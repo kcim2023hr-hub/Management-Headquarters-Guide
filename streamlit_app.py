@@ -2,32 +2,31 @@ import streamlit as st
 from openai import OpenAI
 import datetime
 
-# 1. 페이지 설정 및 초기화
+# 1. 페이지 설정
 st.set_page_config(
-    page_title="Kcim 육아지원 법률 대시보드",
+    page_title="Kcim 육아지원 전문 대시보드",
     page_icon="⚖️",
     layout="wide"
 )
 
 # Kcim 브랜드 컬러
-KCIM_DARK = "#193D52"    # 신뢰감 있는 네이비
-KCIM_MEDIUM = "#00A8C0"  # 포인트 사이언
-KCIM_LIGHT = "#8CCEE7"   # 소프트 블루
+KCIM_DARK = "#193D52"
+KCIM_MEDIUM = "#00A8C0"
+KCIM_LIGHT = "#8CCEE7"
 WHITE = "#FFFFFF"
 
-# 2. 고도화된 대시보드용 CSS
+# 2. 대시보드 전용 CSS
 st.markdown(f"""
     <style>
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
     * {{ font-family: 'Pretendard', sans-serif; }}
+    .stApp {{ background-color: #F8FAFC; }}
     
-    .stApp {{ background-color: #F0F4F8; }}
-    
-    /* 대시보드 헤더 */
-    .header-container {{
+    /* 헤더 */
+    .header-box {{
         background: {KCIM_DARK};
-        padding: 2rem;
-        border-radius: 15px;
+        padding: 1.5rem;
+        border-radius: 12px;
         color: white;
         text-align: center;
         margin-bottom: 2rem;
@@ -35,138 +34,132 @@ st.markdown(f"""
     
     /* 섹션 타이틀 */
     .section-title {{
-        font-size: 1.4rem;
+        font-size: 1.3rem;
         font-weight: 700;
         color: {KCIM_DARK};
         margin-bottom: 1rem;
-        padding-left: 10px;
         border-left: 5px solid {KCIM_MEDIUM};
+        padding-left: 12px;
     }}
     
-    /* 대시보드 카드 */
-    .card {{
+    /* FAQ 카드 스타일 */
+    .faq-card {{
         background: {WHITE};
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        margin-bottom: 1.5rem;
+        padding: 1.2rem;
+        border-radius: 10px;
         border: 1px solid #E2E8F0;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }}
+    .faq-q {{ font-weight: 700; color: {KCIM_MEDIUM}; margin-bottom: 0.5rem; display: block; }}
+    .faq-a {{ font-size: 0.95rem; color: #334155; line-height: 1.6; }}
     
-    /* 강조 지표 */
-    .metric-value {{
-        font-size: 1.8rem;
-        font-weight: 800;
-        color: {KCIM_MEDIUM};
+    /* 핵심 수치 하이라이트 */
+    .highlight-box {{
+        background: #F1F5F9;
+        padding: 1rem;
+        border-radius: 8px;
+        text-align: center;
+        border: 1px dashed {KCIM_MEDIUM};
     }}
-    
-    /* 법령 근거 텍스트 */
-    .law-source {{
-        font-size: 0.8rem;
-        color: #718096;
-        margin-top: 0.5rem;
-    }}
-    
-    /* 챗봇 컨테이너 조정 */
-    .stChatMessage {{ background-color: white !important; border-radius: 10px; }}
+    .highlight-val {{ font-size: 1.5rem; font-weight: 800; color: {KCIM_DARK}; }}
     </style>
     """, unsafe_allow_html=True)
 
-# 3. 메인 상단 헤더
+# 3. 상단 헤더
 st.markdown(f"""
-    <div class="header-container">
-        <h1 style="margin:0;">⚖️ 2025 육아지원제도 전문 노무 대시보드</h1>
-        <p style="opacity:0.8; margin-top:0.5rem;">고용노동부 최신 지침 반영 | Kcim 경영관리본부 전용</p>
+    <div class="header-box">
+        <h2 style="margin:0;">⚖️ 2025 육아지원제도 전문 노무 대시보드</h2>
+        <p style="opacity:0.8; margin:5px 0 0 0;">Kcim 경영관리본부 | 가장 많이 묻는 질문과 핵심 개정안</p>
     </div>
     """, unsafe_allow_html=True)
 
-# 4. 메인 대시보드 레이아웃 (상단 지표 + 중앙 상세 + 우측 챗봇)
+# 4. 메인 레이아웃 (L: FAQ 및 핵심요약, R: AI 상담)
 col_left, col_right = st.columns([0.65, 0.35], gap="large")
 
 with col_left:
-    # --- 섹션 1: 핵심 개정 지표 (Metric Cards) ---
-    st.markdown('<p class="section-title">📍 실무 핵심 개정 요약</p>', unsafe_allow_html=True)
-    m_col1, m_col2, m_col3 = st.columns(3)
-    
-    with m_col1:
-        st.markdown(f"""<div class="card"><p>육아기 단축 자녀연령</p><p class="metric-value">만 12세</p><p class="law-source">(기존 만 8세)</p></div>""", unsafe_allow_html=True)
-    with m_col2:
-        st.markdown(f"""<div class="card"><p>배우자 출산휴가</p><p class="metric-value">20일</p><p class="law-source">(기존 10일 / 4회 분할)</p></div>""", unsafe_allow_html=True)
-    with m_col3:
-        st.markdown(f"""<div class="card"><p>육아휴직 급여상한</p><p class="metric-value">250만원</p><p class="law-source">(1~3개월 기준)</p></div>""", unsafe_allow_html=True)
+    # --- 핵심 변경 수치 퀵뷰 ---
+    st.markdown('<p class="section-title">🚀 2025 핵심 변경 사항 (한눈에 보기)</p>', unsafe_allow_html=True)
+    q1, q2, q3 = st.columns(3)
+    with q1:
+        st.markdown(f'<div class="highlight-box"><small>육아기 단축연령</small><br><span class="highlight-val">초등 6학년</span></div>', unsafe_allow_html=True)
+    with q2:
+        st.markdown(f'<div class="highlight-box"><small>육아휴직 급여상한</small><br><span class="highlight-val">최대 250만원</span></div>', unsafe_allow_html=True)
+    with q3:
+        st.markdown(f'<div class="highlight-box"><small>배우자 출산휴가</small><br><span class="highlight-val">20일 (유급)</span></div>', unsafe_allow_html=True)
 
-    # --- 섹션 2: 상세 법령 가이드 ---
-    st.markdown('<p class="section-title">📑 상세 제도 가이드</p>', unsafe_allow_html=True)
-    with st.expander("🤰 임신기 및 출산기 (25.02.23 시행)", expanded=True):
-        st.markdown("""
-        - **임신기 근로시간 단축:** 기존 '36주 이후'에서 **'32주 이후'**로 확대
-        - **난임치료휴가:** 연간 6일(유급 2일) 확대, 중소기업 급여지원 신설
-        - **미숙아 출산:** 출산전후휴가 **100일**로 확대 (기존 90일)
-        """)
+    st.write("")
     
-    with st.expander("🤱 육아기 및 육아휴직 (25.01.01 / 2.23 시행)", expanded=True):
-        st.markdown("""
-        - **육아휴직 기간:** 부모 모두 3개월 이상 사용 시 **최대 1.5년**으로 연장
-        - **육아기 단축 기간:** 휴직 미사용분 포함 **최대 3년** 가능
-        - **사후지급금 폐지:** 25년 1월 이후 사용분부터 휴직 중 **100% 지급**
-        """)
+    # --- FAQ 섹션 (자주 묻는 질문) ---
+    st.markdown('<p class="section-title">❓ 임직원 자주 묻는 질문 (FAQ)</p>', unsafe_allow_html=True)
+    
+    faqs = [
+        {
+            "q": "이미 육아휴직 중인데, 2025년에 인상된 급여를 받을 수 있나요?",
+            "a": "<b>네, 가능합니다.</b> 2025년 1월 1일 이후 사용한 기간에 대해서는 개정된 급여 기준(1~3개월 250만 원 등)이 적용됩니다."
+        },
+        {
+            "q": "육아기 근로시간 단축을 사용할 수 있는 자녀 연령이 어떻게 바뀌었나요?",
+            "a": "기존 만 8세(초2) 이하에서 <b>만 12세 또는 초등학교 6학년 이하</b>로 대폭 확대되었습니다."
+        },
+        {
+            "q": "육아휴직 1년 6개월 연장 조건이 궁금합니다.",
+            "a": "부모가 각각 육아휴직을 <b>3개월 이상 사용한 경우</b>에만 각각 6개월씩 연장되어 총 1년 6개월 사용이 가능합니다."
+        },
+        {
+            "q": "배우자 출산휴가는 언제까지, 몇 번이나 나눠 쓸 수 있나요?",
+            "a": "출산일로부터 120일 이내에 사용해야 하며, <b>총 3회까지 분할(4번 사용)</b> 가능하도록 확대되었습니다."
+        },
+        {
+            "q": "사후지급금 제도가 정말 폐지되었나요?",
+            "a": "네, 2025년 1월 1일 이후 육아휴직 기간에 대해서는 복직 후 지급되던 25%를 <b>휴직 중에 전액 합산하여 지급</b>합니다."
+        }
+    ]
 
-    # --- 섹션 3: 급여 체계 테이블 ---
-    st.markdown('<p class="section-title">💰 2025 육아휴직 급여 체계</p>', unsafe_allow_html=True)
-    st.markdown(f"""
-        <div class="card">
-            <table style="width:100%; text-align:center; border-collapse:collapse;">
-                <tr style="background:{KCIM_DARK}; color:white;">
-                    <th style="padding:10px;">구분</th><th style="padding:10px;">상한액</th><th style="padding:10px;">비율</th>
-                </tr>
-                <tr style="border-bottom:1px solid #eee;"><td>1~3개월</td><td><b>250만원</b></td><td>통상임금 100%</td></tr>
-                <tr style="border-bottom:1px solid #eee;"><td>4~6개월</td><td><b>200만원</b></td><td>통상임금 100%</td></tr>
-                <tr><td>7~12개월</td><td><b>160만원</b></td><td>통상임금 80%</td></tr>
-            </table>
-        </div>
-    """, unsafe_allow_html=True)
+    for item in faqs:
+        st.markdown(f"""
+            <div class="faq-card">
+                <span class="faq-q">Q. {item['q']}</span>
+                <span class="faq-a">A. {item['a']}</span>
+            </div>
+        """, unsafe_allow_html=True)
 
 with col_right:
-    # --- 섹션 4: AI 전문 노무 상담실 ---
-    st.markdown('<p class="section-title">🤖 AI 전문 노무 상담</p>', unsafe_allow_html=True)
+    # --- AI 상담 섹션 ---
+    st.markdown('<p class="section-title">🤖 실시간 노무 상담</p>', unsafe_allow_html=True)
     
-    with st.container(border=True):
-        st.caption("고용노동부 최신 지침을 기반으로 노무사가 답변해 드립니다.")
+    with st.container(border=True, height=650):
+        st.info("개정 법령에 대해 구체적인 계산이나 사례가 궁금하시면 아래에 입력해 주세요.")
         
-        # 세션 메시지 관리
         if "messages" not in st.session_state:
             st.session_state.messages = [
-                {"role": "system", "content": "너는 Kcim 경영관리본부의 전문 노무사야. 2025년 개정된 육아지원법(자녀연령 만12세, 급여상한 250만, 사후지급금 폐지 등)을 완벽히 숙지하고 있어. 법률적 근거를 바탕으로 전문적이고 친절하게 답변해줘."}
+                {"role": "system", "content": "너는 Kcim 경영관리본부의 전문 노무사야. 2025년 개정된 육아지원법 내용을 바탕으로 상담해줘. 자녀연령 초6 확대, 급여 250만 상한, 배우자 휴가 20일 등 핵심 수치를 정확히 답변해."}
             ]
 
-        # 대화 내용 표시 (높이 제한을 위해 scrollable 공간 권장하나 기본 기능 활용)
-        chat_placeholder = st.container(height=500)
-        with chat_placeholder:
-            for message in st.session_state.messages:
-                if message["role"] != "system":
-                    with st.chat_message(message["role"]):
-                        st.markdown(message["content"])
+        # 대화 표시
+        for message in st.session_state.messages:
+            if message["role"] != "system":
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
 
-        # 채팅 입력
-        if prompt := st.chat_input("노무사에게 문의하기"):
+        # 입력창
+        if prompt := st.chat_input("문의 내용을 입력하세요..."):
             st.session_state.messages.append({"role": "user", "content": prompt})
-            with chat_placeholder:
-                with st.chat_message("user"):
-                    st.markdown(prompt)
-                
-                with st.chat_message("assistant"):
-                    try:
-                        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-                        response = client.chat.completions.create(
-                            model="gpt-4o",
-                            messages=st.session_state.messages
-                        )
-                        full_response = response.choices[0].message.content
-                        st.markdown(full_response)
-                        st.session_state.messages.append({"role": "assistant", "content": full_response})
-                    except:
-                        st.error("API 연결 실패. Settings에서 API Key를 확인하세요.")
+            with st.chat_message("user"):
+                st.markdown(prompt)
+            
+            with st.chat_message("assistant"):
+                try:
+                    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                    response = client.chat.completions.create(
+                        model="gpt-4o",
+                        messages=st.session_state.messages
+                    )
+                    res = response.choices[0].message.content
+                    st.markdown(res)
+                    st.session_state.messages.append({"role": "assistant", "content": res})
+                except:
+                    st.error("API Key를 확인해주세요.")
 
-# 5. 하단 푸터
-st.divider()
-st.markdown(f"<center style='color:gray; font-size:0.8rem;'>© 2025 Kcim Management Support Division. Professional Labor Relations Guide.</center>", unsafe_allow_html=True)
+# 5. 푸터
+st.markdown("<br><center style='color:#94a3b8; font-size:0.8rem;'>Kcim Management Support Division | Professional Labor Guide 2025</center>", unsafe_allow_html=True)
