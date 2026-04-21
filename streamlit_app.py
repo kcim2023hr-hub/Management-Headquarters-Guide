@@ -2,201 +2,179 @@ import streamlit as st
 from openai import OpenAI
 import datetime
 
-# 1. 페이지 설정
+# 1. 페이지 설정 및 디자인 고도화
 st.set_page_config(
     page_title="경영관리본부 육아지원 가이드",
     page_icon="🍼",
     layout="wide"
 )
 
-# [색상 팔레트 세팅]
-NAVY = "#002060"     # 메인: 신뢰감 (네이비)
-BLUE = "#0050ef"     # 포인트: 활력 (브라이트 블루)
-SOFT_BLUE = "#f0f4ff" # 배경: 편안함 (연한 블루그레이)
-TEXT_GRAY = "#454545" # 본문: 가독성 (짙은 회색)
-
-# 2. 커스텀 CSS (3가지 톤의 조화)
-st.markdown(f"""
+# 커스텀 CSS: 이미지의 부드러운 톤과 전문적인 레이아웃 재현
+st.markdown("""
     <style>
-    /* 전체 배경 및 폰트 */
-    .stApp {{ background-color: #ffffff; }}
-    h1, h2, h3 {{ color: {NAVY}; font-family: 'Pretendard', sans-serif; }}
-    p, li {{ color: {TEXT_GRAY}; font-size: 1.05rem; line-height: 1.6; }}
-
-    /* 사이드바 커스텀 */
-    [data-testid="stSidebar"] {{
-        background-color: {NAVY};
-    }}
-    [data-testid="stSidebar"] * {{ color: white !important; }}
-
-    /* 상단 메인 배너: 네이비와 블루의 그라데이션으로 편안함 부여 */
-    .main-banner {{
-        background: linear-gradient(135deg, {NAVY} 0%, {BLUE} 100%);
-        padding: 50px 30px;
-        border-radius: 20px;
-        text-align: center;
-        color: white;
-        margin-bottom: 40px;
-        box-shadow: 0 10px 20px rgba(0,32,96,0.1);
-    }}
-
-    /* 안내 카드: 화이트 배경에 소프트 블루 보더로 깨끗한 느낌 */
-    .info-card {{
+    .main { background-color: #f8f9fa; }
+    .stTabs [data-baseweb="tab-list"] { gap: 24px; }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: #ffffff;
+        border-radius: 10px 10px 0px 0px;
+        gap: 1px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .guide-card {
         background-color: white;
-        padding: 30px;
+        padding: 25px;
         border-radius: 15px;
-        border: 1px solid {SOFT_BLUE};
-        border-top: 5px solid {BLUE};
-        box-shadow: 0 6px 15px rgba(0,0,0,0.03);
-        height: 100%;
-        transition: transform 0.2s;
-    }}
-    .info-card:hover {{
-        transform: translateY(-5px);
-    }}
-
-    /* 탭 디자인: 세련된 블루 톤 적용 */
-    .stTabs [data-baseweb="tab-list"] {{ gap: 8px; }}
-    .stTabs [data-baseweb="tab"] {{
-        background-color: {SOFT_BLUE};
-        border-radius: 8px 8px 0 0;
-        padding: 12px 25px;
-        color: {NAVY};
-        font-weight: 600;
-    }}
-    .stTabs [data-baseweb="tab"][aria-selected="true"] {{
-        background-color: {BLUE} !important;
-        color: white !important;
-    }}
-
-    /* 강조 박스 */
-    .highlight-box {{
-        background-color: {SOFT_BLUE};
-        padding: 15px;
+        border-left: 5px solid #ff4b6b;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin-bottom: 20px;
+    }
+    .stat-box {
+        text-align: center;
+        padding: 10px;
+        background-color: #fff0f3;
         border-radius: 10px;
-        border-left: 4px solid {BLUE};
-        margin: 10px 0;
-    }}
+        border: 1px solid #ffccd5;
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. 사이드바 (핵심 요약)
+# 2. 사이드바: 퀵 인포 및 시행일정
 with st.sidebar:
-    st.markdown(f"<div style='text-align:center; padding:20px;'><h2 style='color:white;'>🏢 경영관리본부</h2><p style='color:#cbdcf7;'>육아지원 스마트 가이드</p></div>", unsafe_allow_html=True)
+    st.markdown("## 🏢 경영관리본부\n**육아지원 스마트 센터**")
+    st.write(f"📅 오늘 날짜: {datetime.date.today()}")
     st.divider()
     
-    st.markdown("### 📅 시행 일정 요약")
-    st.info("**25.01.01**\n- 육아휴직 급여 인상\n- 사후지급금 폐지")
-    st.warning("**25.02.23**\n- 육아휴직 1.5년 연장\n- 배우자 출산휴가 20일")
+    st.markdown("### 🔔 2025년 주요 시행일")
+    st.error("**1월 1일 시행**\n- 휴직급여 인상 (최대 250만)\n- 사후지급금 폐지")
+    st.warning("**2월 23일 시행**\n- 휴직기간 연장 (1.5년)\n- 배우자 출산휴가 (20일)\n- 단축근무 자녀연령 확대 (초6)")
     
     st.divider()
-    st.markdown("### 📞 담당자 안내")
-    st.write("• 제도 문의: 인사팀 (102)")
-    st.write("• 시스템 문의: IT팀 (505)")
+    st.info("💡 **문의처**\n인사총무팀: 내선 102\n고용노동부 콜센터: 1350")
 
-# 4. 메인 화면 배너
-st.markdown(f"""
-    <div class="main-banner">
-        <h1 style="color: white; margin: 0; font-size: 2.5rem;">🌸 육아와 업무의 행복한 균형</h1>
-        <p style="color: #e0eaff; margin-top: 15px; font-size: 1.2rem; font-weight: 300;">경영관리본부는 임직원의 소중한 가정을 응원합니다.</p>
+# 3. 메인 상단 배너
+st.markdown("""
+    <div style="background: linear-gradient(to right, #ffafbd, #ffc3a0); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 25px;">
+        <h1 style="color: white; margin: 0;">💖 스마트 육아지원제도 가이드</h1>
+        <p style="color: white; opacity: 0.9; font-size: 18px;">2025년 달라지는 고용노동부 지침 100% 반영</p>
     </div>
     """, unsafe_allow_html=True)
 
-# 5. 콘텐츠 영역 (3개 탭 구성)
-tab_list = ["📍 단계별 제도", "📝 2025 개편 핵심", "🤖 든든매니저 상담"]
-tabs = st.tabs(tab_list)
+# 4. 제도별 상세 안내 (Tabs 활용)
+tab1, tab2, tab3, tab4 = st.tabs(["🤰 임신기", "👶 출산기", "🤱 육아기", "❓ FAQ"])
 
-with tabs[0]:
-    st.write("")
+with tab1:
     col1, col2 = st.columns(2)
     with col1:
-        st.markdown(f"""
-            <div class="info-card">
-                <h3 style="color:{BLUE};">🤰 임신기·출산기</h3>
-                <div class="highlight-box"><b>임신기 근로시간 단축</b><br>12주 이내 ~ 32주 이후 (2.23 시행)</div>
+        st.markdown("""
+            <div class="guide-card">
+                <h3>임신기 근로시간 단축 (2.23 시행)</h3>
                 <ul>
-                    <li>배우자 출산휴가 20일 (4회 분할 가능)</li>
-                    <li>난임치료휴가 유급 2일 포함 총 6일</li>
-                    <li>미숙아 출산 시 출산휴가 100일</li>
+                    <li><b>확대:</b> 12주 이내 ~ 32주 이후 (기존 36주) [cite: 13, 76]</li>
+                    <li><b>고위험 임신부:</b> 임신 전 기간 사용 가능 [cite: 13, 77]</li>
+                    <li><b>임금:</b> 근로시간 단축을 이유로 임금 삭감 불가</li>
                 </ul>
             </div>
             """, unsafe_allow_html=True)
     with col2:
-        st.markdown(f"""
-            <div class="info-card">
-                <h3 style="color:{BLUE};">🤱 육아기</h3>
-                <div class="highlight-box"><b>육아휴직 기간 연장</b><br>최대 1년 → 1.5년 (부모 모두 3개월 사용 시)</div>
+        st.markdown("""
+            <div class="guide-card" style="border-left-color: #4b6bff;">
+                <h3>난임치료휴가 확대 (2.23 시행)</h3>
                 <ul>
-                    <li>육아기 근로시간 단축 초6(만12세)까지</li>
-                    <li>단축근무 급여 상한 220만원 상향</li>
-                    <li>육아휴직 분할 사용 3회로 확대</li>
+                    <li><b>기간:</b> 연간 6일 (기존 3일) [cite: 15, 85]</li>
+                    <li><b>유급:</b> 최초 2일 유급 (기존 1일) [cite: 16, 85]</li>
+                    <li><b>비밀유지:</b> 사업주의 비밀유지 의무 신설 [cite: 86]</li>
                 </ul>
             </div>
             """, unsafe_allow_html=True)
 
-with tabs[1]:
-    st.write("")
-    st.markdown(f"""
-        <div class="info-card">
-            <h3 style="color:{NAVY}; text-align:center;">💰 2025년 육아휴직 급여 개편 안내</h3>
-            <p style="text-align:center; color:{TEXT_GRAY};">2025년 1월 1일부터 육아휴직 급여가 대폭 인상되며 사후지급금이 폐지됩니다.</p>
-            <table style="width:100%; border-collapse: collapse; margin-top:20px;">
-                <tr style="background-color:{SOFT_BLUE}; border-bottom: 2px solid {BLUE};">
-                    <th style="padding:15px; text-align:left;">구분</th>
-                    <th style="padding:15px; text-align:left;">기존</th>
-                    <th style="padding:15px; text-align:left; color:{BLUE};">2025년 개편</th>
-                </tr>
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:15px;">1~3개월</td>
-                    <td style="padding:15px;">월 150만원</td>
-                    <td style="padding:15px; font-weight:bold;">월 250만원</td>
-                </tr>
-                <tr style="border-bottom:1px solid #eee;">
-                    <td style="padding:15px;">4~6개월</td>
-                    <td style="padding:15px;">월 150만원</td>
-                    <td style="padding:15px; font-weight:bold;">월 200만원</td>
-                </tr>
-                <tr>
-                    <td style="padding:15px;">7개월 이후</td>
-                    <td style="padding:15px;">월 150만원</td>
-                    <td style="padding:15px; font-weight:bold;">월 160만원</td>
-                </tr>
-            </table>
-            <p style="margin-top:15px; font-size:0.9rem; color:red;">※ 사후지급금(25%) 없이 휴직 기간 중 100% 지급됩니다.</p>
+with tab2:
+    st.markdown("""
+        <div class="guide-card">
+            <h3>배우자 출산휴가 (2.23 시행)</h3>
+            <p>신생아와 산모를 충분히 돌볼 수 있도록 대폭 확대됩니다.</p>
+            <div style="display: flex; justify-content: space-around;">
+                <div class="stat-box"><b>휴가 기간</b><br><span style="font-size:20px; color:#ff4b6b;">20일</span> (기존 10일) [cite: 27, 103]</div>
+                <div class="stat-box"><b>분할 사용</b><br><span style="font-size:20px; color:#ff4b6b;">3회</span> (총 4회 분할) [cite: 30, 106]</div>
+                <div class="stat-box"><b>급여 지원</b><br><span style="font-size:20px; color:#ff4b6b;">20일 전체</span> (중소기업) [cite: 29, 107]</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
-with tabs[2]:
-    st.write("")
-    st.markdown(f"### 🤖 '든든매니저'에게 물어보세요")
-    st.caption("고용노동부 '2025 달라지는 육아지원제도' 가이드를 기반으로 답변합니다.")
+with tab3:
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.markdown("""
+            <div class="guide-card">
+                <h3>육아휴직 급여 인상 (1.1 시행)</h3>
+                <ul>
+                    <li><b>1~3개월:</b> 월 상한 250만원 [cite: 38, 43, 113]</li>
+                    <li><b>4~6개월:</b> 월 상한 200만원 [cite: 39, 113]</li>
+                    <li><b>7개월~:</b> 월 상한 160만원 [cite: 40, 113]</li>
+                    <li><b>사후지급금 폐지:</b> 휴직 중 전액 지급 [cite: 41, 113, 257]</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
+    with col_b:
+        st.markdown("""
+            <div class="guide-card" style="border-left-color: #4caf50;">
+                <h3>육아기 근로시간 단축 (2.23 시행)</h3>
+                <ul>
+                    <li><b>대상:</b> 만 12세 또는 초6 이하 [cite: 48, 118, 119]</li>
+                    <li><b>기간:</b> 최대 3년 (휴직 미사용분 가산) [cite: 45, 118, 119]</li>
+                    <li><b>급여:</b> 기준금액 상한 220만원으로 상향 [cite: 119, 259]</li>
+                </ul>
+            </div>
+            """, unsafe_allow_html=True)
 
-    # 6. AI 챗봇 로직
-    if "messages" not in st.session_state:
-        st.session_state.messages = [
-            {"role": "system", "content": "너는 경영관리본부의 전문 상담사 '든든매니저'야. 네이비와 블루 톤의 신뢰감 있는 말투로 2025년 개편된 육아지원제도를 친절하게 안내해줘."}
-        ]
+with tab4:
+    st.markdown("### 💡 자주 묻는 질문 (FAQ)")
+    with st.expander("Q. 이미 육아휴직 중인데 인상된 급여를 받을 수 있나요?"):
+        st.write("A. 네, 가능합니다. 2025년 1월 1일 이후 사용하는 기간에 대해서는 인상된 급여 기준이 적용됩니다. [cite: 280, 281, 282]")
+    with st.expander("Q. 육아휴직 1년 6개월 연장 조건은 무엇인가요?"):
+        st.write("A. 부모가 각각 육아휴직을 3개월 이상 사용했거나, 한부모 또는 중증장애아동 부모인 경우에 가능합니다. [cite: 35, 36, 111, 308]")
 
-    # 채팅 UI는 기본 Streamlit 컴포넌트 사용 (가독성 최우선)
-    for message in st.session_state.messages:
-        if message["role"] != "system":
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+# 5. AI 챗봇 섹션
+st.divider()
+st.markdown("### 🤖 육아지원 AI 어시스턴트 '든든매니저'")
+st.caption("고용노동부 2025 개편 가이드북 데이터를 기반으로 답변합니다.")
 
-    if prompt := st.chat_input("예: 육아휴직 급여 인상에 대해 알려줘"):
-        st.session_state.messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.markdown(prompt)
+# API 설정 및 페르소나 주입
+try:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+except:
+    st.error("API Key 설정이 필요합니다 (Settings > Secrets).")
+    st.stop()
 
-        with st.chat_message("assistant"):
-            try:
-                client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-                response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=st.session_state.messages
-                )
-                full_response = response.choices[0].message.content
-                st.markdown(full_response)
-                st.session_state.messages.append({"role": "assistant", "content": full_response})
-            except:
-                st.error("API 키를 확인해주세요.")
+if "messages" not in st.session_state:
+    st.session_state.messages = [
+        {"role": "system", "content": """너는 경영관리본부의 '든든매니저'야. 
+        사용자에게 2025년 개편된 육아지원제도를 안내하는 전문가이며, 반드시 제공된 고용노동부 PDF 가이드북 내용에 기반해 답변해야 해.
+        
+        [주요 규칙]
+        1. 2025.1.1 시행과 2025.2.23 시행 제도를 엄격히 구분해서 안내할 것.
+        2. 육아휴직 급여 인상(최대 250만)과 기간 연장(1.5년) 조건을 정확히 설명할 것.
+        3. 배우자 출산휴가가 20일로 늘어난 점과 4회 분할 가능함을 강조할 것.
+        4. 말투는 부드럽고 따뜻하게 하되, 수치는 정확하게 전달할 것."""}
+    ]
+
+for message in st.session_state.messages:
+    if message["role"] != "system":
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
+
+if prompt := st.chat_input("궁금한 제도를 입력하세요 (예: 육아휴직 급여 인상 얼마인가요?)"):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=st.session_state.messages
+        )
+        ans = response.choices[0].message.content
+        st.markdown(ans)
+        st.session_state.messages.append({"role": "assistant", "content": ans})
