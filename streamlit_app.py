@@ -9,7 +9,7 @@ st.set_page_config(
 )
 
 # ================================================
-# CSS 스타일
+# CSS - 사이드바 중복 완전 제거 버전
 # ================================================
 st.markdown(
     """
@@ -26,15 +26,10 @@ st.markdown(
   --cyan: #11a8c7;
 }
 
-html, body, [class*="css"] {
-  font-family: 'Pretendard', sans-serif !important;
-}
-
+html, body, [class*="css"] { font-family: 'Pretendard', sans-serif !important; }
 .stApp { background: var(--bg); }
 
-.block-container {
-  padding: 1.2rem 1.2rem 2.5rem 1.2rem !important;
-}
+.block-container { padding: 1.2rem 1.2rem 2.5rem 1.2rem !important; }
 
 /* Hero Header */
 .hero {
@@ -63,12 +58,7 @@ html, body, [class*="css"] {
   margin-bottom: 1.4rem;
 }
 
-.chip-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
+.chip-container { display: flex; flex-wrap: wrap; gap: 10px; }
 .chip {
   background: rgba(255,255,255,0.18);
   border: 1px solid rgba(255,255,255,0.25);
@@ -78,7 +68,6 @@ html, body, [class*="css"] {
   font-size: 0.9rem;
   font-weight: 600;
 }
-
 .date-chip {
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.3);
@@ -90,66 +79,67 @@ html, body, [class*="css"] {
   margin-left: auto;
 }
 
-/* 좌측 단계 선택 (버튼 제거, 카드만) */
+/* 좌측 단계 선택 - 버튼 완전 제거, 카드 리스트만 */
 .left-card {
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 20px;
-  padding: 1.4rem 1.2rem;
+  padding: 1.5rem 1.2rem;
   box-shadow: 0 8px 25px rgba(23, 43, 64, 0.06);
+  height: 100%;
 }
 
 .stage-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
 }
 
 .stage-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 16px;
+  padding: 15px 16px;
   border-radius: 16px;
   border: 1px solid var(--line);
   background: #fff;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .stage-item:hover {
   border-color: var(--cyan);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(17, 168, 199, 0.12);
+  box-shadow: 0 8px 20px rgba(17, 168, 199, 0.15);
 }
 
 .stage-item.active {
   border-color: transparent;
   background: linear-gradient(90deg, #f0f9ff, #e0f2fe);
-  box-shadow: 0 8px 20px rgba(17, 168, 199, 0.18);
+  box-shadow: 0 10px 25px rgba(17, 168, 199, 0.22);
 }
 
 .stage-num {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 1.1rem;
+  font-size: 1.15rem;
   color: #fff;
   flex-shrink: 0;
 }
 
 .stage-label {
   font-weight: 700;
-  font-size: 0.97rem;
+  font-size: 0.98rem;
   color: var(--text);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
-/* 메인 영역 */
+/* 메인 영역 스타일 */
 .quick-panel {
   display: grid;
   grid-template-columns: 1.35fr 1fr;
@@ -195,18 +185,8 @@ html, body, [class*="css"] {
   text-align: center;
 }
 
-.status-label {
-  font-size: 0.8rem;
-  color: var(--muted);
-  margin-bottom: 6px;
-}
-
-.status-value {
-  font-size: 1.02rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.4;
-}
+.status-label { font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+.status-value { font-size: 1.02rem; font-weight: 800; color: var(--text); line-height: 1.4; }
 
 .main-card, .faq-card, .chat-card {
   background: var(--card);
@@ -216,64 +196,35 @@ html, body, [class*="css"] {
 }
 
 .step-badge {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.35rem;
+  width: 64px; height: 64px; border-radius: 18px;
+  color: white; font-weight: 800; font-size: 1.35rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 
 .item-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 0.75rem 0;
-  border-bottom: 1px solid #edf2f7;
-  font-size: 0.96rem;
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 0.75rem 0; border-bottom: 1px solid #edf2f7; font-size: 0.96rem;
 }
-
 .item-row:last-child { border-bottom: 0; }
 
 .warn-box {
-  border-radius: 16px;
-  border: 1px solid #ffd7de;
-  background: #fff6f8;
-  padding: 1rem;
-  line-height: 1.65;
-  font-size: 0.93rem;
-  color: #9a2948;
-  margin-bottom: 0.8rem;
+  border-radius: 16px; border: 1px solid #ffd7de; background: #fff6f8;
+  padding: 1rem; line-height: 1.65; font-size: 0.93rem; color: #9a2948; margin-bottom: 0.8rem;
 }
 
 .form-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: #f8fafc;
-  padding: 0.55rem 0.9rem;
-  font-size: 0.86rem;
-  color: var(--navy);
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: 999px; border: 1px solid var(--line); background: #f8fafc;
+  padding: 0.55rem 0.9rem; font-size: 0.86rem; color: var(--navy);
 }
 
 .faq-item {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 1.1rem;
-  background: #fff;
-  margin-bottom: 1rem;
+  border: 1px solid var(--line); border-radius: 16px; padding: 1.1rem;
+  background: #fff; margin-bottom: 1rem;
 }
 
 @media (max-width: 1100px) {
-  .quick-panel, .status-row {
-    grid-template-columns: 1fr;
-  }
+  .quick-panel, .status-row { grid-template-columns: 1fr; }
 }
 </style>
 """,
@@ -311,7 +262,7 @@ STEPS = [
         "guide": "직원의 임신 주수와 근무 상황을 먼저 확인한 뒤, 플로우 양식의 임신기/육아기 근로시간 단축신청서 또는 변경신청서를 안내해 주세요.",
         "check": ["적용 가능 시기와 현재 임신 주수 먼저 확인하기", "단축 시간대와 업무 공백 조율하기", "최초 신청인지 변경 신청인지 구분하기", "필요 시 변경신청서 사용 여부 안내하기"],
         "forms": ["임신기/육아기 근로시간 단축신청서", "임신기/육아기 근로시간 단축 변경신청서"],
-        "warn": ["신청 내용이 바뀌는 경우 최초 신청서가 아니라 변경신청서 사용 여부를 같이 확인해 주세요.", "법령 기준과 사내 운영 기준을 함께 확인한 뒤 안내해야 혼선이 줄어듭니다."],
+        "warn": ["신청 내용이 바뀌는 경우 최초 신청서가 아니라 변경신청서 사용 여부를 같이 확인해 주세요."],
         "faq": [("처음 신청과 변경 신청은 어떻게 구분하나요", "처음 단축근무를 신청하는 경우는 신청서를, 이미 운영 중인 시간을 변경하는 경우는 변경신청서를 안내하는 것이 좋습니다.")],
         "next_step": "정기건강진단 시간 안내", "target": "임신기 단축근무 희망자"
     },
@@ -321,7 +272,7 @@ STEPS = [
         "guide": "검진 일정이 확인되면 플로우 양식의 임산부 정기건강진단 신청서를 안내하고, 검진 일정과 근무시간 처리 기준을 함께 설명해 주세요.",
         "check": ["검진 일정과 진료 예정일 확인하기", "임산부 정기건강진단 신청서 작성 위치 안내하기", "근로시간 인정 방식과 사후 확인 방법 설명하기", "누락 없이 내부 기록 남기기"],
         "forms": ["임산부 정기건강진단 신청서"],
-        "warn": ["증빙 없이 구두 처리만 하면 나중에 해석 차이가 생길 수 있습니다.", "정기 검진 관련 안내는 신청서 작성과 일정 확인을 함께 설명하는 편이 좋습니다."],
+        "warn": ["증빙 없이 구두 처리만 하면 나중에 해석 차이가 생길 수 있습니다."],
         "faq": [("정기 검진 때 어떤 양식을 쓰나요", "플로우 내 KCIM_임신•육아기 관련 지원 신청서에서 임산부 정기건강진단 신청서 탭을 작성하면 됩니다.")],
         "next_step": "출산휴가 전 연차 일정 점검", "target": "임신 중 정기 검진 대상자"
     },
@@ -368,7 +319,7 @@ STEPS = [
 ]
 
 # ================================================
-# 세션 상태 초기화
+# 세션 상태
 # ================================================
 if "active_step" not in st.session_state:
     st.session_state.active_step = 0
@@ -411,17 +362,22 @@ left_col, main_col = st.columns([1.05, 3.7], gap="medium")
 
 with left_col:
     st.markdown('<div class="left-card">', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:0.95rem; font-weight:800; color:#17384b; margin-bottom:1rem;">단계 선택</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:0.95rem; font-weight:800; color:#17384b; margin-bottom:1.2rem;">단계 선택</div>', unsafe_allow_html=True)
 
     for idx, s in enumerate(STEPS):
         active_class = "active" if idx == active_step else ""
-        if st.button(f"STEP {s['id']} {s['short']}", key=f"step_btn_{idx}", use_container_width=True, type="secondary"):
+        
+        # 숨겨진 버튼 (클릭용)
+        if st.button(f"select_{idx}", key=f"step_select_{idx}", use_container_width=True):
             st.session_state.active_step = idx
             st.rerun()
 
+        # 실제로 보이는 카드
         st.markdown(
             f"""
-            <div class="stage-item {active_class}" style="border-left: 5px solid {s['color']};">
+            <div class="stage-item {active_class}" 
+                 style="border-left: 5px solid {s['color']};"
+                 onclick="document.querySelector('button[key=\\'step_select_{idx}\\']').click()">
               <div class="stage-num" style="background:{s['color']};">{s['id']}</div>
               <div class="stage-label">{s['short']}</div>
             </div>
@@ -429,11 +385,12 @@ with left_col:
             unsafe_allow_html=True,
         )
 
-    st.markdown('<div style="height: 2rem;"></div>', unsafe_allow_html=True)
+    # 양식 안내
+    st.markdown('<div style="height:2.5rem"></div>', unsafe_allow_html=True)
     st.markdown('<div style="font-size:0.95rem; font-weight:800; color:#17384b; margin-bottom:1rem;">양식 안내</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
-        <div style="background:#f8fbff; border:1px solid #dbe4ee; border-radius:16px; padding:1.2rem; line-height:1.65; font-size:0.9rem;">
+        <div style="background:#f8fbff; border:1px solid #dbe4ee; border-radius:16px; padding:1.3rem; line-height:1.65; font-size:0.9rem;">
           <b>경로</b><br>{COMMON_FORM_GUIDE['location']}<br><br>
           <b>양식명</b><br>{COMMON_FORM_GUIDE['form_name']}
         </div>
@@ -441,9 +398,9 @@ with left_col:
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div style="margin-top:1.2rem; font-size:0.95rem; font-weight:800; color:#17384b;">신청서 탭</div>', unsafe_allow_html=True)
+    st.markdown('<div style="margin-top:1.3rem; font-size:0.95rem; font-weight:800; color:#17384b;">신청서 탭</div>', unsafe_allow_html=True)
     st.markdown(
-        '<div style="background:#f8fbff; border:1px solid #dbe4ee; border-radius:16px; padding:1.1rem; line-height:1.7; font-size:0.9rem;">' +
+        '<div style="background:#f8fbff; border:1px solid #dbe4ee; border-radius:16px; padding:1.2rem; line-height:1.7; font-size:0.9rem;">' +
         '<br>'.join([f'• {x}' for x in COMMON_FORM_GUIDE['tabs']]) +
         '</div>',
         unsafe_allow_html=True,
@@ -485,10 +442,10 @@ with main_col:
     st.markdown('<div class="main-card">', unsafe_allow_html=True)
     st.markdown(
         f"""
-        <div style="padding:1.3rem 1.4rem; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:16px;">
+        <div style="padding:1.4rem 1.5rem; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:18px;">
           <div class="step-badge" style="background:{step['color']}"><small>STEP</small>{step['id']}</div>
           <div>
-            <div style="font-size:1.32rem; font-weight:800; color:var(--text);">{step['title']}</div>
+            <div style="font-size:1.32rem; font-weight:800;">{step['title']}</div>
             <div style="color:var(--muted); font-size:0.95rem;">{step['period']} · {step['summary']}</div>
           </div>
         </div>
@@ -496,18 +453,18 @@ with main_col:
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div style="padding:1.4rem;">', unsafe_allow_html=True)
+    st.markdown('<div style="padding:1.5rem;">', unsafe_allow_html=True)
 
     col1, col2 = st.columns([1.1, 0.95])
     with col1:
-        st.markdown('<div style="border:1px solid var(--line); border-radius:18px; padding:1.2rem; background:#fff;">', unsafe_allow_html=True)
+        st.markdown('<div style="border:1px solid var(--line); border-radius:18px; padding:1.3rem; background:#fff;">', unsafe_allow_html=True)
         st.markdown('<div style="font-size:0.95rem; font-weight:800; color:#17384b; margin-bottom:1rem;">✅ HR 담당자 체크</div>', unsafe_allow_html=True)
         for item in step["check"]:
-            st.markdown(f'<div class="item-row"><span style="color:#11a8c7; font-size:1.1rem;">✔</span> {item}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="item-row"><span style="color:#11a8c7">✔</span> {item}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
-        st.markdown('<div style="border:1px solid var(--line); border-radius:18px; padding:1.2rem; background:#fff;">', unsafe_allow_html=True)
+        st.markdown('<div style="border:1px solid var(--line); border-radius:18px; padding:1.3rem; background:#fff;">', unsafe_allow_html=True)
         st.markdown('<div style="font-size:0.95rem; font-weight:800; color:#17384b; margin-bottom:1rem;">🧾 필요 서류</div>', unsafe_allow_html=True)
         for form in step["forms"]:
             st.markdown(f'<div class="form-chip">📄 {form}</div>', unsafe_allow_html=True)
@@ -518,9 +475,9 @@ with main_col:
             st.markdown(f'<div class="warn-box">{warn}</div>', unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)   # main body
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # 이전/다음 버튼
+    # 이전 / 다음 버튼
     c1, c2, c3 = st.columns([1, 1.2, 1])
     with c1:
         if active_step > 0:
@@ -528,7 +485,7 @@ with main_col:
                 st.session_state.active_step -= 1
                 st.rerun()
     with c2:
-        st.markdown(f"<div style='text-align:center; margin-top:12px; color:#708191;'>STEP {step['id']} / {len(STEPS)}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align:center; margin-top:12px; color:#708191; font-size:0.9rem;'>STEP {step['id']} / {len(STEPS)}</div>", unsafe_allow_html=True)
     with c3:
         if active_step < len(STEPS) - 1:
             if st.button("다음 단계 →", use_container_width=True):
@@ -568,12 +525,7 @@ with main_col:
 
         try:
             client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-            system_prompt = (
-                "너는 KCIM 경영관리본부 내부 응대 가이드 챗봇이다. "
-                f"현재 단계는 STEP {step['id']} {step['title']} 이다. "
-                "답변은 한국어로 작성하고 관리자가 임직원에게 설명하기 쉽게 짧고 친절하게 정리한다. "
-                "법령 해석이 필요한 부분은 최신 기준과 사내 규정 확인이 필요하다고 함께 안내한다."
-            )
+            system_prompt = f"너는 KCIM 경영관리본부 내부 응대 가이드 챗봇이다. 현재 단계는 STEP {step['id']} {step['title']} 이다. 답변은 한국어로 작성하고 관리자가 임직원에게 설명하기 쉽게 짧고 친절하게 정리한다."
             with st.chat_message("assistant"):
                 with st.spinner("답변 생성 중..."):
                     response = client.chat.completions.create(
@@ -585,6 +537,6 @@ with main_col:
             st.session_state.chat_messages.append({"role": "assistant", "content": answer})
         except Exception as e:
             with st.chat_message("assistant"):
-                st.error(f"상담 서비스 오류: {str(e)[:100]}")
+                st.error(f"상담 서비스 오류가 발생했습니다.")
 
     st.markdown('</div>', unsafe_allow_html=True)
