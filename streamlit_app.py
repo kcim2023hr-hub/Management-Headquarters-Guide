@@ -513,30 +513,30 @@ with main_col:
 
     # 1. 가이드 탭
     with tab_guide:
-        # 빠른 확인 뱃지와 메인 스크립트 박스 상단 배치
+        # ✅ 들여쓰기를 제거하여 Markdown 코드 블록으로 인식되는 문제 해결
         st.markdown(
-            f"""
-            <div class="main-card" style="padding:1.4rem; margin-bottom:1.6rem; border-left: 6px solid {step['color']};">
-                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                    <div>
-                        <div style="color:var(--muted); font-size:0.9rem; font-weight:700; margin-bottom:0.2rem;">STEP {step['id']}</div>
-                        <div class="main-title" style="margin-bottom:0.4rem;">{step['title']}</div>
-                        <div style="color:var(--muted); font-size:0.95rem;">{step['summary']}</div>
-                    </div>
-                    <div style="text-align:right;">
-                        <span class="form-chip">👤 대상: {step['target']}</span>
-                        <span class="form-chip">➡️ 다음: {step['next_step']}</span>
-                    </div>
-                </div>
-                
-                <div style="margin-top:1.5rem;">
-                    <div style="font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:0.6rem;">🗣️ 담당자 안내 스크립트</div>
-                    <div style="background:#f4fbfe; border:1px solid #d0ecf8; border-radius:12px; padding:1.2rem; font-size:1.05rem; line-height:1.6; font-weight:500; color:#0e5a78;">
-                        {step['guide']}
-                    </div>
-                </div>
-            </div>
-            """,
+f"""
+<div class="main-card" style="padding:1.4rem; margin-bottom:1.6rem; border-left: 6px solid {step['color']};">
+    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+            <div style="color:var(--muted); font-size:0.9rem; font-weight:700; margin-bottom:0.2rem;">STEP {step['id']}</div>
+            <div class="main-title" style="margin-bottom:0.4rem;">{step['title']}</div>
+            <div style="color:var(--muted); font-size:0.95rem;">{step['summary']}</div>
+        </div>
+        <div style="text-align:right;">
+            <span class="form-chip">👤 대상: {step['target']}</span>
+            <span class="form-chip">➡️ 다음: {step['next_step']}</span>
+        </div>
+    </div>
+    
+    <div style="margin-top:1.5rem;">
+        <div style="font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:0.6rem;">🗣️ 담당자 안내 스크립트</div>
+        <div style="background:#f4fbfe; border:1px solid #d0ecf8; border-radius:12px; padding:1.2rem; font-size:1.05rem; line-height:1.6; font-weight:500; color:#0e5a78;">
+            {step['guide']}
+        </div>
+    </div>
+</div>
+""",
             unsafe_allow_html=True,
         )
 
