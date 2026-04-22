@@ -230,14 +230,6 @@ html, body, [class*="css"] {
   color: var(--navy);
 }
 
-.faq-item {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 1.1rem;
-  background: #fff;
-  margin-bottom: 1rem;
-}
-
 @media (max-width: 1100px) {
   .quick-panel, .status-row {
     grid-template-columns: 1fr;
@@ -249,7 +241,7 @@ html, body, [class*="css"] {
 )
 
 # ================================================
-# 데이터 (7개 단계 모두 포함)
+# 데이터
 # ================================================
 COMMON_FORM_GUIDE = {
     "location": "플로우 내 [KCIM] 전체 공지사항 > 상단고정 > [공지] 사내 주요 양식 안내 > 2. 휴가 및 휴직",
@@ -287,7 +279,7 @@ STEPS = [
             ("신청서는 어디에서 찾나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내에서 2. 휴가 및 휴직 항목을 확인하면 됩니다."),
             ("처음 단계에서 바로 신청 가능한 것은 무엇인가요", "개별 상황에 따라 다르지만 대표적으로 임신기 근로시간 단축 여부를 먼저 확인해 안내하면 좋습니다."),
         ],
-        "next_step": "임신기 근로시간 단축 여부 확인",
+        "next_step": "단축근무 여부 확인",
         "target": "임신 확인한 임직원",
     },
     {
@@ -314,8 +306,8 @@ STEPS = [
             ("신청서는 어디에서 찾나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내에서 2. 휴가 및 휴직 항목을 확인하면 됩니다."),
             ("직원이 시간 조정을 다시 원하면 어떻게 하나요", "운영 중 변경이 필요한 경우 임신기/육아기 근로시간 단축 변경신청서를 안내해 주세요."),
         ],
-        "next_step": "정기건강진단 시간 안내",
-        "target": "임신기 단축근무 희망자",
+        "next_step": "건강진단 시간 안내",
+        "target": "단축근무 희망자",
     },
     {
         "id": 3,
@@ -341,8 +333,8 @@ STEPS = [
             ("매번 신청서를 받아야 하나요", "반복되는 경우에도 내부 기록을 남기는 방식이 가장 안전합니다."),
             ("신청서 위치를 어떻게 설명하면 좋나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내에서 2. 휴가 및 휴직 항목이라고 안내하면 찾기 쉽습니다."),
         ],
-        "next_step": "출산휴가 전 연차 일정 점검",
-        "target": "임신 중 정기 검진 대상자",
+        "next_step": "연차 일정 점검",
+        "target": "정기 검진 대상자",
     },
     {
         "id": 4,
@@ -365,10 +357,9 @@ STEPS = [
         "faq": [
             ("연차 정리 단계에서도 별도 양식이 있나요", "이 단계는 주로 일정 조율과 다음 신청 준비가 중심이며, 이후 단계에서 필요한 양식을 미리 안내해 주는 방식이 좋습니다."),
             ("무엇을 먼저 정리하면 좋나요", "잔여 연차 종료일 출산휴가 시작일 인수인계 시점을 한 번에 볼 수 있게 정리하면 좋습니다."),
-            ("다음 단계는 무엇을 준비하면 되나요", "출산 관련 신청이 이어질 수 있어 플로우 상단고정 양식 위치를 미리 안내해 두면 좋습니다."),
         ],
-        "next_step": "출산 관련 신청 안내",
-        "target": "출산휴가 예정 임직원",
+        "next_step": "출산 관련 신청",
+        "target": "출산휴가 예정자",
     },
     {
         "id": 5,
@@ -377,7 +368,7 @@ STEPS = [
         "period": "출산 전후 상황 발생 시",
         "color": "#E8556D",
         "summary": "출산 전후 상황에 맞춰 관련 신청서를 정확히 안내하는 단계입니다.",
-        "guide": "출산 관련 문의가 오면 먼저 상황을 확인한 뒤, 현재 플로우 양식 탭 기준으로 필요한 신청서를 정확히 안내해 주세요. 현재 제공된 탭 중 출산 전후와 직접 연결되는 것은 유산/사산 휴가 신청서입니다.",
+        "guide": "출산 관련 문의가 오면 먼저 상황을 확인한 뒤, 현재 플로우 양식 탭 기준으로 필요한 신청서를 정확히 안내해 주세요.",
         "check": [
             "현재 문의가 출산휴가인지 유산 사산 휴가인지 먼저 구분하기",
             "플로우 양식 탭 중 해당 신청서 존재 여부 확인하기",
@@ -386,16 +377,13 @@ STEPS = [
         ],
         "forms": ["유산/사산 휴가 신청서"],
         "warn": [
-            "현재 사용자 제공 정보 기준으로 플로우 양식 탭에는 유산/사산 휴가 신청서가 포함되어 있습니다.",
-            "출산휴가 자체 양식이 별도로 있는지는 현재 공개된 정보만으로는 확인되지 않으므로 내부 공지 추가 확인이 필요합니다.",
+            "출산휴가 자체 양식이 별도로 있는지는 내부 공지 추가 확인이 필요합니다.",
         ],
         "faq": [
             ("출산 관련 문의 시 어떤 양식을 먼저 봐야 하나요", "현재 제공된 플로우 탭 기준으로는 유산 사산 관련 상황에서 유산/사산 휴가 신청서를 안내할 수 있습니다."),
-            ("출산휴가 신청서도 같은 곳에 있나요", "현재 공유해 주신 탭 목록에는 출산휴가 신청서 명칭은 확인되지 않았습니다. 내부 공지나 운영 절차를 추가로 확인하는 것이 좋습니다."),
-            ("직원이 상황을 정확히 설명하지 못하면 어떻게 하나요", "먼저 현재 상황을 구체적으로 확인한 뒤 해당 탭 양식이 있는지 보고 안내하는 것이 안전합니다."),
         ],
-        "next_step": "육아기 지원 또는 복직 관련 안내",
-        "target": "출산 전후 관련 문의자",
+        "next_step": "육아기 지원 안내",
+        "target": "출산 전후 문의자",
     },
     {
         "id": 6,
@@ -418,10 +406,9 @@ STEPS = [
         "faq": [
             ("육아기에도 같은 신청서를 쓰나요", "네 현재 제공된 정보 기준으로 임신기/육아기 근로시간 단축신청서와 변경신청서를 함께 사용하는 구조입니다."),
             ("근무시간을 바꾸고 싶다고 하면 무엇을 안내하나요", "이미 운영 중인 조건을 조정하는 경우에는 변경신청서를 먼저 안내하는 것이 좋습니다."),
-            ("양식은 어디에서 찾나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내 > 2. 휴가 및 휴직에서 찾을 수 있습니다."),
         ],
-        "next_step": "복직 준비 및 최종 일정 확인",
-        "target": "육아기 지원 제도 이용자",
+        "next_step": "복직 준비 점검",
+        "target": "제도 이용자",
     },
     {
         "id": 7,
@@ -444,9 +431,8 @@ STEPS = [
         "faq": [
             ("복직 전에 무엇을 먼저 확인하면 좋나요", "복직일 현재 근무 형태 그리고 육아기 제도 유지 변경 종료 여부를 먼저 확인하면 좋습니다."),
             ("복직하면서 단축조건을 바꾸는 경우는요", "현재 운영 조건을 변경하는 경우에는 변경신청서 사용 여부를 함께 안내하면 좋습니다."),
-            ("양식 위치도 같이 안내해야 하나요", "네 플로우 상단고정의 사내 주요 양식 안내 경로를 함께 알려주면 재문의가 줄어듭니다."),
         ],
-        "next_step": "개별 상황 후속 관리",
+        "next_step": "사후 관리",
         "target": "복직 예정자",
     },
 ]
@@ -479,7 +465,6 @@ st.markdown(
       <div class="chip-container">
         <div class="chip">📌 단계별 빠른 응대 중심</div>
         <div class="chip">🧾 필요 서류 즉시 확인</div>
-        <div class="chip">💬 FAQ와 상담 연계</div>
         <div class="date-chip">기준일 {datetime.date.today()}</div>
       </div>
     </div>
@@ -488,179 +473,155 @@ st.markdown(
 )
 
 # ================================================
-# 레이아웃
+# 레이아웃 구성
 # ================================================
-left_col, main_col = st.columns([1.05, 3.7], gap="medium")
+left_col, main_col = st.columns([1.1, 3.6], gap="medium")
 
+# --- 좌측 메뉴 영역 ---
 with left_col:
     st.markdown('<div class="left-card">', unsafe_allow_html=True)
     st.markdown('<div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-bottom:1rem;">단계 선택</div>', unsafe_allow_html=True)
 
-    # 시각용 HTML을 제거하고 버튼의 type 속성으로 활성화 상태 구분
     for idx, s in enumerate(STEPS):
         btn_type = "primary" if idx == active_step else "secondary"
         if st.button(f"STEP {s['id']}. {s['short']}", key=f"step_btn_{idx}", use_container_width=True, type=btn_type):
             st.session_state.active_step = idx
             st.rerun()
 
-    st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-bottom:0.8rem;">양식 안내</div>', unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div style="background:#f8fbff;border:1px solid #dbe4ee;border-radius:16px;padding:1.2rem;line-height:1.65;font-size:0.9rem;">
-          <b>경로</b><br>{COMMON_FORM_GUIDE['location']}<br><br>
-          <b>양식명</b><br>{COMMON_FORM_GUIDE['form_name']}
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown('<div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-top:1.2rem; margin-bottom:0.8rem;">신청서 탭</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div style="background:#f8fbff;border:1px solid #dbe4ee;border-radius:16px;padding:1.1rem;line-height:1.7;font-size:0.9rem;">' +
-        '<br>'.join([f'• {x}' for x in COMMON_FORM_GUIDE['tabs']]) +
-        '</div>',
-        unsafe_allow_html=True,
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with main_col:
-    # 바로 안내할 말 + 빠른 확인
-    st.markdown(
-        f"""
-        <div class="quick-panel">
-          <div class="quick-card">
-            <div class="quick-title">바로 안내할 말</div>
-            <div class="guide-box">{step['guide']}</div>
-          </div>
-          <div class="quick-card">
-            <div class="quick-title">빠른 확인</div>
-            <div class="status-row">
-              <div class="status-box">
-                <div class="status-label">현재 단계</div>
-                <div class="status-value">STEP {step['id']}<br>{step['short']}</div>
-              </div>
-              <div class="status-box">
-                <div class="status-label">대상자</div>
-                <div class="status-value">{step['target']}</div>
-              </div>
-              <div class="status-box">
-                <div class="status-label">다음 단계</div>
-                <div class="status-value">{step['next_step']}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    # 메인 카드
-    st.markdown('<div class="main-card">', unsafe_allow_html=True)
-    st.markdown(
-        f"""
-        <div class="main-card-header">
-            <div style="display:flex;align-items:center;gap:16px;">
-                <div class="step-badge" style="background:{step['color']}"><small>STEP</small>{step['id']}</div>
-                <div>
-                    <div class="main-title">{step['title']}</div>
-                    <div style="color:var(--muted);font-size:0.95rem;">{step['period']} · {step['summary']}</div>
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown('<div style="padding:1.4rem;">', unsafe_allow_html=True)
-
-    col1, col2 = st.columns([1.1, 0.95])
-    with col1:
-        st.markdown('<div style="border:1px solid var(--line);border-radius:18px;padding:1.2rem;background:#fff;">', unsafe_allow_html=True)
-        st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:1rem;">✅ HR 담당자 체크</div>', unsafe_allow_html=True)
-        for item in step["check"]:
-            st.markdown(f'<div class="item-row"><span style="color:#11a8c7">✔</span> {item}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    with col2:
-        st.markdown('<div style="border:1px solid var(--line);border-radius:18px;padding:1.2rem;background:#fff;">', unsafe_allow_html=True)
-        st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:1rem;">🧾 필요 서류</div>', unsafe_allow_html=True)
-        for form in step["forms"]:
-            st.markdown(f'<div class="form-chip">📄 {form}</div>', unsafe_allow_html=True)
-
-        st.markdown('<div style="height:1.5rem"></div>', unsafe_allow_html=True)
-        st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:0.8rem;">⚠️ 주의사항</div>', unsafe_allow_html=True)
-        for warn in step["warn"]:
-            st.markdown(f'<div class="warn-box">{warn}</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)  # main-body
-
-    # 이전 / 다음 버튼
-    c1, c2, c3 = st.columns([1, 1.2, 1])
-    with c1:
-        if active_step > 0:
-            if st.button("← 이전 단계", use_container_width=True):
-                st.session_state.active_step -= 1
-                st.rerun()
-    with c2:
-        st.markdown(f"<div style='text-align:center; margin-top:12px; color:#708191;'>STEP {step['id']} / {len(STEPS)}</div>", unsafe_allow_html=True)
-    with c3:
-        if active_step < len(STEPS) - 1:
-            if st.button("다음 단계 →", use_container_width=True):
-                st.session_state.active_step += 1
-                st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)  # main-card
-
-    # FAQ
-    st.markdown('<div class="faq-card" style="margin-top:1.8rem;">', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:1rem;">❓ 자주 받는 질문</div>', unsafe_allow_html=True)
-    for q, a in step["faq"]:
+    st.markdown('<div style="height:1rem"></div>', unsafe_allow_html=True)
+    
+    # 아코디언(Expander)으로 양식 안내 숨기기 (공간 최적화)
+    with st.expander("📂 주요 양식 및 경로 안내"):
         st.markdown(
             f"""
-            <div class="faq-item">
-                <div style="font-weight:700;color:#17384b;margin-bottom:0.6rem;">Q. {q}</div>
-                <div style="line-height:1.65;">{a}</div>
+            <div style="line-height:1.65;font-size:0.85rem;">
+              <b>경로:</b><br>{COMMON_FORM_GUIDE['location']}<br><br>
+              <b>양식명:</b><br>{COMMON_FORM_GUIDE['form_name']}
             </div>
-            """,
+            <div style="font-weight:700; margin-top:0.8rem; margin-bottom:0.4rem; font-size:0.85rem;">[신청서 탭]</div>
+            <div style="line-height:1.7;font-size:0.85rem;">
+            """ +
+            '<br>'.join([f'• {x}' for x in COMMON_FORM_GUIDE['tabs']]) +
+            '</div>',
             unsafe_allow_html=True,
         )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    # 챗봇
-    st.markdown('<div class="chat-card" style="margin-top:1.8rem;">', unsafe_allow_html=True)
-    st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:0.6rem;">🤖 추가 상담</div>', unsafe_allow_html=True)
-    st.caption(f"현재 선택된 단계는 STEP {step['id']} {step['title']} 입니다.")
+# --- 우측 메인 콘텐츠 영역 (탭 분리 적용) ---
+with main_col:
+    tab_guide, tab_chat = st.tabs(["📖 단계별 가이드", "🤖 AI 비서 상담"])
 
-    for msg in st.session_state.chat_messages:
-        with st.chat_message(msg["role"]):
-            st.write(msg["content"])
+    # 1. 가이드 탭
+    with tab_guide:
+        # 빠른 확인 뱃지와 메인 스크립트 박스 상단 배치
+        st.markdown(
+            f"""
+            <div class="main-card" style="padding:1.4rem; margin-bottom:1.6rem; border-left: 6px solid {step['color']};">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <div style="color:var(--muted); font-size:0.9rem; font-weight:700; margin-bottom:0.2rem;">STEP {step['id']}</div>
+                        <div class="main-title" style="margin-bottom:0.4rem;">{step['title']}</div>
+                        <div style="color:var(--muted); font-size:0.95rem;">{step['summary']}</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <span class="form-chip">👤 대상: {step['target']}</span>
+                        <span class="form-chip">➡️ 다음: {step['next_step']}</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top:1.5rem;">
+                    <div style="font-size:0.95rem;font-weight:800;color:var(--navy);margin-bottom:0.6rem;">🗣️ 담당자 안내 스크립트</div>
+                    <div style="background:#f4fbfe; border:1px solid #d0ecf8; border-radius:12px; padding:1.2rem; font-size:1.05rem; line-height:1.6; font-weight:500; color:#0e5a78;">
+                        {step['guide']}
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
-    if prompt := st.chat_input(f"예: {step['short']} 관련 문의를 입력하세요"):
-        st.session_state.chat_messages.append({"role": "user", "content": prompt})
-        with st.chat_message("user"):
-            st.write(prompt)
+        # 체크리스트와 필요 서류 좌우 배치
+        col_chk, col_doc = st.columns([1.1, 0.9])
+        with col_chk:
+            st.markdown('<div style="border:1px solid var(--line);border-radius:16px;padding:1.2rem;background:#fff;height:100%;">', unsafe_allow_html=True)
+            st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:1rem;">✅ HR 담당자 체크리스트</div>', unsafe_allow_html=True)
+            for item in step["check"]:
+                st.markdown(f'<div class="item-row"><span style="color:#11a8c7">✔</span> {item}</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
-        try:
-            client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-            system_prompt = (
-                "너는 KCIM 경영관리본부 내부 응대 가이드 챗봇이다. "
-                f"현재 단계는 STEP {step['id']} {step['title']} 이다. "
-                "답변은 한국어로 작성하고 관리자가 임직원에게 설명하기 쉽게 짧고 친절하게 정리한다. "
-                "법령 해석이 필요한 부분은 최신 기준과 사내 규정 확인이 필요하다고 함께 안내한다."
-            )
-            with st.chat_message("assistant"):
-                with st.spinner("답변 생성 중..."):
-                    response = client.chat.completions.create(
-                        model="gpt-4o",
-                        messages=[{"role": "system", "content": system_prompt}, *st.session_state.chat_messages],
-                    )
-                    answer = response.choices[0].message.content
-                    st.write(answer)
-            st.session_state.chat_messages.append({"role": "assistant", "content": answer})
-        except Exception as e:
-            with st.chat_message("assistant"):
-                st.error(f"상담 서비스 오류가 발생했습니다: {str(e)[:100]}")
+        with col_doc:
+            st.markdown('<div style="border:1px solid var(--line);border-radius:16px;padding:1.2rem;background:#fff;height:100%;">', unsafe_allow_html=True)
+            st.markdown('<div style="font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:0.8rem;">🧾 필요 서류</div>', unsafe_allow_html=True)
+            for form in step["forms"]:
+                st.markdown(f'<div class="form-chip" style="margin-bottom:0.6rem;">📄 {form}</div>', unsafe_allow_html=True)
+            
+            if step["warn"]:
+                st.markdown('<div style="margin-top:1.5rem; font-size:0.95rem;font-weight:800;color:#17384b;margin-bottom:0.6rem;">⚠️ 주의사항</div>', unsafe_allow_html=True)
+                for warn in step["warn"]:
+                    st.markdown(f'<div style="color:#9a2948; font-size:0.88rem; line-height:1.5; padding:0.6rem; background:#fff6f8; border-radius:8px; margin-bottom:0.4rem;">{warn}</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
+        # FAQ 영역 (아코디언 형태)
+        st.markdown('<div style="margin-top:2rem; font-size:1.1rem;font-weight:800;color:var(--navy);margin-bottom:1rem;">❓ 자주 받는 질문 (FAQ)</div>', unsafe_allow_html=True)
+        for q, a in step["faq"]:
+            with st.expander(f"Q. {q}"):
+                st.write(a)
+        
+        # 하단 네비게이션 버튼
+        st.markdown('<hr style="margin:2rem 0; border:none; border-top:1px solid var(--line);">', unsafe_allow_html=True)
+        nav1, nav2, nav3 = st.columns([1, 2, 1])
+        with nav1:
+            if active_step > 0:
+                if st.button("← 이전 단계", use_container_width=True):
+                    st.session_state.active_step -= 1
+                    st.rerun()
+        with nav2:
+            st.markdown(f"<div style='text-align:center; padding-top:8px; color:var(--muted); font-size:0.9rem;'>{active_step+1} / {len(STEPS)} 단계</div>", unsafe_allow_html=True)
+        with nav3:
+            if active_step < len(STEPS) - 1:
+                if st.button("다음 단계 →", use_container_width=True):
+                    st.session_state.active_step += 1
+                    st.rerun()
+
+    # 2. 챗봇 상담 탭 (가장 상단에서 탭 클릭 시 바로 보임)
+    with tab_chat:
+        st.markdown(
+            f"""
+            <div style="background:#eaf5fa; border-radius:12px; padding:1.2rem; margin-bottom:1.5rem;">
+                <div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-bottom:0.4rem;">🤖 AI 비서에게 질문하기</div>
+                <div style="font-size:0.9rem; color:#4a5d6e;">현재 선택된 <b>[STEP {step['id']} {step['title']}]</b> 단계에 대해 궁금한 점을 편하게 물어보세요!</div>
+            </div>
+            """, 
+            unsafe_allow_html=True
+        )
+
+        for msg in st.session_state.chat_messages:
+            with st.chat_message(msg["role"]):
+                st.write(msg["content"])
+
+        # st.chat_input은 탭 안에 배치해도 정상 동작합니다.
+        if prompt := st.chat_input(f"예: {step['short']} 관련 문의를 입력하세요"):
+            st.session_state.chat_messages.append({"role": "user", "content": prompt})
+            with st.chat_message("user"):
+                st.write(prompt)
+
+            try:
+                client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                system_prompt = (
+                    "너는 KCIM 경영관리본부 내부 응대 가이드 챗봇이다. "
+                    f"현재 단계는 STEP {step['id']} {step['title']} 이다. "
+                    "답변은 한국어로 작성하고 관리자가 임직원에게 설명하기 쉽게 짧고 친절하게 정리한다. "
+                    "법령 해석이 필요한 부분은 최신 기준과 사내 규정 확인이 필요하다고 함께 안내한다."
+                )
+                with st.chat_message("assistant"):
+                    with st.spinner("답변 생성 중..."):
+                        response = client.chat.completions.create(
+                            model="gpt-4o",
+                            messages=[{"role": "system", "content": system_prompt}, *st.session_state.chat_messages],
+                        )
+                        answer = response.choices[0].message.content
+                        st.write(answer)
+                st.session_state.chat_messages.append({"role": "assistant", "content": answer})
+            except Exception as e:
+                with st.chat_message("assistant"):
+                    st.error(f"상담 서비스 오류가 발생했습니다: {str(e)[:100]}")
