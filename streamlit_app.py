@@ -103,48 +103,6 @@ html, body, [class*="css"] {
   box-shadow: 0 8px 25px rgba(23, 43, 64, 0.06);
 }
 
-.stage-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.stage-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 16px;
-  border-radius: 16px;
-  border: 1px solid var(--line);
-  background: #fff;
-  transition: all 0.2s;
-}
-
-.stage-item.active {
-  border-color: transparent;
-  background: linear-gradient(90deg, #f0f9ff, #e0f2fe);
-  box-shadow: 0 8px 20px rgba(17, 168, 199, 0.15);
-}
-
-.stage-num {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.1rem;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.stage-label {
-  font-weight: 700;
-  font-size: 0.97rem;
-  color: var(--text);
-}
-
 /* Main Area */
 .quick-panel {
   display: grid;
@@ -536,26 +494,17 @@ left_col, main_col = st.columns([1.05, 3.7], gap="medium")
 
 with left_col:
     st.markdown('<div class="left-card">', unsafe_allow_html=True)
-    st.markdown('<div class="card-title">단계 선택</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-bottom:1rem;">단계 선택</div>', unsafe_allow_html=True)
 
+    # 시각용 HTML을 제거하고 버튼의 type 속성으로 활성화 상태 구분
     for idx, s in enumerate(STEPS):
-        active_class = "active" if idx == active_step else ""
-        if st.button(f"STEP {s['id']} {s['short']}", key=f"step_btn_{idx}", use_container_width=True):
+        btn_type = "primary" if idx == active_step else "secondary"
+        if st.button(f"STEP {s['id']}. {s['short']}", key=f"step_btn_{idx}", use_container_width=True, type=btn_type):
             st.session_state.active_step = idx
             st.rerun()
 
-        st.markdown(
-            f"""
-            <div class="stage-item {active_class}" style="border-left:5px solid {s['color'] if idx == active_step else '#dbe4ee'};">
-              <div class="stage-num" style="background:{s['color'] if idx == active_step else '#fff'}; color:{'#fff' if idx == active_step else '#708191'}; border:2px solid {s['color'] if idx == active_step else '#dbe4ee'};">{s['id']}</div>
-              <div class="stage-label">{s['short']}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
     st.markdown('<div style="height:2rem"></div>', unsafe_allow_html=True)
-    st.markdown('<div class="card-title">양식 안내</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-bottom:0.8rem;">양식 안내</div>', unsafe_allow_html=True)
     st.markdown(
         f"""
         <div style="background:#f8fbff;border:1px solid #dbe4ee;border-radius:16px;padding:1.2rem;line-height:1.65;font-size:0.9rem;">
@@ -566,7 +515,7 @@ with left_col:
         unsafe_allow_html=True,
     )
 
-    st.markdown('<div class="card-title" style="margin-top:1.2rem;">신청서 탭</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:1.1rem; font-weight:800; color:var(--navy); margin-top:1.2rem; margin-bottom:0.8rem;">신청서 탭</div>', unsafe_allow_html=True)
     st.markdown(
         '<div style="background:#f8fbff;border:1px solid #dbe4ee;border-radius:16px;padding:1.1rem;line-height:1.7;font-size:0.9rem;">' +
         '<br>'.join([f'• {x}' for x in COMMON_FORM_GUIDE['tabs']]) +
