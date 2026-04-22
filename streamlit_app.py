@@ -49,7 +49,7 @@ html, body, [class*="css"] { font-family: 'Pretendard', sans-serif !important; }
 .chip { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.25); color: #fff; border-radius: 9999px; padding: 0.55rem 1.1rem; font-size: 0.9rem; font-weight: 600; }
 .date-chip { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 9999px; padding: 0.55rem 1.2rem; font-size: 0.9rem; font-weight: 600; margin-left: auto; }
 
-/* 좌측 단계 선택 - select 버튼 완전 제거 */
+/* 좌측 단계 선택 - 하나로 통합 */
 .left-card {
   background: var(--card);
   border: 1px solid var(--line);
@@ -59,7 +59,7 @@ html, body, [class*="css"] { font-family: 'Pretendard', sans-serif !important; }
   height: 100%;
 }
 
-.stage-list { display: flex; flex-direction: column; gap: 9px; }
+.stage-list { display: flex; flex-direction: column; gap: 8px; }
 
 .stage-item {
   display: flex;
@@ -263,6 +263,7 @@ with left_col:
     for idx, s in enumerate(STEPS):
         active_class = "active" if idx == active_step else ""
         
+        # 클릭 가능한 카드
         st.markdown(
             f"""
             <div class="stage-item {active_class}" 
@@ -275,7 +276,7 @@ with left_col:
             unsafe_allow_html=True,
         )
         
-        # 클릭을 위한 숨겨진 버튼 (사용자에게는 보이지 않음)
+        # 실제 동작 버튼 (사용자에게는 보이지 않음)
         if st.button(f"STEP {s['id']} {s['short']}", key=f"step_btn_{idx}", use_container_width=True):
             st.session_state.active_step = idx
             st.rerun()
@@ -303,6 +304,7 @@ with left_col:
     st.markdown('</div>', unsafe_allow_html=True)
 
 with main_col:
+    # 바로 안내할 말 + 빠른 확인
     st.markdown(
         f"""
         <div class="quick-panel">
@@ -323,7 +325,7 @@ with main_col:
         unsafe_allow_html=True,
     )
 
-    # 메인 카드 + 체크리스트 + 필요서류 + 주의사항
+    # 메인 카드
     st.markdown('<div class="main-card">', unsafe_allow_html=True)
     st.markdown(
         f"""
@@ -379,7 +381,6 @@ with main_col:
 
     st.markdown('</div>', unsafe_allow_html=True)  # main-card
 
-    # FAQ와 챗봇 부분은 이전 코드와 동일하게 유지 (생략 없이 전체 포함)
     # FAQ
     st.markdown('<div class="faq-card" style="margin-top:1.8rem;">', unsafe_allow_html=True)
     st.markdown('<div style="font-size:0.95rem; font-weight:800; color:#17384b; margin-bottom:1rem;">❓ 자주 받는 질문</div>', unsafe_allow_html=True)
