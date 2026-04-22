@@ -39,11 +39,12 @@ html, body, [class*="css"] {
 }
 
 .block-container {
-  max-width: 1480px !important;
-  padding-top: 1.2rem !important;
-  padding-bottom: 3rem !important;
-  padding-left: 2rem !important;
-  padding-right: 2rem !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-top: 0.8rem !important;
+  padding-bottom: 2rem !important;
+  padding-left: 0.8rem !important;
+  padding-right: 0.8rem !important;
 }
 
 .hero {
@@ -143,8 +144,8 @@ html, body, [class*="css"] {
   border: 1px solid var(--line);
   border-radius: 16px;
   background: #fff;
-  padding: 0.8rem 0.9rem;
-  margin-bottom: 0.55rem;
+  padding: 0.9rem 0.95rem;
+  margin-bottom: 0.2rem;
 }
 
 .stage-item.active {
@@ -408,7 +409,23 @@ html, body, [class*="css"] {
 }
 
 .left-card .stButton > button {
-  min-height: 42px !important;
+  min-height: 78px !important;
+  border-radius: 16px !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: transparent !important;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+}
+
+.left-card .stButton > button:hover {
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: transparent !important;
+}
+
+.left-card .stButton > button p {
+  color: transparent !important;
 }
 
 [data-testid="stChatInput"] textarea {
@@ -421,6 +438,11 @@ html, body, [class*="css"] {
   .status-grid {
     grid-template-columns: 1fr;
   }
+  .block-container {
+    padding-left: 0.4rem !important;
+    padding-right: 0.4rem !important;
+  }
+}
   .block-container {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -667,7 +689,7 @@ st.markdown(
 # --------------------------------------------------
 # 메인 레이아웃
 # --------------------------------------------------
-left_col, main_col = st.columns([1.0, 2.7], gap="large")
+left_col, main_col = st.columns([1.0, 3.6], gap="medium")
 
 with left_col:
     st.markdown('<div class="left-card">', unsafe_allow_html=True)
@@ -675,9 +697,12 @@ with left_col:
 
     for idx, s in enumerate(STEPS):
         active_class = "active" if idx == st.session_state.active_step else ""
+        if st.button(f"STEP {s['id']}  {s['short']}", key=f"step_btn_{idx}", use_container_width=True):
+            st.session_state.active_step = idx
+            st.rerun()
         st.markdown(
             f"""
-            <div class="stage-item {active_class}" style="border-left:5px solid {s['color'] if idx == st.session_state.active_step else '#dbe4ee'};">
+            <div class="stage-item {active_class}" style="border-left:5px solid {s['color'] if idx == st.session_state.active_step else '#dbe4ee'}; margin-top:-42px; pointer-events:none;">
               <div class="stage-item-top">
                 <div class="stage-num" style="background:{s['color'] if idx == st.session_state.active_step else '#fff'}; color:{'#fff' if idx == st.session_state.active_step else '#708191'}; border-color:{s['color'] if idx == st.session_state.active_step else '#dbe4ee'};">{s['id']}</div>
                 <div>
@@ -689,9 +714,7 @@ with left_col:
             """,
             unsafe_allow_html=True,
         )
-        if st.button(f"STEP {s['id']} 선택", key=f"step_btn_{idx}", use_container_width=True):
-            st.session_state.active_step = idx
-            st.rerun()
+        st.markdown('<div style="height:0.45rem"></div>', unsafe_allow_html=True)
 
     st.markdown('<div class="layout-gap"></div>', unsafe_allow_html=True)
     st.markdown('<div class="card-title">양식 안내</div>', unsafe_allow_html=True)
