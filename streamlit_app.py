@@ -2,14 +2,15 @@ import datetime
 import streamlit as st
 from openai import OpenAI
 
+# 1. 페이지 설정
 st.set_page_config(
-    page_title="KCIM 출산 육아 응대 가이드",
-    page_icon="👶",
+    page_title="KCIM 출산 육아 실무 응대 가이드",
+    page_icon="⚖️",
     layout="wide",
 )
 
 # --------------------------------------------------
-# 스타일
+# 스타일 및 테마 설정 (이레 안심 가이드 스타일 + KCIM 컬러)
 # --------------------------------------------------
 st.markdown(
     """
@@ -17,821 +18,235 @@ st.markdown(
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
 :root {
-  --navy: #17384b;
-  --navy-soft: #24566f;
-  --bg: #f5f7fb;
-  --card: #ffffff;
-  --line: #dbe4ee;
-  --text: #1f2a35;
-  --muted: #708191;
-  --cyan: #11a8c7;
-  --green: #1f9d63;
-  --red: #e65a70;
-  --amber: #f4a62a;
+  --navy: #193D52;
+  --cyan: #00A8C0;
+  --light-blue: #8CCEE7;
+  --bg: #F8F9FA;
+  --white: #ffffff;
+  --point: #E63946;
 }
 
 html, body, [class*="css"] {
   font-family: 'Pretendard', sans-serif !important;
 }
 
-.stApp {
-  background: var(--bg);
-}
+.stApp { background: var(--bg); }
 
-.block-container {
-  max-width: 1120px;
-  padding-top: 1.4rem;
-  padding-bottom: 3rem;
-}
-
+/* 상단 히어로 배너 */
 .hero {
-  background: linear-gradient(135deg, var(--navy) 0%, #156a8d 100%);
+  background: linear-gradient(135deg, var(--navy) 0%, var(--cyan) 100%);
   color: #fff;
   border-radius: 22px;
-  padding: 1.4rem 1.6rem;
-  box-shadow: 0 12px 28px rgba(22, 48, 71, 0.14);
-  margin-bottom: 1rem;
-  position: relative;
-  overflow: hidden;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 10px 25px rgba(25, 61, 82, 0.15);
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
 
-.hero::after {
-  content: "";
-  position: absolute;
-  right: -60px;
-  top: -50px;
-  width: 220px;
-  height: 220px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.08);
-}
+.hero-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; }
+.hero-desc { font-size: 1rem; opacity: 0.9; }
 
-.hero-title {
-  font-size: 1.55rem;
-  font-weight: 800;
-  margin-bottom: 0.35rem;
-  letter-spacing: -0.02em;
-}
-
-.hero-desc {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.88);
-}
-
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-top: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.meta-chip-wrap {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.meta-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: #fff;
-  border-radius: 999px;
-  padding: 0.42rem 0.78rem;
-  font-size: 0.8rem;
-}
-
-.stage-nav {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  padding: 0.9rem;
-  box-shadow: 0 8px 22px rgba(23, 43, 64, 0.05);
-  margin-bottom: 1rem;
-}
-
-.stage-nav-title {
-  font-size: 0.92rem;
-  font-weight: 800;
-  color: var(--navy);
-  margin-bottom: 0.75rem;
-}
-
+/* 단계별 네비게이션 카드 */
 .stage-tab {
   text-align: center;
   border-radius: 16px;
-  border: 1px solid var(--line);
+  border: 1px solid #dbe4ee;
   background: #fff;
-  padding: 0.75rem 0.5rem 0.85rem 0.5rem;
-  min-height: 96px;
+  padding: 1rem 0.5rem;
+  transition: 0.3s;
+  cursor: pointer;
 }
-
 .stage-tab.active {
-  border-color: transparent;
-  box-shadow: 0 12px 26px rgba(20, 49, 72, 0.12);
+  border-color: var(--cyan);
+  box-shadow: 0 8px 20px rgba(0, 168, 192, 0.15);
+  background: #f0fbff;
 }
 
-.stage-num {
-  width: 34px;
-  height: 34px;
-  margin: 0 auto 0.45rem auto;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  border: 2px solid var(--line);
-  color: var(--muted);
-  background: #fff;
-}
-
-.stage-label {
-  font-size: 0.8rem;
-  line-height: 1.35;
-  color: var(--text);
-  font-weight: 700;
-}
-
-.quick-panel {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 14px;
-  margin-bottom: 1rem;
-}
-
-.quick-card, .main-card, .faq-card, .chat-card {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  box-shadow: 0 8px 22px rgba(23, 43, 64, 0.05);
-}
-
-.quick-card {
-  padding: 1rem 1.05rem;
-}
-
-.quick-title {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: var(--navy);
-  margin-bottom: 0.65rem;
-}
-
-.quick-text {
-  font-size: 0.94rem;
-  line-height: 1.65;
-  color: var(--text);
-}
-
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-}
-
-.status-box {
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  padding: 0.9rem;
-  background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
-}
-
-.status-label {
-  font-size: 0.78rem;
-  color: var(--muted);
-  margin-bottom: 0.3rem;
-}
-
-.status-value {
-  font-size: 0.96rem;
-  font-weight: 800;
-  color: var(--text);
-  line-height: 1.45;
-}
-
-.main-card-header {
-  padding: 1rem 1.1rem;
-  border-bottom: 1px solid var(--line);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.main-card-title-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.step-badge {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  line-height: 1.05;
-  font-weight: 800;
-}
-
-.step-badge small {
-  font-size: 0.66rem;
-}
-
-.main-title {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: 0.2rem;
-}
-
-.main-sub {
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  padding: 0.42rem 0.8rem;
-  font-size: 0.8rem;
-  color: var(--muted);
-  background: #fff;
-}
-
-.main-body {
-  padding: 1rem 1.1rem 1.15rem 1.1rem;
-}
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.section-box {
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 0.95rem 1rem;
-  background: #fff;
-}
-
-.section-title {
-  font-size: 0.9rem;
-  font-weight: 800;
-  color: var(--navy);
-  margin-bottom: 0.8rem;
-}
-
-.item-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 0.58rem 0;
-  border-bottom: 1px solid #edf2f7;
-  font-size: 0.92rem;
-  color: var(--text);
-  line-height: 1.6;
-}
-
-.item-row:last-child {
-  border-bottom: 0;
+/* 실무 응대 메인 카드 */
+.main-card {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 2rem;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
 }
 
 .guide-box {
   border-radius: 16px;
-  border: 1px solid #d7ecf4;
-  background: #f4fbfe;
-  padding: 0.95rem 1rem;
-  line-height: 1.65;
-  font-size: 0.94rem;
-  color: var(--text);
+  border-left: 6px solid var(--cyan);
+  background: #F1F9FB;
+  padding: 1.5rem;
+  font-size: 1.15rem;
+  line-height: 1.8;
+  color: #1e293b;
 }
 
-.warn-box {
-  border-radius: 16px;
-  border: 1px solid #ffd7de;
-  background: #fff6f8;
-  padding: 0.9rem 0.95rem;
-  line-height: 1.6;
-  font-size: 0.9rem;
-  color: #9a2948;
-  margin-bottom: 0.55rem;
-}
+.highlight { color: var(--point); font-weight: 800; text-decoration: underline; }
 
-.form-chip-wrap {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.form-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border-radius: 999px;
-  border: 1px solid var(--line);
-  background: #f8fafc;
-  padding: 0.48rem 0.8rem;
-  font-size: 0.82rem;
-  color: var(--navy);
-}
-
-.faq-card, .chat-card {
-  padding: 1rem 1.05rem;
-  margin-top: 1rem;
-}
-
-.faq-item {
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 0.85rem 0.95rem;
-  background: #fff;
-  margin-bottom: 0.7rem;
-}
-
-.faq-q {
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: var(--navy);
-  margin-bottom: 0.35rem;
-}
-
-.faq-a {
-  font-size: 0.9rem;
-  color: var(--text);
-  line-height: 1.6;
-}
-
-.bottom-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-top: 1rem;
-}
-
-.stButton > button {
-  border-radius: 12px !important;
-  font-weight: 700 !important;
-}
-
-[data-testid="stChatInput"] textarea {
-  border-radius: 14px !important;
-}
-
-@media (max-width: 900px) {
-  .quick-panel,
-  .grid-2 {
-    grid-template-columns: 1fr;
-  }
-  .status-grid {
-    grid-template-columns: 1fr;
-  }
-}
+/* 사이드바 글씨 색상 */
+[data-testid="stSidebar"] { background-color: var(--navy); }
+[data-testid="stSidebar"] .stMarkdown p { color: white !important; font-size: 1.05rem; }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
 # --------------------------------------------------
-# 데이터
+# 2025 개정 지침 데이터 (고용노동부 가이드북 기반)
 # --------------------------------------------------
-COMMON_FORM_GUIDE = {
-    "location": "플로우 내 [KCIM] 전체 공지사항 > 상단고정 > [공지] 사내 주요 양식 안내 > 2. 휴가 및 휴직",
-    "form_name": "KCIM_임신•육아기 관련 지원 신청서",
-    "tabs": [
-        "임신기/육아기 근로시간 단축신청서",
-        "임산부 정기건강진단 신청서",
-        "유산/사산 휴가 신청서",
-        "임신기/육아기 근로시간 단축 변경신청서",
-    ],
-}
-
 STEPS = [
     {
         "id": 1,
-        "title": "임신 확인 및 초기 안내",
         "short": "임신 확인",
-        "period": "임신 확인 직후",
-        "color": "#4FACCC",
-        "summary": "임신 사실 확인 직후 개인정보 보호 원칙과 바로 신청 가능한 지원 제도를 안내하는 단계입니다.",
-        "guide": "먼저 축하 인사를 전한 뒤 임신 사실 공유 범위를 확인하고, 플로우 상단고정에 있는 신청서 위치와 현재 바로 신청 가능한 제도를 함께 안내해 주세요.",
-        "check": [
-            "임신 사실 공유 범위를 당사자와 먼저 확인하기",
-            "임신기 근로시간 단축 신청 가능 여부 안내하기",
-            "플로우 내 신청서 위치와 작성 방법 안내하기",
-            "향후 출산휴가와 육아휴직 흐름을 간단히 설명하기",
+        "title": "임신 확인 및 초기 응대",
+        "guide": "축하와 함께 <span class='highlight'>개인정보 비공개 원칙</span>을 먼저 확인하세요. 현재 12주 이내라면 바로 단축근무가 가능함을 안내해 심리적 안정을 주는 것이 핵심입니다.",
+        "details": [
+            "임신기 근로시간 단축: 임신 후 12주 이내 및 32주 이후(개정) 사용 가능 [cite: 13, 76]",
+            "임금 삭감 없이 하루 2시간 단축 가능 [cite: 74]",
+            "고위험 임신부(19대 질환)는 전 기간 단축 가능 [cite: 13, 77, 438]"
         ],
-        "forms": ["임신기/육아기 근로시간 단축신청서"],
-        "warn": [
-            "임신을 이유로 한 불이익 조치나 업무 배제는 금지됩니다.",
-            "당사자 동의 없이 임신 사실을 공유하지 않도록 주의해 주세요.",
-        ],
-        "faq": [
-            ("처음 문의가 오면 무엇부터 안내하면 되나요", "개인정보 보호 원칙과 신청서 위치를 먼저 안내한 뒤 현재 바로 신청 가능한 제도를 설명해 주는 것이 좋습니다."),
-            ("신청서는 어디에서 찾나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내에서 2. 휴가 및 휴직 항목을 확인하면 됩니다."),
-            ("처음 단계에서 바로 신청 가능한 것은 무엇인가요", "개별 상황에 따라 다르지만 대표적으로 임신기 근로시간 단축 여부를 먼저 확인해 안내하면 좋습니다."),
-        ],
-        "next_step": "임신기 근로시간 단축 여부 확인",
-        "target": "임신 확인한 임직원",
+        "faq": "Q. 32주 이전에는 단축근무가 아예 안 되나요? \nA. 원칙적으로는 12주 이내/32주 이후지만, 의사 진단서가 있는 고위험 임신부는 기간 제한 없이 사용 가능합니다. [cite: 77]"
     },
     {
         "id": 2,
-        "title": "임신기 근로시간 단축",
-        "short": "임신기 단축",
-        "period": "적용 가능 시기 확인 후",
-        "color": "#37B89A",
-        "summary": "임신기 중 근로시간 단축 신청 가능 여부를 확인하고 실제 운영 시간을 조율하는 단계입니다.",
-        "guide": "직원의 임신 주수와 근무 상황을 먼저 확인한 뒤, 플로우 양식의 임신기/육아기 근로시간 단축신청서 또는 변경신청서를 안내해 주세요.",
-        "check": [
-            "적용 가능 시기와 현재 임신 주수 먼저 확인하기",
-            "단축 시간대와 업무 공백 조율하기",
-            "최초 신청인지 변경 신청인지 구분하기",
-            "필요 시 변경신청서 사용 여부 안내하기",
+        "short": "출산/배우자",
+        "title": "출산휴가 및 배우자 지원",
+        "guide": "남성 직원에게는 <span class='highlight'>유급 20일</span>로 확대된 배우자 출산휴가를 안내하세요. 4번까지 나눠 쓸 수 있어 조리원 퇴소 시기에 맞춰 쓰면 매우 유용합니다.",
+        "details": [
+            "배우자 출산휴가: 유급 20일(기존 10일)로 확대 [cite: 27, 103]",
+            "분할 사용: 총 4회(분할 3회)까지 나누어 사용 가능 [cite: 30, 106]",
+            "미숙아 출산 시: 출산전후휴가 100일(기존 90일)로 확대 [cite: 18, 93]"
         ],
-        "forms": ["임신기/육아기 근로시간 단축신청서", "임신기/육아기 근로시간 단축 변경신청서"],
-        "warn": [
-            "신청 내용이 바뀌는 경우 최초 신청서가 아니라 변경신청서 사용 여부를 같이 확인해 주세요.",
-            "법령 기준과 사내 운영 기준을 함께 확인한 뒤 안내해야 혼선이 줄어듭니다.",
-        ],
-        "faq": [
-            ("처음 신청과 변경 신청은 어떻게 구분하나요", "처음 단축근무를 신청하는 경우는 신청서를, 이미 운영 중인 시간을 변경하는 경우는 변경신청서를 안내하는 것이 좋습니다."),
-            ("신청서는 어디에서 찾나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내에서 2. 휴가 및 휴직 항목을 확인하면 됩니다."),
-            ("직원이 시간 조정을 다시 원하면 어떻게 하나요", "운영 중 변경이 필요한 경우 임신기/육아기 근로시간 단축 변경신청서를 안내해 주세요."),
-        ],
-        "next_step": "정기건강진단 시간 안내",
-        "target": "임신기 단축근무 희망자",
+        "faq": "Q. 배우자 휴가는 언제까지 써야 하나요? \nA. 출산일로부터 120일 이내에 휴가를 종료해야 합니다. [cite: 105]"
     },
     {
         "id": 3,
-        "title": "임산부 정기건강진단",
-        "short": "건강진단",
-        "period": "임신 주수별 검진 시기",
-        "color": "#F5A623",
-        "summary": "정기 검진 시간 인정과 신청서 작성 안내를 빠르게 처리하는 단계입니다.",
-        "guide": "검진 일정이 확인되면 플로우 양식의 임산부 정기건강진단 신청서를 안내하고, 검진 일정과 근무시간 처리 기준을 함께 설명해 주세요.",
-        "check": [
-            "검진 일정과 진료 예정일 확인하기",
-            "임산부 정기건강진단 신청서 작성 위치 안내하기",
-            "근로시간 인정 방식과 사후 확인 방법 설명하기",
-            "누락 없이 내부 기록 남기기",
+        "short": "육아휴직",
+        "title": "육아휴직 급여 및 기간",
+        "guide": "경제적 걱정을 덜어주세요. <span class='highlight'>첫 3개월 최대 250만 원</span>이 지급되며, 사후지급금이 폐지되어 휴직 중에 전액을 다 받을 수 있습니다.",
+        "details": [
+            "급여 상한: 1~3개월(250만), 4~6개월(200만), 7~12개월(160만) [cite: 38, 39, 40, 113]",
+            "사후지급금 폐지: 복직 후 6개월 대기 없이 휴직 중 100% 지급 [cite: 41, 113, 257]",
+            "기간 연장: 부모 각각 3개월 이상 사용 시 최대 1.5년으로 연장 [cite: 35, 111, 316]"
         ],
-        "forms": ["임산부 정기건강진단 신청서"],
-        "warn": [
-            "증빙 없이 구두 처리만 하면 나중에 해석 차이가 생길 수 있습니다.",
-            "정기 검진 관련 안내는 신청서 작성과 일정 확인을 함께 설명하는 편이 좋습니다.",
-        ],
-        "faq": [
-            ("정기 검진 때 어떤 양식을 쓰나요", "플로우 내 KCIM_임신•육아기 관련 지원 신청서에서 임산부 정기건강진단 신청서 탭을 작성하면 됩니다."),
-            ("매번 신청서를 받아야 하나요", "반복되는 경우에도 내부 기록을 남기는 방식이 가장 안전합니다."),
-            ("신청서 위치를 어떻게 설명하면 좋나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내에서 2. 휴가 및 휴직 항목이라고 안내하면 찾기 쉽습니다."),
-        ],
-        "next_step": "출산휴가 전 연차 일정 점검",
-        "target": "임신 중 정기 검진 대상자",
+        "faq": "Q. 2024년에 시작한 사람도 인상된 급여를 받나요? \nA. 네, 2025.1.1. 이후 사용하는 기간에 대해서는 인상된 금액이 적용됩니다. [cite: 281, 282]"
     },
     {
         "id": 4,
-        "title": "잔여 연차 및 일정 정리",
-        "short": "연차 정리",
-        "period": "출산휴가 시작 전",
-        "color": "#9B59B6",
-        "summary": "출산휴가 전에 남은 연차와 전체 일정 흐름을 정리해 실제 사용 계획을 맞추는 단계입니다.",
-        "guide": "잔여 연차를 먼저 확인하고 출산휴가 시작일과 이어지는 전체 일정을 같이 정리해 주세요. 이 단계는 별도 탭 양식보다는 일정 조율과 다음 신청 준비가 핵심입니다.",
-        "check": [
-            "당해 연도 잔여 연차 확인하기",
-            "연차 사용 희망 일정 확인하기",
-            "출산휴가 시작일과 연결 일정 정리하기",
-            "다음 단계 신청서 작성 시점을 미리 안내하기",
+        "short": "복직/단축",
+        "title": "복직 및 육아기 단축근무",
+        "guide": "초등학생 부모님의 경력단절을 막아주세요. 자녀가 <span class='highlight'>초등학교 6학년(만 12세)</span>이 될 때까지 단축근무를 쓸 수 있어 유연한 복직이 가능합니다.",
+        "details": [
+            "대상 확대: 만 8세 이하 -> 만 12세(초6) 이하 자녀까지 [cite: 48, 118, 119]",
+            "사용 기간: 최대 3년까지 사용 가능 (육휴 미사용분 가산) [cite: 45, 119]",
+            "급여 지원: 매주 최초 10시간 단축분 기준금액 상한 220만원 상향 [cite: 119, 259]"
         ],
-        "forms": ["다음 단계 신청서 사전 안내"],
-        "warn": [
-            "연차 사용은 직원 의사를 우선 확인해야 하며 강제 소진처럼 보이지 않도록 주의해 주세요.",
-        ],
-        "faq": [
-            ("연차 정리 단계에서도 별도 양식이 있나요", "이 단계는 주로 일정 조율과 다음 신청 준비가 중심이며, 이후 단계에서 필요한 양식을 미리 안내해 주는 방식이 좋습니다."),
-            ("무엇을 먼저 정리하면 좋나요", "잔여 연차 종료일 출산휴가 시작일 인수인계 시점을 한 번에 볼 수 있게 정리하면 좋습니다."),
-            ("다음 단계는 무엇을 준비하면 되나요", "출산휴가 또는 육아 관련 신청이 이어질 수 있어 플로우 상단고정 양식 위치를 미리 안내해 두면 좋습니다."),
-        ],
-        "next_step": "출산 관련 신청 안내",
-        "target": "출산휴가 예정 임직원",
-    },
-    {
-        "id": 5,
-        "title": "출산 전후 관련 신청 안내",
-        "short": "출산 관련",
-        "period": "출산 전후 상황 발생 시",
-        "color": "#E8556D",
-        "summary": "출산 전후 상황에 맞춰 관련 신청서를 정확히 안내하는 단계입니다.",
-        "guide": "출산 관련 문의가 오면 먼저 상황을 확인한 뒤, 현재 플로우 양식 탭 기준으로 필요한 신청서를 정확히 안내해 주세요. 현재 제공된 탭 중 출산 전후와 직접 연결되는 것은 유산/사산 휴가 신청서입니다.",
-        "check": [
-            "현재 문의가 출산휴가인지 유산 사산 휴가인지 먼저 구분하기",
-            "플로우 양식 탭 중 해당 신청서 존재 여부 확인하기",
-            "유산 사산 관련 문의 시 유산/사산 휴가 신청서 안내하기",
-            "그 외 출산 전후 문의는 별도 내부 운영 절차와 함께 설명하기",
-        ],
-        "forms": ["유산/사산 휴가 신청서"],
-        "warn": [
-            "현재 사용자 제공 정보 기준으로 플로우 양식 탭에는 유산/사산 휴가 신청서가 포함되어 있습니다.",
-            "출산휴가 자체 양식이 별도로 있는지는 현재 제공된 정보만으로는 확인되지 않으므로 내부 공지 추가 확인이 필요합니다.",
-        ],
-        "faq": [
-            ("출산 관련 문의 시 어떤 양식을 먼저 봐야 하나요", "현재 제공된 플로우 탭 기준으로는 유산/사산 관련 상황에서 유산/사산 휴가 신청서를 안내할 수 있습니다."),
-            ("출산휴가 신청서도 같은 곳에 있나요", "현재 공유해 주신 탭 목록에는 출산휴가 신청서 명칭은 확인되지 않았습니다. 내부 공지나 운영 절차를 추가로 확인하는 것이 좋습니다."),
-            ("직원이 상황을 정확히 설명하지 못하면 어떻게 하나요", "먼저 현재 상황을 구체적으로 확인한 뒤 해당 탭 양식이 있는지 보고 안내하는 것이 안전합니다."),
-        ],
-        "next_step": "육아기 지원 또는 복직 관련 안내",
-        "target": "출산 전후 관련 문의자",
-    },
-    {
-        "id": 6,
-        "title": "육아기 지원 및 변경 안내",
-        "short": "육아기 지원",
-        "period": "육아기 제도 운영 중",
-        "color": "#2980B9",
-        "summary": "육아기 근로시간 단축 운영과 변경 문의를 빠르게 처리하는 단계입니다.",
-        "guide": "육아기 지원 문의가 오면 현재 운영 중인지 최초 신청인지 변경인지부터 확인한 뒤, 플로우 양식의 임신기/육아기 근로시간 단축신청서 또는 변경신청서를 안내해 주세요.",
-        "check": [
-            "최초 신청인지 변경 요청인지 구분하기",
-            "육아기 근로시간 단축신청서 또는 변경신청서 안내하기",
-            "현재 근무 형태와 변경 희망사항 확인하기",
-            "다음 복직 계획이 있는지도 함께 확인하기",
-        ],
-        "forms": ["임신기/육아기 근로시간 단축신청서", "임신기/육아기 근로시간 단축 변경신청서"],
-        "warn": [
-            "육아기 문의도 동일 양식 내 탭을 사용하는 구조이므로 탭 명칭을 정확히 안내하는 것이 중요합니다.",
-        ],
-        "faq": [
-            ("육아기에도 같은 신청서를 쓰나요", "네 현재 제공된 정보 기준으로 임신기/육아기 근로시간 단축신청서와 변경신청서를 함께 사용하는 구조입니다."),
-            ("근무시간을 바꾸고 싶다고 하면 무엇을 안내하나요", "이미 운영 중인 조건을 조정하는 경우에는 변경신청서를 먼저 안내하는 것이 좋습니다."),
-            ("양식은 어디에서 찾나요", "플로우 내 [KCIM] 전체 공지사항 상단고정의 [공지] 사내 주요 양식 안내 > 2. 휴가 및 휴직에서 찾을 수 있습니다."),
-        ],
-        "next_step": "복직 준비 및 최종 일정 확인",
-        "target": "육아기 지원 제도 이용자",
-    },
-    {
-        "id": 7,
-        "title": "복직 및 최종 일정 확인",
-        "short": "복직 준비",
-        "period": "복직 전후",
-        "color": "#27AE60",
-        "summary": "복직 일정 확인과 필요 시 육아기 단축 변경 여부를 함께 점검하는 단계입니다.",
-        "guide": "복직 의사를 먼저 확인한 뒤 현재 육아기 제도 운영 중이면 유지 변경 종료 여부를 같이 확인해 주세요. 필요 시 변경신청서 사용 여부를 함께 안내하면 좋습니다.",
-        "check": [
-            "복직일과 복직 의사 먼저 확인하기",
-            "현재 육아기 단축근무 운영 여부 확인하기",
-            "복직 전 변경 또는 종료가 필요한지 점검하기",
-            "필요 시 변경신청서 또는 후속 절차 안내하기",
-        ],
-        "forms": ["임신기/육아기 근로시간 단축 변경신청서"],
-        "warn": [
-            "복직 단계는 제도 설명보다 실제 일정과 운영 변경 여부를 함께 확인하는 것이 더 중요합니다.",
-        ],
-        "faq": [
-            ("복직 전에 무엇을 먼저 확인하면 좋나요", "복직일 현재 근무 형태 그리고 육아기 제도 유지 변경 종료 여부를 먼저 확인하면 좋습니다."),
-            ("복직하면서 단축조건을 바꾸는 경우는요", "현재 운영 조건을 변경하는 경우에는 변경신청서 사용 여부를 함께 안내하면 좋습니다."),
-            ("양식 위치도 같이 안내해야 하나요", "네 플로우 상단고정의 사내 주요 양식 안내 경로를 함께 알려주면 재문의가 줄어듭니다."),
-        ],
-        "next_step": "개별 상황 후속 관리",
-        "target": "복직 예정자",
-    },
+        "faq": "Q. 육아휴직을 1년 다 썼는데 단축근무를 더 쓸 수 있나요? \nA. 네, 육아휴직 1년을 다 썼더라도 육아기 단축근무는 기본 1년이 보장되어 추가 사용이 가능합니다. [cite: 124]"
+    }
 ]
 
+# --------------------------------------------------
+# 세션 상태 초기화
+# --------------------------------------------------
 if "active_step" not in st.session_state:
     st.session_state.active_step = 0
 if "chat_messages" not in st.session_state:
     st.session_state.chat_messages = []
 
-step = STEPS[st.session_state.active_step]
+# --------------------------------------------------
+# 화면 구성
+# --------------------------------------------------
 
-# --------------------------------------------------
-# 헤더
-# --------------------------------------------------
+# 사이드바
+with st.sidebar:
+    st.markdown("## 🛡️ 관리자 정보")
+    st.write(f"📅 기준일: {datetime.date.today()}")
+    st.divider()
+    st.info("💡 **응대 Tip**\n임직원에게 '축하'를 먼저 건네는 것이 원활한 노무 관리의 시작입니다.")
+    st.divider()
+    st.markdown("### 📞 실무 지원 내선")
+    st.write("• 인사팀: 102\n• IT지원: 105")
+
+# 메인 헤더
 st.markdown(
     f"""
 <div class="hero">
-  <div class="hero-title">👶 KCIM 출산 육아 응대 가이드</div>
-  <div class="hero-desc">
-    임신 확인부터 복직까지 관리자 입장에서 빠르게 응대할 수 있도록 단계별 핵심만 정리한 페이지입니다.
-  </div>
-  <div class="header-row">
-    <div class="meta-chip-wrap">
-      <div class="meta-chip">📌 단계별 빠른 응대 중심</div>
-      <div class="meta-chip">🧾 필요 서류 즉시 확인</div>
-      <div class="meta-chip">💬 FAQ와 상담 연계</div>
-    </div>
-    <div class="meta-chip">기준일 {datetime.date.today()}</div>
-  </div>
+  <div class="hero-title">👶 KCIM 출산 육아 실무 응대 가이드</div>
+  <div class="hero-desc">사장님과 팀장님이 직원의 상황에 맞춰 즉각 응대할 수 있는 2025년 개정판 매뉴얼입니다.</div>
 </div>
 """,
     unsafe_allow_html=True,
 )
 
-# --------------------------------------------------
-# 본문 레이아웃
-# --------------------------------------------------
-left_col, main_col, right_col = st.columns([1.05, 2.4, 0.001])
-
-with left_col:
-    st.markdown('<div class="stage-nav">', unsafe_allow_html=True)
-    st.markdown('<div class="stage-nav-title">단계 선택</div>', unsafe_allow_html=True)
-    for idx, s in enumerate(STEPS):
-        active_class = "active" if idx == st.session_state.active_step else ""
-        st.markdown(
-            f"""
-            <div class="stage-tab {active_class}" style="margin-bottom:10px; text-align:left; min-height:auto; padding:0.85rem 0.9rem; border-left:5px solid {s['color'] if idx == st.session_state.active_step else '#dbe4ee'};">
-                <div style="display:flex; align-items:center; gap:10px;">
-                    <div class="stage-num" style="margin:0; width:30px; height:30px; background:{s['color'] if idx == st.session_state.active_step else '#fff'}; color:{'#fff' if idx == st.session_state.active_step else '#708191'}; border-color:{s['color'] if idx == st.session_state.active_step else '#dbe4ee'};">{s['id']}</div>
-                    <div>
-                        <div style="font-size:0.72rem; color:#708191; font-weight:700;">STEP {s['id']}</div>
-                        <div class="stage-label" style="text-align:left;">{s['short']}</div>
-                    </div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        if st.button(f"선택", key=f"step_btn_{idx}", use_container_width=True):
+# 단계 선택 (가로 레이아웃)
+nav_cols = st.columns(len(STEPS))
+for idx, col in enumerate(nav_cols):
+    s = STEPS[idx]
+    is_active = (idx == st.session_state.active_step)
+    with col:
+        if st.button(f"STEP {s['id']}\n{s['short']}", key=f"btn_{idx}", use_container_width=True):
             st.session_state.active_step = idx
             st.rerun()
 
-    st.markdown('<div class="quick-card" style="margin-top:14px;">', unsafe_allow_html=True)
-    st.markdown('<div class="quick-title">양식 안내</div>', unsafe_allow_html=True)
-    st.markdown(
-        f"<div class='quick-text'><b>경로</b><br>{COMMON_FORM_GUIDE['location']}<br><br><b>양식명</b><br>{COMMON_FORM_GUIDE['form_name']}</div>",
-        unsafe_allow_html=True,
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-
-with main_col:
-    # --------------------------------------------------
-    # 빠른 응대 요약
-# --------------------------------------------------
-st.markdown(
-    f"""
-    <div class="quick-panel">
-      <div class="quick-card">
-        <div class="quick-title">바로 안내할 말</div>
+# 메인 콘텐츠 카드
+step = STEPS[st.session_state.active_step]
+st.markdown(f"""
+<div class="main-card">
+    <h3 style="color:var(--navy); margin-bottom:1.5rem;">📍 {step['title']}</h3>
+    <div style="margin-bottom:2rem;">
+        <p style="font-weight:700; color:var(--cyan); margin-bottom:0.5rem;">📣 바로 안내할 말</p>
         <div class="guide-box">{step['guide']}</div>
-      </div>
-      <div class="quick-card">
-        <div class="quick-title">빠른 확인</div>
-        <div class="status-grid">
-          <div class="status-box">
-            <div class="status-label">현재 단계</div>
-            <div class="status-value">STEP {step['id']}<br>{step['short']}</div>
-          </div>
-          <div class="status-box">
-            <div class="status-label">대상자</div>
-            <div class="status-value">{step['target']}</div>
-          </div>
-          <div class="status-box">
-            <div class="status-label">다음 단계</div>
-            <div class="status-value">{step['next_step']}</div>
-          </div>
-        </div>
-      </div>
     </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-# --------------------------------------------------
-# 메인 카드
-# --------------------------------------------------
-st.markdown('<div class="main-card">', unsafe_allow_html=True)
-st.markdown(
-    f"""
-    <div class="main-card-header">
-        <div class="main-card-title-wrap">
-            <div class="step-badge" style="background:{step['color']}">
-                <small>STEP</small>
-                {step['id']}
-            </div>
-            <div>
-                <div class="main-title">{step['title']}</div>
-                <div class="main-sub">{step['period']} · {step['summary']}</div>
-            </div>
+    <div class="grid-2" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+        <div style="background:#fff; padding:1.2rem; border-radius:15px; border:1px solid #eee;">
+            <p style="font-weight:700; color:var(--navy);">✅ 실무 체크리스트</p>
+            {"".join([f"<p style='font-size:0.95rem; margin-bottom:8px;'>• {d}</p>" for d in step['details']])}
         </div>
-        <div class="pill">현재 단계 응대 가이드</div>
+        <div style="background:#FFF9FA; padding:1.2rem; border-radius:15px; border:1px solid #FFE5E9;">
+            <p style="font-weight:700; color:var(--point);">❓ 자주 묻는 질문</p>
+            <p style="font-size:0.95rem; white-space: pre-wrap;">{step['faq']}</p>
+        </div>
     </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown('<div class="main-body">', unsafe_allow_html=True)
-st.markdown('<div class="grid-2">', unsafe_allow_html=True)
-
-# 왼쪽
-st.markdown('<div class="section-box">', unsafe_allow_html=True)
-st.markdown('<div class="section-title">✅ HR 담당자 체크</div>', unsafe_allow_html=True)
-for item in step["check"]:
-    st.markdown(f'<div class="item-row"><span>✅</span><span>{item}</span></div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-# 오른쪽
-st.markdown('<div class="section-box">', unsafe_allow_html=True)
-st.markdown('<div class="section-title">🧾 필요 서류</div>', unsafe_allow_html=True)
-st.markdown('<div class="form-chip-wrap">', unsafe_allow_html=True)
-for form in step["forms"]:
-    st.markdown(f'<span class="form-chip">📄 {form}</span>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('<div style="height:0.9rem"></div>', unsafe_allow_html=True)
-st.markdown('<div class="section-title">⚠️ 주의사항</div>', unsafe_allow_html=True)
-for warn in step["warn"]:
-    st.markdown(f'<div class="warn-box">{warn}</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-prev_col, center_col, next_col = st.columns([1, 1, 1])
-with prev_col:
-    if st.session_state.active_step > 0:
-        if st.button("← 이전 단계", use_container_width=True):
-            st.session_state.active_step -= 1
-            st.rerun()
-with center_col:
-    st.markdown(f"<div style='text-align:center; color:#708191; font-size:0.86rem; padding-top:0.6rem;'>STEP {step['id']} / {len(STEPS)}</div>", unsafe_allow_html=True)
-with next_col:
-    if st.session_state.active_step < len(STEPS) - 1:
-        if st.button("다음 단계 →", use_container_width=True):
-            st.session_state.active_step += 1
-            st.rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
-st.markdown('</div>', unsafe_allow_html=True)
+</div>
+""", unsafe_allow_html=True)
 
 # --------------------------------------------------
-# FAQ
+# 하단 통합 검색/상담창
 # --------------------------------------------------
-st.markdown('<div class="faq-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-title">❓ 자주 받는 질문</div>', unsafe_allow_html=True)
-for q, a in step["faq"]:
-    st.markdown(
-        f"""
-        <div class="faq-item">
-            <div class="faq-q">Q. {q}</div>
-            <div class="faq-a">{a}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-st.markdown('</div>', unsafe_allow_html=True)
+st.markdown("---")
+st.subheader("🤖 상세 내용 검색 및 AI 노무 상담")
+st.caption(f"현재 안내 중인 단계: {step['short']} (2025년 개정 법령 기반)")
 
-# --------------------------------------------------
-# 챗봇
-# --------------------------------------------------
-st.markdown('<div class="chat-card">', unsafe_allow_html=True)
-st.markdown('<div class="section-title">🤖 추가 상담</div>', unsafe_allow_html=True)
-st.caption(f"현재 선택된 단계는 STEP {step['id']} {step['title']} 입니다.")
+# 채팅 내역 표시 (높이 제한)
+chat_container = st.container(height=250)
+with chat_container:
+    for msg in st.session_state.chat_messages:
+        with st.chat_message(msg["role"]):
+            st.markdown(msg["content"])
 
-for msg in st.session_state.chat_messages:
-    with st.chat_message(msg["role"]):
-        st.write(msg["content"])
-
-prompt = st.chat_input(f"예: {step['short']} 관련 문의를 입력하세요")
-if prompt:
+if prompt := st.chat_input("문의 내용을 입력하세요 (예: 쌍둥이 출산 시 배우자 휴가 일수는?)"):
     st.session_state.chat_messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.write(prompt)
-
-    try:
-        client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-        system_prompt = (
-            "너는 KCIM 경영관리본부 내부 응대 가이드 챗봇이다. "
-            f"현재 단계는 STEP {step['id']} {step['title']} 이다. "
-            "답변은 한국어로 작성하고 관리자가 임직원에게 설명하기 쉽게 짧고 친절하게 정리한다. "
-            "법령 해석이 필요한 부분은 최신 기준과 사내 규정 확인이 필요하다고 함께 안내한다."
-        )
+    with chat_container:
+        with st.chat_message("user"):
+            st.markdown(prompt)
         with st.chat_message("assistant"):
-            with st.spinner("답변 생성 중"):
+            try:
+                client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+                # 최신 데이터를 강제 주입하는 시스템 프롬프트
+                system_instr = (
+                    "너는 KCIM 경영관리본부의 전문 노무 상담사야. "
+                    "반드시 2025년 개정 법령을 기준으로 답변해. "
+                    "1. 육아휴직 상한 250만 원, 사후지급금 폐지(25.1.1) [cite: 38, 41, 113] "
+                    "2. 배우자 휴가 20일, 육아기 단축 자녀연령 만 12세 확대(25.2.23) [cite: 27, 48, 119] "
+                    "사장님과 팀장님이 직원에게 친절하고 명확하게 설명할 수 있도록 답변해줘."
+                )
                 response = client.chat.completions.create(
                     model="gpt-4o",
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        *st.session_state.chat_messages,
-                    ],
+                    messages=[{"role": "system", "content": system_instr}] + st.session_state.chat_messages
                 )
-                answer = response.choices[0].message.content
-                st.write(answer)
-        st.session_state.chat_messages.append({"role": "assistant", "content": answer})
-    except KeyError:
-        with st.chat_message("assistant"):
-            st.warning("OPENAI_API_KEY 설정 후 상담 기능을 사용할 수 있습니다.")
-    except Exception as e:
-        with st.chat_message("assistant"):
-            st.warning(f"일시적인 오류가 발생했습니다: {e}")
-
-st.markdown('</div>', unsafe_allow_html=True)
+                res_content = response.choices[0].message.content
+                st.markdown(res_content)
+                st.session_state.chat_messages.append({"role": "assistant", "content": res_content})
+            except:
+                st.warning("상세 상담을 위해 OpenAI API Key 설정이 필요합니다.")
