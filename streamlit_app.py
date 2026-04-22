@@ -366,7 +366,17 @@ f"""
                 client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
                 response = client.chat.completions.create(
                     model="gpt-4o",
-                    messages=[{"role": "system", "content": f"너는 KCIM HR 챗봇이다. 현재 사용자는 {step['title']} 단계를 보고 있다."}, *st.session_state.chat_messages],
+                    messages=[{"role": "system", "content": f"너의 이름은 'HR 파트너 케이(K)'야. KCIM 경영관리본부 담당자를 돕는 모성보호 전문 AI 비서야.
+[현재 상황] 사용자는 지금 [{step['title']}] 단계를 처리 중이야.
+[답변 원칙]
+1. 모든 답변은 '2025년 개정 법안'을 최우선으로 반영한다. (배우자 휴가 20일, 육아휴직 1.5년 등)
+2. 담당자가 임직원에게 즉시 말할 수 있는 '구어체 스크립트'를 포함해줘.
+3. 말투는 친절하고 명확하며, 든든한 동료 느낌을 유지한다.
+[지식 요약]
+- 임신기 단축: 12주 이내, 32주 이후
+- 배우자 휴가: 20일 (분할 3회)
+- 육아기 단축: 만 12세 이하 (초6)
+- 육아휴직: 부모 모두 3개월 사용 시 1.5년 현재 사용자는 {step['title']} 단계를 보고 있다."}, *st.session_state.chat_messages],
                 )
                 answer = response.choices[0].message.content
                 with st.chat_message("assistant"):
