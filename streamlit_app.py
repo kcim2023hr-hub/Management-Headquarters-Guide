@@ -2,22 +2,22 @@ import datetime
 import streamlit as st
 from openai import OpenAI
 
-# 1. 페이지 설정: 스크롤 절대 방지 및 폰트 최적화
+# 1. 페이지 설정: 스크롤 발생을 억제하기 위한 레이아웃 설정
 st.set_page_config(
-    page_title="KCIM 출산 육아 가이드",
+    page_title="KCIM 출산 육아 응대 가이드",
     page_icon="👶",
     layout="wide",
 )
 
-# 2. 고효율 레이아웃을 위한 CSS (초슬림 모드)
+# 2. 고효율/초슬림 레이아웃용 CSS
 st.markdown(
     """
 <style>
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
-/* 기본 여백 및 스크롤 억제 */
+/* 전체 스크롤 억제 및 배경 정리 */
 .block-container {
-    padding-top: 0.5rem !important;
+    padding-top: 1rem !important;
     padding-bottom: 0rem !important;
     max-height: 100vh;
 }
@@ -28,45 +28,42 @@ st.markdown(
 
 html, body, [class*="css"] { font-family: 'Pretendard', sans-serif !important; font-size: 14px; }
 
-/* 상단 슬림 배너 */
+/* 헤더 디자인 */
 .slim-header {
     background: linear-gradient(90deg, #17384b 0%, #156a8d 100%);
-    color: white; padding: 0.5rem 1rem; border-radius: 10px; margin-bottom: 0.5rem;
+    color: white; padding: 0.6rem 1.2rem; border-radius: 10px; margin-bottom: 0.7rem;
     display: flex; justify-content: space-between; align-items: center;
 }
 
-/* 카드 및 섹션 타이틀 */
+/* 카드 및 섹션 타이틀 공통화 */
 .compact-card {
     background: white; border: 1px solid var(--line); border-radius: 10px;
-    padding: 0.7rem 0.9rem; margin-bottom: 0.4rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    padding: 0.8rem 1rem; margin-bottom: 0.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .section-title {
-    font-weight: 800; color: var(--navy); font-size: 0.85rem; margin-bottom: 0.3rem;
-    display: flex; align-items: center; gap: 4px;
+    font-weight: 800; color: var(--navy); font-size: 0.88rem; margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 5px;
 }
 
-/* 스크립트 박스 최적화 */
+/* 스크립트 박스 (안내 문구) */
 .script-box {
-    background: #f0f9ff; border-left: 4px solid var(--cyan); padding: 0.6rem 0.8rem;
-    border-radius: 8px; font-weight: 500; line-height: 1.5; color: #0e5a78; font-size: 0.92rem;
+    background: #f0f9ff; border-left: 4px solid var(--cyan); padding: 0.7rem 0.9rem;
+    border-radius: 8px; font-weight: 500; line-height: 1.6; color: #0e5a78; font-size: 0.95rem;
 }
 
-.item-row { display: flex; gap: 6px; padding: 0.2rem 0; border-bottom: 1px solid #f0f4f8; font-size: 0.82rem; }
-
+/* 리스트 및 칩 */
+.item-row { display: flex; gap: 6px; padding: 0.25rem 0; border-bottom: 1px solid #f0f4f8; font-size: 0.85rem; }
 .chip {
-    background: #f1f5f9; color: var(--navy); padding: 0.1rem 0.5rem;
+    background: #f1f5f9; color: var(--navy); padding: 0.1rem 0.6rem;
     border-radius: 4px; font-size: 0.75rem; font-weight: 700; border: 1px solid var(--line);
 }
-
-/* 챗봇 입력창 높이 조정 */
-.stChatInput { padding-bottom: 10px !important; }
 </style>
 """,
     unsafe_allow_html=True,
 )
 
-# 3. 데이터 (7단계 완결)
+# 3. 데이터 구성 (정확하고 핵심적인 정보 위주)
 STEPS = [
     {"id": 1, "title": "임신 확인 및 초기 응대", "short": "임신 확인", "color": "#4FACCC", "guide": "“축하드립니다! 본인이 원하는 범위 내에서만 공유될 예정이니 안심하세요. 먼저 단축근무 제도부터 안내해 드릴까요?”", "check": ["공유 범위 확인 (비밀 유지)", "임신기 근로시간 단축 안내", "플로우 내 신청서 경로 설명"], "forms": ["임신기 단축신청서"], "warn": ["비밀 엄수 필수", "임신 이유 불이익 금지"], "target": "임신 확인 직원", "next": "단축 조율"},
     {"id": 2, "title": "임신기 근로시간 단축", "short": "임신기 단축", "color": "#37B89A", "guide": "“초기(12주 이내)와 말기(36주 이후)는 하루 2시간 단축이 가능합니다. 급여 삭감은 없으니 편하신 시간대를 알려주세요.”", "check": ["주수 확인 (증빙 수령)", "단축 시간대 협의 및 팀 공유", "플로우 신청서 작성 확인"], "forms": ["임신기 단축신청서"], "warn": ["주수 경과 시 변경 신청"], "target": "단축 희망자", "next": "검진 안내"},
@@ -77,18 +74,21 @@ STEPS = [
     {"id": 7, "title": "복직 및 최종 확인", "short": "복직 준비", "color": "#27AE60", "guide": "“복직을 진심으로 환영합니다! 자리는 세팅해 두었습니다. 업무 적응을 위해 가벼운 면담부터 시작해 볼까요?”", "check": ["복직일 확정 공지", "자리/PC/권한 세팅 완료", "복직 면담 실시"], "forms": ["복직원 (사내 서식)"], "warn": ["부당 처우 절대 금지"], "target": "복직 예정자", "next": "사후 관리"}
 ]
 
-# 4. 세션 관리
+# 4. 세션 상태 관리
 if "active_step" not in st.session_state: st.session_state.active_step = 0
 if "messages" not in st.session_state: st.session_state.messages = []
 
 step = STEPS[st.session_state.active_step]
 
-# 5. 메인 레이아웃 구성
+# 5. 메인 레이아웃 (3단 가로 분할 및 수직 최적화)
+
+# 헤더
 st.markdown(f'<div class="slim-header"><div><b>👶 KCIM 출산 육아 응대 가이드</b></div><div style="font-size:0.75rem;">{datetime.date.today()} | 경영관리본부</div></div>', unsafe_allow_html=True)
 
-col_left, col_right = st.columns([1, 4.5], gap="small")
+col_nav, col_body = st.columns([1, 4.4], gap="small")
 
-with col_left:
+# 좌측 내비게이션
+with col_nav:
     st.markdown('<div class="section-title">📍 단계 선택</div>', unsafe_allow_html=True)
     for idx, s in enumerate(STEPS):
         btn_type = "primary" if idx == st.session_state.active_step else "secondary"
@@ -98,30 +98,32 @@ with col_left:
     with st.expander("📂 양식 위치", expanded=False):
         st.markdown("<div style='font-size:0.75rem;'>플로우 > 전체공지 > 주요양식 > 2.휴가/휴직</div>", unsafe_allow_html=True)
 
-with col_right:
-    # 상단 요약 바 (높이 축소)
-    st.markdown(f"""<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem; background:#fff; padding:0.4rem 0.8rem; border-radius:8px; border:1px solid var(--line);"><div style="font-weight:800; color:var(--navy);">STEP {step['id']}. {step['title']}</div><div><span class="chip">👤 대상: {step['target']}</span> <span class="chip">➡️ 다음: {step['next']}</span></div></div>""", unsafe_allow_html=True)
+# 우측 메인 본문
+with col_body:
+    # 1. 상단 상태 요약 바
+    st.markdown(f"""<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem; background:#fff; padding:0.4rem 1rem; border-radius:8px; border:1px solid var(--line);"><div style="font-weight:800; color:var(--navy); font-size:0.95rem;">STEP {step['id']}. {step['title']}</div><div><span class="chip">👤 대상: {step['target']}</span> <span class="chip">➡️ 다음: {step['next']}</span></div></div>""", unsafe_allow_html=True)
 
-    # 스크립트 박스
+    # 2. 안내 스크립트 박스
     st.markdown('<div class="section-title">💬 담당자 핵심 안내 문구</div>', unsafe_allow_html=True)
     st.markdown(f'<div class="script-box">{step["guide"]}</div>', unsafe_allow_html=True)
 
-    # 체크리스트 & 서류 (가로 배치, 높이 고정)
+    # 3. 체크리스트 & 서류 정보 (높이 통일)
     c1, c2 = st.columns(2)
     with c1:
-        st.markdown(f'<div class="compact-card" style="height:140px;"><div class="section-title">✅ 필수 체크</div>' + "".join([f'<div class="item-row">✔ {i}</div>' for i in step['check']]) + '</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="compact-card" style="height:150px;"><div class="section-title">✅ 필수 체크</div>' + "".join([f'<div class="item-row">✔ {i}</div>' for i in step['check']]) + '</div>', unsafe_allow_html=True)
     with c2:
-        st.markdown(f'<div class="compact-card" style="height:140px;"><div class="section-title">🧾 서류/주의</div>' + "".join([f'<div style="margin-bottom:2px;"><span class="chip">📄 {f}</span></div>' for f in step['forms']]) + f'<div style="margin-top:5px; font-size:0.8rem; color:var(--red); font-weight:700;">⚠️ 주의: {" / ".join(step["warn"])}</div>' + '</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="compact-card" style="height:150px;"><div class="section-title">🧾 서류/주의</div>' + "".join([f'<div style="margin-bottom:3px;"><span class="chip">📄 {f}</span></div>' for f in step['forms']]) + f'<div style="margin-top:6px; font-size:0.8rem; color:var(--red); font-weight:700;">⚠️ 주의: {" / ".join(step["warn"])}</div>' + '</div>', unsafe_allow_html=True)
 
-    # 챗봇 (높이 조절하여 한 페이지 완성)
-    st.markdown('<div class="section-title" style="margin-top:0.2rem;">🤖 AI 비서 상담</div>', unsafe_allow_html=True)
-    chat_container = st.container(height=240) # 240px로 확장하여 가시성 확보
+    # 4. 하단 챗봇 상담 영역 (한 화면에 들어오도록 높이 고정)
+    st.markdown('<div class="section-title" style="margin-top:0.3rem;">🤖 AI 비서 상담</div>', unsafe_allow_html=True)
+    chat_container = st.container(height=230) 
     with chat_container:
         if not st.session_state.messages:
             st.write(f"<div style='font-size:0.8rem; color:#888;'>현재 <b>{step['short']}</b> 단계에 대해 질문해주세요.</div>", unsafe_allow_html=True)
         for msg in st.session_state.messages:
             chat_container.chat_message(msg["role"]).markdown(f"<div style='font-size:0.85rem;'>{msg['content']}</div>", unsafe_allow_html=True)
 
+    # 5. 채팅 입력창 (항상 맨 아래 유지)
     if prompt := st.chat_input("이 단계에 대해 질문하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with chat_container: st.chat_message("user").write(prompt)
