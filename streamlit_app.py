@@ -146,7 +146,7 @@ with col_body:
                     f'<div style="margin-top:6px; font-size:0.8rem; color:var(--red); font-weight:700; line-height:1.3;">⚠️ 주의: {" / ".join(step["warn"])}</div>' + '</div>', unsafe_allow_html=True)
 
     # 3. 최하단 챗봇 (높이 조절 및 페르소나 적용)
-    st.markdown('<div style="font-weight: 800; color:var(--navy); font-size:0.9rem; margin-top:0.3rem; margin-bottom:0.2rem;">🤖 HR 파트너 케이(K) 상담</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-weight: 800; color:var(--navy); font-size:0.9rem; margin-top:0.3rem; margin-bottom:0.2rem;">🤖 육아지원박사 상담</div>', unsafe_allow_html=True)
     chat_container = st.container(height=260) 
     with chat_container:
         if not st.session_state.messages:
