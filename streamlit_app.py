@@ -150,18 +150,18 @@ with col_body:
     chat_container = st.container(height=260) 
     with chat_container:
         if not st.session_state.messages:
-            st.write(f"<div style='font-size:0.85rem; color:#888;'>반가워요! 저는 KCIM의 HR 파트너 <b>케이(K)</b>입니다. {step['short']} 단계의 구체적인 법규나 대응법이 궁금하시면 말씀해주세요.</div>", unsafe_allow_html=True)
+            st.write(f"<div style='font-size:0.85rem; color:#888;'>반가워요! 저는 KCIM의 육아지원 파트너 <b>박사</b>입니다. {step['short']} 단계의 구체적인 법규나 대응법이 궁금하시면 말씀해주세요.</div>", unsafe_allow_html=True)
         for msg in st.session_state.messages:
             chat_container.chat_message(msg["role"]).markdown(f"<div style='font-size:0.9rem;'>{msg['content']}</div>", unsafe_allow_html=True)
 
     # 4. 챗봇 API 로직
-    if prompt := st.chat_input("이 단계의 대응법을 물어보세요..."):
+    if prompt := st.chat_input("육아지원제도 관련하여 궁금한 것을 물어보세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with chat_container: st.chat_message("user").write(prompt)
         try:
             client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
             system_prompt = f"""
-            너의 이름은 'HR 파트너 케이(K)'야. KCIM 경영관리본부 담당자를 돕는 모성보호 전문 AI 비서야.
+            너의 이름은 '육아지원박사'야. KCIM 경영관리본부 담당자를 돕는 모성보호 전문 AI 비서야.
             [현재 상황] 사용자는 지금 [{step['title']}] 단계를 처리 중이야.
             [답변 원칙]
             1. 모든 답변은 '2025년 개정 법안'을 최우선 반영한다. (임신기 단축 32주, 배우자 휴가 20일, 육아휴직 1.5년 등)
