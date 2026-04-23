@@ -155,7 +155,7 @@ with col_body:
             chat_container.chat_message(msg["role"]).markdown(f"<div style='font-size:0.9rem;'>{msg['content']}</div>", unsafe_allow_html=True)
 
     # 4. 챗봇 API 로직
-    if prompt := st.chat_input("이 단계의 대응법을 물어보세요..."):
+    if prompt := st.chat_input("육아지원 관련하여 무엇이든 물어보세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
         with chat_container: st.chat_message("user").write(prompt)
         try:
