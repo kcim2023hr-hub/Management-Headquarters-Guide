@@ -150,7 +150,7 @@ with col_body:
     chat_container = st.container(height=260) 
     with chat_container:
         if not st.session_state.messages:
-            st.write(f"<div style='font-size:0.85rem; color:#888;'>반가워요! 저는 KCIM의 HR 파트너 <b>케이(K)</b>입니다. {step['short']} 단계의 구체적인 법규나 대응법이 궁금하시면 말씀해주세요.</div>", unsafe_allow_html=True)
+            st.write(f"<div style='font-size:0.85rem; color:#888;'>반가워요! 저는 KCIM의 육아지원도우미 </b>입니다. {step['short']} 단계의 구체적인 법규나 대응법이 궁금하시면 말씀해주세요.</div>", unsafe_allow_html=True)
         for msg in st.session_state.messages:
             chat_container.chat_message(msg["role"]).markdown(f"<div style='font-size:0.9rem;'>{msg['content']}</div>", unsafe_allow_html=True)
 
