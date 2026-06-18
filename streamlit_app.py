@@ -7,6 +7,9 @@ st.set_page_config(
     layout="wide",
 )
 
+# ──────────────────────────────────────────
+# CSS
+# ──────────────────────────────────────────
 st.markdown("""
 <style>
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
@@ -16,134 +19,376 @@ st.markdown("""
   box-sizing: border-box;
 }
 
-.block-container { padding: 0 !important; max-width: 100% !important; }
+.block-container {
+  padding: 0 !important;
+  max-width: 100% !important;
+}
+
 .stApp { background: #f0f4f8; }
 
+/* ── 최상단 헤더 바 ── */
 .top-header {
   background: linear-gradient(135deg, #0f2942 0%, #1a4a6e 60%, #1e6091 100%);
-  padding: 0.9rem 2rem; display: flex; align-items: center;
-  justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  padding: 0.9rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
-.top-header-title { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
-.top-header-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.top-header-title {
+  font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px;
+}
+.top-header-sub {
+  font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px;
+}
 .badge-2025 {
   background: linear-gradient(135deg, #f093fb, #f5576c);
   color: white; padding: 3px 10px; border-radius: 20px;
-  font-size: 0.7rem; font-weight: 700; margin-left: 10px; vertical-align: middle;
+  font-size: 0.7rem; font-weight: 700; margin-left: 10px;
+  vertical-align: middle;
 }
 
-.stepper-wrap { background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0.9rem 2rem; overflow-x: auto; }
-.stepper { display: flex; align-items: center; gap: 0; min-width: 600px; }
-.step-node { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; cursor: pointer; }
+/* ── 스텝 프로그레스 바 ── */
+.stepper-wrap {
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.9rem 2rem;
+  overflow-x: auto;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  min-width: 600px;
+}
+.step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+}
 .step-node::before {
-  content: ''; position: absolute; top: 16px; right: 50%; width: 100%; height: 2px;
-  background: #e2e8f0; z-index: 0;
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: 50%;
+  width: 100%;
+  height: 2px;
+  background: #e2e8f0;
+  z-index: 0;
 }
 .step-node:first-child::before { display: none; }
 .step-node.done::before { background: #22c55e; }
 .step-node.active::before { background: #3b82f6; }
+
 .step-circle {
-  width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
-  justify-content: center; font-weight: 800; font-size: 0.8rem; border: 2px solid #e2e8f0;
-  background: #f8fafc; color: #94a3b8; position: relative; z-index: 1; transition: all 0.2s;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.8rem;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc; color: #94a3b8;
+  position: relative; z-index: 1;
+  transition: all 0.2s;
 }
-.step-node.done .step-circle { background: #22c55e; border-color: #22c55e; color: white; }
+.step-node.done .step-circle {
+  background: #22c55e; border-color: #22c55e; color: white;
+}
 .step-node.active .step-circle {
   background: #3b82f6; border-color: #3b82f6; color: white;
   box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
 }
-.step-label { font-size: 0.68rem; font-weight: 600; color: #94a3b8; margin-top: 5px; text-align: center; white-space: nowrap; }
+.step-label {
+  font-size: 0.68rem; font-weight: 600; color: #94a3b8;
+  margin-top: 5px; text-align: center; white-space: nowrap;
+}
 .step-node.active .step-label { color: #3b82f6; font-weight: 800; }
 .step-node.done .step-label { color: #22c55e; }
 
+/* ── 메인 3열 레이아웃 ── */
+.main-layout {
+  display: flex;
+  height: calc(100vh - 130px);
+  overflow: hidden;
+}
+
+/* ── 왼쪽 패널 ── */
+.left-panel {
+  width: 200px;
+  min-width: 200px;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+  padding: 1rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
 .nav-section-title {
   font-size: 0.65rem; font-weight: 700; color: #94a3b8;
-  letter-spacing: 0.8px; text-transform: uppercase; padding: 0.3rem 0.5rem 0.2rem; margin-top: 0.5rem;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 0.3rem 0.5rem 0.2rem;
+  margin-top: 0.5rem;
 }
-.law-item { padding: 0.4rem 0.6rem; border-radius: 6px; background: #f8fafc; border-left: 3px solid #e2e8f0; margin-bottom: 4px; }
+.nav-btn {
+  display: flex; align-items: center; gap: 8px;
+  padding: 0.5rem 0.6rem; border-radius: 8px;
+  cursor: pointer; transition: all 0.15s;
+  border: none; background: transparent; width: 100%;
+  text-align: left;
+}
+.nav-btn:hover { background: #f1f5f9; }
+.nav-btn.active { background: #eff6ff; }
+.nav-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.nav-text { font-size: 0.78rem; font-weight: 600; color: #475569; }
+.nav-btn.active .nav-text { color: #2563eb; font-weight: 700; }
+
+.law-item {
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: #f8fafc;
+  border-left: 3px solid #e2e8f0;
+  margin-bottom: 4px;
+}
 .law-item-title { font-size: 0.7rem; font-weight: 700; color: #374151; }
 .law-item-desc { font-size: 0.65rem; color: #6b7280; margin-top: 1px; line-height: 1.4; }
+
 .kpi-card {
-  background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd;
-  border-radius: 8px; padding: 0.5rem 0.7rem; margin-bottom: 4px; text-align: center;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+  padding: 0.5rem 0.7rem;
+  margin-bottom: 4px;
+  text-align: center;
 }
 .kpi-value { font-size: 1.1rem; font-weight: 900; color: #0369a1; }
 .kpi-label { font-size: 0.62rem; font-weight: 600; color: #0369a1; opacity: 0.8; }
 
+/* ── 중앙 패널 ── */
+.center-panel {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.2rem 1.4rem;
+  background: #f0f4f8;
+}
+
+/* ── 스텝 헤더 카드 ── */
 .step-header-card {
-  border-radius: 14px; padding: 1.2rem 1.5rem; margin-bottom: 1rem;
-  color: white; position: relative; overflow: hidden;
+  border-radius: 14px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 1rem;
+  color: white;
+  position: relative;
+  overflow: hidden;
 }
 .step-header-card::after {
-  content: attr(data-num); position: absolute; right: 1rem; top: 50%;
-  transform: translateY(-50%); font-size: 5rem; font-weight: 900; opacity: 0.12; line-height: 1;
+  content: attr(data-num);
+  position: absolute;
+  right: 1rem; top: 50%;
+  transform: translateY(-50%);
+  font-size: 5rem;
+  font-weight: 900;
+  opacity: 0.12;
+  line-height: 1;
 }
 .step-num-badge {
-  font-size: 0.72rem; font-weight: 700; background: rgba(255,255,255,0.25);
-  border-radius: 20px; padding: 2px 10px; display: inline-block; margin-bottom: 5px;
+  font-size: 0.72rem; font-weight: 700;
+  background: rgba(255,255,255,0.25); border-radius: 20px;
+  padding: 2px 10px; display: inline-block; margin-bottom: 5px;
 }
-.step-main-title { font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px; }
-.step-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+.step-main-title {
+  font-size: 1.4rem; font-weight: 900; letter-spacing: -0.5px;
+}
+.step-meta {
+  display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;
+}
 .step-chip {
-  background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);
-  border-radius: 20px; padding: 3px 10px; font-size: 0.72rem; font-weight: 600; color: white;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px; padding: 3px 10px;
+  font-size: 0.72rem; font-weight: 600; color: white;
 }
 
+/* ── 스크립트 박스 ── */
 .script-card {
-  background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-  padding: 1rem 1.2rem; margin-bottom: 0.8rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  background: white; border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
-.card-title { font-size: 0.8rem; font-weight: 800; color: #374151; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 6px; }
+.card-title {
+  font-size: 0.8rem; font-weight: 800; color: #374151;
+  margin-bottom: 0.6rem; display: flex; align-items: center; gap: 6px;
+}
 .script-content {
-  background: #f0f9ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0;
-  padding: 0.8rem 1rem; font-size: 0.95rem; font-weight: 500; color: #1e40af; line-height: 1.7; font-style: italic;
+  background: #f0f9ff;
+  border-left: 4px solid #3b82f6;
+  border-radius: 0 8px 8px 0;
+  padding: 0.8rem 1rem;
+  font-size: 0.95rem; font-weight: 500;
+  color: #1e40af; line-height: 1.7;
+  font-style: italic;
 }
 
-.info-card { background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 0.9rem 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+/* ── 체크 + 서류 그리드 ── */
+.two-col-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;
+  margin-bottom: 0.8rem;
+}
+.info-card {
+  background: white; border-radius: 12px;
+  border: 1px solid #e2e8f0; padding: 0.9rem 1rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+}
+.check-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 5px 0; border-bottom: 1px solid #f1f5f9;
+  font-size: 0.82rem; color: #374151; line-height: 1.4;
+  cursor: pointer;
+}
+.check-item:last-child { border-bottom: none; }
+.check-box {
+  width: 16px; height: 16px; border-radius: 4px;
+  border: 2px solid #d1d5db; flex-shrink: 0;
+  margin-top: 1px; display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; color: white;
+}
+.check-box.checked { background: #22c55e; border-color: #22c55e; }
+.check-text.checked { text-decoration: line-through; color: #9ca3af; }
+
 .form-chip2 {
-  display: inline-flex; align-items: center; gap: 5px; background: #f8fafc; border: 1px solid #e2e8f0;
-  border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; font-weight: 600; color: #334155;
+  display: inline-flex; align-items: center; gap: 5px;
+  background: #f8fafc; border: 1px solid #e2e8f0;
+  border-radius: 6px; padding: 4px 10px;
+  font-size: 0.78rem; font-weight: 600; color: #334155;
   margin-bottom: 5px; width: 100%;
 }
 .warn-banner {
-  background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 0.5rem 0.8rem;
-  font-size: 0.78rem; font-weight: 600; color: #dc2626; margin-top: 6px; line-height: 1.5;
+  background: #fef2f2; border: 1px solid #fecaca;
+  border-radius: 8px; padding: 0.5rem 0.8rem;
+  font-size: 0.78rem; font-weight: 600; color: #dc2626;
+  margin-top: 6px; line-height: 1.5;
 }
 
+/* ── FAQ ── */
 .faq-card {
-  background: white; border-radius: 12px; border: 1px solid #e2e8f0; padding: 0.9rem 1rem;
-  margin-bottom: 0.8rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  background: white; border-radius: 12px;
+  border: 1px solid #e2e8f0; padding: 0.9rem 1rem;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
 .faq-item { padding: 0.4rem 0; border-bottom: 1px solid #f1f5f9; }
 .faq-item:last-child { border-bottom: none; }
 .faq-q { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px; }
 .faq-a { font-size: 0.78rem; color: #475569; line-height: 1.5; }
 
+/* ── 오른쪽 챗봇 패널 ── */
+.right-panel {
+  width: 320px;
+  min-width: 320px;
+  background: #fff;
+  border-left: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
 .chat-header {
-  padding: 0.9rem 1rem; border-bottom: 1px solid #e2e8f0;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
   background: linear-gradient(135deg, #1e3a5f, #1a5276);
-  display: flex; align-items: center; gap: 10px; border-radius: 12px 12px 0 0;
+  display: flex; align-items: center; gap: 10px;
 }
 .chat-avatar {
   width: 36px; height: 36px; border-radius: 50%;
   background: linear-gradient(135deg, #f093fb, #f5576c);
-  display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
 }
-.chat-header-text .chat-name { font-size: 0.9rem; font-weight: 800; color: white; }
-.chat-header-text .chat-desc { font-size: 0.65rem; color: rgba(255,255,255,0.65); }
+.chat-header-text .chat-name {
+  font-size: 0.9rem; font-weight: 800; color: white;
+}
+.chat-header-text .chat-desc {
+  font-size: 0.65rem; color: rgba(255,255,255,0.65);
+}
+.chat-messages {
+  flex: 1; overflow-y: auto; padding: 1rem;
+  background: #f8fafc; display: flex; flex-direction: column; gap: 0.6rem;
+}
+.msg-user {
+  display: flex; justify-content: flex-end;
+}
+.msg-user .bubble {
+  background: #3b82f6; color: white;
+  padding: 0.5rem 0.8rem; border-radius: 14px 14px 4px 14px;
+  font-size: 0.82rem; max-width: 85%; line-height: 1.5;
+}
+.msg-bot {
+  display: flex; gap: 6px; align-items: flex-start;
+}
+.msg-bot .bot-icon {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: linear-gradient(135deg, #f093fb, #f5576c);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; flex-shrink: 0; margin-top: 2px;
+}
+.msg-bot .bubble {
+  background: white; border: 1px solid #e2e8f0;
+  padding: 0.5rem 0.8rem; border-radius: 4px 14px 14px 14px;
+  font-size: 0.82rem; max-width: 85%; line-height: 1.5; color: #1f2937;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
 .welcome-msg {
-  background: linear-gradient(135deg, #eff6ff, #f0f9ff); border: 1px solid #bfdbfe;
-  border-radius: 10px; padding: 0.8rem; font-size: 0.8rem; color: #1e40af; line-height: 1.6; text-align: center;
+  background: linear-gradient(135deg, #eff6ff, #f0f9ff);
+  border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 0.8rem; font-size: 0.8rem; color: #1e40af; line-height: 1.6;
+  text-align: center;
 }
 
+/* ── Streamlit 요소 커스텀 ── */
+div[data-testid="stChatInput"] {
+  padding: 0.5rem 0.7rem 0.8rem !important;
+  background: #f8faff !important;
+  border-top: 2px solid #dbeafe !important;
+  margin-top: 0 !important;
+}
+div[data-testid="stChatInput"] > div {
+  border: 2px solid #3b82f6 !important;
+  border-radius: 12px !important;
+  background: white !important;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.08) !important;
+}
+div[data-testid="stChatInput"] textarea {
+  color: #1f2937 !important;
+  font-size: 0.88rem !important;
+}
+div[data-testid="stChatInput"] textarea::placeholder {
+  color: #94a3b8 !important;
+  font-size: 0.85rem !important;
+}
+div[data-testid="stChatInput"] button {
+  background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+  border-radius: 8px !important;
+  color: white !important;
+}
 section[data-testid="stSidebar"] { display: none !important; }
 header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
 .stChatMessage { background: transparent !important; }
-.stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
+
+/* 버튼 초기화 */
+.stButton button {
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  transition: all 0.15s !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
+# ──────────────────────────────────────────
+# 데이터 정의
+# ──────────────────────────────────────────
 STEPS = [
     {
         "id": 1, "short": "임신 확인", "title": "임신 확인 및 초기 응대",
@@ -186,12 +431,14 @@ STEPS = [
     {
         "id": 3, "short": "건강진단", "title": "정기 건강진단 (태아검진)",
         "color": "#f59e0b", "grad": "linear-gradient(135deg, #d97706, #f59e0b)",
-        "target": "검진 대상자", "next": "연차 조율",
+        "target": "검진 대상자", "next": "연차 안내",
         "guide": '"검진 시간은 유급으로 보장됩니다. 플로우 양식 신청서만 작성해 주시면 팀장님께 자동 공유됩니다."',
         "check": ["검진 주기별 허용 시간 확인 및 부여", "유급 인정 기준 및 증빙 방법 안내", "플로우 내 신청 경로 안내"],
         "forms": ["KCIM_임신·육아기 관련 지원 신청서"],
         "warn": ["사전 예약 문자 및 진료 영수증 등 증빙 필수", "검진 사용으로 인한 불이익 절대 금지"],
-        "laws": [{"name": "근로기준법 제74조의2 제3항", "desc": "정기 태아검진 시간 유급 보장"}],
+        "laws": [
+            {"name": "근로기준법 제74조의2 제3항", "desc": "정기 태아검진 시간 유급 보장"},
+        ],
         "faq": [
             {"q": "검진 주기마다 몇 시간이나 주어지나요?", "a": "임신 주수에 따라 다릅니다. 28주 미만: 월 1회, 28~36주: 2주 1회, 36주 이후: 주 1회 기준으로 시간이 부여됩니다."},
             {"q": "증빙을 잃어버렸다면?", "a": "병원에서 재발급이 가능합니다. 예약 확인 문자 캡처본도 임시 증빙으로 인정 가능하나 원본 제출을 권장합니다."},
@@ -207,7 +454,9 @@ STEPS = [
         "check": ["잔여 연차 일수 계산 및 안내", "출산휴가 시작 예정일 확정", "인수인계 항목 리스트 작성 지원"],
         "forms": ["어울지기 내 신청"],
         "warn": ["연차 강제 소진 지시 금지 (자율 사용 원칙)", "직원의 자율권 존중"],
-        "laws": [{"name": "근로기준법 제60조", "desc": "연차 유급휴가 자율 사용 원칙"}],
+        "laws": [
+            {"name": "근로기준법 제60조", "desc": "연차 유급휴가 자율 사용 원칙"},
+        ],
         "faq": [
             {"q": "출산휴가 전 연차를 다 소진해야 하나요?", "a": "아닙니다. 연차는 직원이 원하는 시점에 자유롭게 사용합니다. 회사가 강제로 소진 지시하는 것은 불법입니다."},
             {"q": "인수인계 기간이 짧으면 어떻게 하나요?", "a": "핵심 업무 위주의 간소화된 인수인계를 진행하고, 나머지는 복직 후 인계하는 방식으로 조율할 수 있습니다."},
@@ -242,7 +491,9 @@ STEPS = [
         "check": ["대상 자녀 연령 확인 (만 12세 이하)", "단축 기간 및 시간 협의", "최소 1개월 단위 사용 안내"],
         "forms": ["KCIM_임신·육아기 관련 지원 신청서"],
         "warn": ["단축 시간에 비례해 연차 산정됨", "주 5~25시간 범위 내 단축 가능"],
-        "laws": [{"name": "남녀고용평등법 제19조의2", "desc": "육아기 근로시간 단축 (자녀 만 12세 이하, 최대 3년)"}],
+        "laws": [
+            {"name": "남녀고용평등법 제19조의2", "desc": "육아기 근로시간 단축 (자녀 만 12세 이하, 최대 3년)"},
+        ],
         "faq": [
             {"q": "육아휴직과 단축근무를 동시에 할 수 있나요?", "a": "동시 사용은 불가하지만, 육아휴직 후 복직하여 단축 근무로 전환하거나 그 반대도 가능합니다."},
             {"q": "단축 근무 중 급여는 어떻게 계산되나요?", "a": "단축된 시간에 비례하여 급여가 산정됩니다. 고용보험 지원금이 일부 보전될 수 있으니 확인해보세요."},
@@ -271,6 +522,9 @@ STEPS = [
     },
 ]
 
+# ──────────────────────────────────────────
+# 세션 초기화
+# ──────────────────────────────────────────
 if "active_step" not in st.session_state:
     st.session_state.active_step = 0
 if "messages" not in st.session_state:
@@ -283,6 +537,9 @@ if "completed_steps" not in st.session_state:
 active_idx = st.session_state.active_step
 step = STEPS[active_idx]
 
+# ──────────────────────────────────────────
+# 상단 헤더
+# ──────────────────────────────────────────
 st.markdown(f"""
 <div class="top-header">
   <div>
@@ -297,49 +554,98 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ──────────────────────────────────────────
+# 상단 스텝 프로그레스 스테퍼
+# ──────────────────────────────────────────
 stepper_html = '<div class="stepper-wrap"><div class="stepper">'
 for i, s in enumerate(STEPS):
     cls = "active" if i == active_idx else ("done" if i in st.session_state.completed_steps else "")
     icon = "✓" if i in st.session_state.completed_steps else str(s["id"])
-    stepper_html += f'<div class="step-node {cls}"><div class="step-circle">{icon}</div><div class="step-label">{s["short"]}</div></div>'
+    stepper_html += f"""
+    <div class="step-node {cls}">
+      <div class="step-circle">{icon}</div>
+      <div class="step-label">{s['short']}</div>
+    </div>"""
 stepper_html += '</div></div>'
 st.markdown(stepper_html, unsafe_allow_html=True)
 
+# ──────────────────────────────────────────
+# 3열 메인 레이아웃
+# ──────────────────────────────────────────
 col_left, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
 
+# ── 왼쪽: 내비게이션 + 법령 + KPI ──
 with col_left:
     st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
     for i, s in enumerate(STEPS):
+        is_active = i == active_idx
+        is_done = i in st.session_state.completed_steps
         check_count = sum(st.session_state.checks[i])
         total_count = len(s["check"])
-        is_done = i in st.session_state.completed_steps
         progress_text = f" ({check_count}/{total_count})" if check_count > 0 else ""
+
         if st.button(
             f"{'✓ ' if is_done else ''}{s['id']}. {s['short']}{progress_text}",
-            key=f"nav_{i}", use_container_width=True,
-            type="primary" if i == active_idx else "secondary",
+            key=f"nav_{i}",
+            use_container_width=True,
+            type="primary" if is_active else "secondary",
         ):
             st.session_state.active_step = i
             st.rerun()
 
     st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
     for law in step["laws"]:
-        st.markdown(f'<div class="law-item"><div class="law-item-title">{law["name"]}</div><div class="law-item-desc">{law["desc"]}</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="law-item">
+          <div class="law-item-title">{law['name']}</div>
+          <div class="law-item-desc">{law['desc']}</div>
+        </div>""", unsafe_allow_html=True)
 
     st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🔢 핵심 수치</div>', unsafe_allow_html=True)
     for kpi in step["kpi"]:
-        st.markdown(f'<div class="kpi-card"><div class="kpi-value">{kpi["val"]}</div><div class="kpi-label">{kpi["label"]}</div></div>', unsafe_allow_html=True)
-    st.markdown('<div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div><div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div><div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="kpi-card">
+          <div class="kpi-value">{kpi['val']}</div>
+          <div class="kpi-label">{kpi['label']}</div>
+        </div>""", unsafe_allow_html=True)
 
+    st.markdown("""
+    <div class="kpi-card">
+      <div class="kpi-value">90일</div>
+      <div class="kpi-label">출산휴가</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">20일</div>
+      <div class="kpi-label">배우자휴가</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">2시간</div>
+      <div class="kpi-label">임신기단축/일</div>
+    </div>""", unsafe_allow_html=True)
+
+# ── 중앙: 스텝 콘텐츠 ──
 with col_center:
-    st.markdown(f'<div class="step-header-card" data-num="{step["id"]}" style="background:{step["grad"]}"><div class="step-num-badge">STEP {step["id"]} / 7</div><div class="step-main-title">{step["title"]}</div><div class="step-meta"><span class="step-chip">👤 대상: {step["target"]}</span><span class="step-chip">➡️ 다음: {step["next"]}</span></div></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="step-header-card" data-num="{step['id']}" style="background:{step['grad']};">
+      <div class="step-num-badge">STEP {step['id']} / 7</div>
+      <div class="step-main-title">{step['title']}</div>
+      <div class="step-meta">
+        <span class="step-chip">👤 대상: {step['target']}</span>
+        <span class="step-chip">➡️ 다음: {step['next']}</span>
+      </div>
+    </div>""", unsafe_allow_html=True)
 
-    st.markdown(f'<div class="script-card"><div class="card-title">💬 담당자 안내 핵심 스크립트</div><div class="script-content">{step["guide"]}</div></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="script-card">
+      <div class="card-title">💬 담당자 안내 핵심 스크립트</div>
+      <div class="script-content">{step['guide']}</div>
+    </div>""", unsafe_allow_html=True)
 
-    col_copy, col_done_btn = st.columns([2, 1])
+    col_copy, col_done = st.columns([2, 1])
     with col_copy:
-        st.code(step["guide"].strip('"'), language=None)
-    with col_done_btn:
+        script_text = step["guide"].strip('"').strip('\u201c').strip('\u201d')
+        st.code(script_text, language=None)
+    with col_done:
         if st.button("✅ 이 단계 완료", key=f"done_{active_idx}", use_container_width=True):
             st.session_state.completed_steps.add(active_idx)
             if active_idx < len(STEPS) - 1:
@@ -347,17 +653,25 @@ with col_center:
             st.rerun()
 
     c1, c2 = st.columns(2)
+
     with c1:
         check_count = sum(st.session_state.checks[active_idx])
         total_count = len(step["check"])
         pct = int(check_count / total_count * 100)
-        st.markdown(f'<div class="info-card"><div class="card-title">✅ 관리자 필수 체크 <span style="margin-left:auto;font-size:0.7rem;color:#6b7280;font-weight:600;">{check_count}/{total_count} 완료</span></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="info-card">
+          <div class="card-title">
+            ✅ 관리자 필수 체크
+            <span style="margin-left:auto; font-size:0.7rem; color:#6b7280; font-weight:600;">{check_count}/{total_count} 완료</span>
+          </div>""", unsafe_allow_html=True)
+
         for ci, check_text in enumerate(step["check"]):
             checked = st.session_state.checks[active_idx][ci]
             if st.checkbox(check_text, value=checked, key=f"chk_{active_idx}_{ci}"):
                 st.session_state.checks[active_idx][ci] = True
             else:
                 st.session_state.checks[active_idx][ci] = False
+
         st.progress(pct / 100)
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -369,46 +683,89 @@ with col_center:
             st.markdown(f'<div class="warn-banner">⚠️ {w}</div>', unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown('<div class="faq-card"><div class="card-title">💡 자주 묻는 질문 (FAQ)</div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="faq-card">
+      <div class="card-title">💡 자주 묻는 질문 (FAQ)</div>""", unsafe_allow_html=True)
     for faq in step["faq"]:
-        st.markdown(f'<div class="faq-item"><div class="faq-q">Q. {faq["q"]}</div><div class="faq-a">A. {faq["a"]}</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+      <div class="faq-item">
+        <div class="faq-q">Q. {faq['q']}</div>
+        <div class="faq-a">A. {faq['a']}</div>
+      </div>""", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
+# ── 오른쪽: 챗봇 ──
 with col_right:
-    st.markdown(f'<div class="chat-header"><div class="chat-avatar">🎓</div><div class="chat-header-text"><div class="chat-name">육아지원박사</div><div class="chat-desc">KCIM 모성보호 전문 AI · {step["short"]} 단계 대기 중</div></div></div>', unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class="chat-header">
+      <div class="chat-avatar">🎓</div>
+      <div class="chat-header-text">
+        <div class="chat-name">육아지원박사</div>
+        <div class="chat-desc">KCIM 모성보호 전문 AI · {step['short']} 단계 대기 중</div>
+      </div>
+    </div>""", unsafe_allow_html=True)
 
     chat_container = st.container(height=480)
     with chat_container:
         if not st.session_state.messages:
-            st.markdown(f'<div class="welcome-msg">안녕하세요! 저는 KCIM의 육아지원 전문 AI <strong>박사</strong>입니다.<br><br>현재 <strong>[{step["short"]}]</strong> 단계에 대한 법령 해석, 대응 방법, 엣지케이스 등 무엇이든 질문하세요. 📚</div>', unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class="welcome-msg">
+              안녕하세요! 저는 KCIM의 육아지원 전문 AI <strong>박사</strong>입니다.<br><br>
+              현재 <strong>[{step['short']}]</strong> 단계에 대한 법령 해석, 대응 방법, 엣지케이스 등 무엇이든 질문하세요. 📚
+            </div>""", unsafe_allow_html=True)
+
         for msg in st.session_state.messages:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
     if prompt := st.chat_input("질문을 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
+
         try:
             if "OPENAI_API_KEY" not in st.secrets:
                 st.error("OPENAI_API_KEY가 secrets.toml에 없습니다.")
                 st.stop()
+
             client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-            system_prompt = f"""너의 이름은 '육아지원박사'야. KCIM 경영관리본부 HR 담당자를 돕는 모성보호 전문 AI야.
-[현재 상황] 담당자는 [{step['title']}] 단계를 처리 중이야. 관련 법령: {[l['name'] for l in step['laws']]}
-[답변 원칙] 1. 2025년 개정 법안 최우선 반영 (임신기 단축 32주, 배우자 휴가 20일, 육아휴직 1.5년, 사후지급금 폐지 등) 2. 담당자가 직원에게 즉시 말할 수 있는 구어체 스크립트 포함 3. 법령 조항명 정확히 인용 4. 친절하고 명확하게 5. 답변은 간결하게 (3~5문장 핵심 위주)"""
+
+            system_prompt = f"""
+너의 이름은 '육아지원박사'야. KCIM 경영관리본부 HR 담당자를 돕는 모성보호 전문 AI야.
+
+[현재 상황]
+- 담당자는 [{step['title']}] 단계를 처리 중이야.
+- 현재 체크리스트: {step['check']}
+- 관련 법령: {[l['name'] for l in step['laws']]}
+
+[답변 원칙]
+1. 2025년 개정 법안 최우선 반영 (임신기 단축 32주, 배우자 휴가 20일, 육아휴직 1.5년, 사후지급금 폐지 등)
+2. 담당자가 직원에게 즉시 말할 수 있는 구어체 스크립트를 포함할 것
+3. 법령 조항명을 정확히 인용할 것
+4. 친절하고 명확하며, 든든한 동료 느낌 유지
+5. 답변은 간결하게 (3~5문장 핵심 위주)
+"""
+
             with chat_container:
                 with st.chat_message("assistant"):
-                    placeholder = st.empty()
+                    response_placeholder = st.empty()
                     full_response = ""
+
                     stream = client.chat.completions.create(
                         model="gpt-4o",
-                        messages=[{"role": "system", "content": system_prompt}, *st.session_state.messages],
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            *st.session_state.messages,
+                        ],
                         stream=True,
                     )
+
                     for chunk in stream:
                         delta = chunk.choices[0].delta.content or ""
                         full_response += delta
-                        placeholder.markdown(full_response + "▌")
-                    placeholder.markdown(full_response)
+                        response_placeholder.markdown(full_response + "▌")
+
+                    response_placeholder.markdown(full_response)
+
             st.session_state.messages.append({"role": "assistant", "content": full_response})
+
         except Exception as e:
             st.error(f"챗봇 오류: {str(e)}")
