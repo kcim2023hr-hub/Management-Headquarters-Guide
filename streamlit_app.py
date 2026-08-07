@@ -234,28 +234,10 @@ div[data-testid="stChatInput"] button {
 section[data-testid="stSidebar"] { display: none !important; }
 header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
-.menu-toggle-btn {
-  display: flex;
-  justify-content: flex-end; /* 메뉴 열려있을 때 우측 정렬 */
-  margin-bottom: 0.5rem;
-}
 .menu-toggle-btn button {
-  background: transparent !important;
-  color: #64748b !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 50% !important; /* 동그란 모양 */
-  width: 32px !important;
-  height: 32px !important;
-  padding: 0 !important;
-  font-size: 1.1rem !important;
-  min-height: auto !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-.menu-toggle-btn button:hover {
-  background: #f1f5f9 !important;
-  color: #0f2942 !important;
+  background: #1a4a6e !important; color: white !important;
+  border-radius: 8px !important; padding: 0.3rem 0.7rem !important;
+  font-size: 1rem !important; min-height: 2.2rem !important;
 }
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
@@ -498,34 +480,30 @@ if "menu_open" not in st.session_state:
     st.session_state.menu_open = True
 
 # ──────────────────────────────────────────
-# 메인 레이아웃 (아이콘 토글 방식 적용)
+# 토글 버튼
+# ──────────────────────────────────────────
+toggle_col, _spacer = st.columns([0.12, 0.88])
+with toggle_col:
+    st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
+    btn_label = "✕ 메뉴 닫기" if st.session_state.menu_open else "☰ 메뉴 열기"
+    if st.button(btn_label, key="menu_toggle_btn"):
+        st.session_state.menu_open = not st.session_state.menu_open
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ──────────────────────────────────────────
+# 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
 # ──────────────────────────────────────────
 if st.session_state.menu_open:
-    # 메뉴가 열려있을 때
     col_menu, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
-    
-    with col_menu:
-        # 우측 상단에 닫기(«) 버튼 배치
-        st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
-        if st.button("«", key="btn_close_menu"):
-            st.session_state.menu_open = False
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
-
 else:
     col_menu = None
-    # 메뉴가 닫혀있을 때
     col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
-    
-    with col_spacer:
-        # 좌측 상단에 열기(») 버튼 배치
-        st.markdown('<div class="menu-toggle-btn" style="justify-content: flex-start;">', unsafe_allow_html=True)
-        if st.button("»", key="btn_open_menu"):
-            st.session_state.menu_open = True
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
+
+# ── 메뉴 패널 (단계 이동 / 계산 도구 / 법령 / KPI) ──
+if col_menu is not None:
+    with col_menu:
+        st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
         for i, s in enumerate(STEPS):
             is_active = (i == active_idx) and not is_calc
             is_done = i in st.session_state.completed_steps
