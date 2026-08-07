@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 # ──────────────────────────────────────────
-# CSS
+# CSS (스텝 프로그레스 완전 개편)
 # ──────────────────────────────────────────
 st.markdown("""
 <style>
@@ -40,51 +40,85 @@ st.markdown("""
   white-space: nowrap;
 }
 
-/* ── 스텝 프로그레스 (수정 및 레이아웃 정렬) ── */
+/* ── 스텝 프로그레스 (완전 개편) ── */
 .stepper-wrap {
   background: #ffffff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.8rem 1rem;
-  overflow-x: auto;
+  padding: 0.8rem 0.5rem 0.6rem 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.03);
 }
-.stepper-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  width: 100%;
+
+/* Streamlit Column 내부 요소 수직 정렬 강제 */
+div[data-testid="column"] {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
 }
-.stepper-item div[data-testid="stButton"] {
+
+/* 버튼 wrapper 박스 강제 정렬 */
+div[data-testid="stButton"] {
   display: flex !important;
   justify-content: center !important;
+  align-items: center !important;
   margin: 0 !important;
-  width: 100% !important;
-}
-.stepper-item button {
-  border-radius: 50% !important;
-  width: 36px !important;
-  height: 36px !important;
-  min-width: 36px !important;
   padding: 0 !important;
-  font-weight: 800 !important;
-  font-size: 0.85rem !important;
+  width: auto !important;
+}
+
+/* 동그란 버튼 핵심 CSS 강제 적용 */
+div[data-testid="stButton"] > button {
+  border-radius: 50% !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  max-width: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  padding: 0 !important;
   margin: 0 auto !important;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.08) !important;
+  font-weight: 800 !important;
+  font-size: 0.9rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  transition: all 0.2s ease !important;
+  line-height: 1 !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.08) !important;
+  transition: all 0.15s ease-in-out !important;
 }
+
+/* 비활성화 버튼 (Standard/Secondary) */
+div[data-testid="stButton"] > button[kind="secondary"] {
+  background-color: #ffffff !important;
+  border: 1.5px solid #cbd5e1 !important;
+  color: #475569 !important;
+}
+div[data-testid="stButton"] > button[kind="secondary"]:hover {
+  border-color: #3b82f6 !important;
+  color: #3b82f6 !important;
+  background-color: #eff6ff !important;
+}
+
+/* 활성화 버튼 (Primary) */
+div[data-testid="stButton"] > button[kind="primary"] {
+  background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+  border: none !important;
+  color: #ffffff !important;
+  box-shadow: 0 3px 8px rgba(37,99,235,0.35) !important;
+}
+
+/* 동그란 버튼 아래 텍스트 라벨 */
 .step-label {
-  font-size: 0.72rem;
+  font-size: 0.73rem;
   font-weight: 600;
   color: #64748b;
   text-align: center;
   white-space: nowrap;
-  margin-top: 2px;
+  margin-top: 6px !important;
   line-height: 1.2;
+  letter-spacing: -0.2px;
 }
+
 .step-label.active {
   color: #2563eb;
   font-weight: 800;
@@ -96,9 +130,17 @@ st.markdown("""
   .top-header-title { font-size: 1.05rem; display: block; }
   .badge-2025 { display: inline-block; margin-left: 0; margin-top: 6px; }
   .top-header-sub { font-size: 0.7rem; }
-  .stepper-wrap { padding: 0.6rem 0.2rem; }
-  .stepper-item button { width: 28px !important; height: 28px !important; min-width: 28px !important; font-size: 0.7rem !important; }
-  .step-label { font-size: 0.55rem; margin-top: 1px; }
+  .stepper-wrap { padding: 0.5rem 0.2rem; }
+  div[data-testid="stButton"] > button {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
+    min-height: 30px !important;
+    max-height: 30px !important;
+    font-size: 0.75rem !important;
+  }
+  .step-label { font-size: 0.58rem; margin-top: 3px !important; }
   .step-main-title { font-size: 1.15rem !important; }
   .step-header-card { padding: 1rem 1.1rem !important; }
   .step-header-card::after { font-size: 3.2rem !important; }
@@ -257,7 +299,6 @@ div[data-testid="stToolbar"] { display: none !important; }
   font-size: 1rem !important; min-height: 2.2rem !important;
 }
 .stChatMessage { background: transparent !important; }
-.stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -453,7 +494,7 @@ if "completed_steps" not in st.session_state:
     st.session_state.completed_steps = set()
 
 # ──────────────────────────────────────────
-# 메뉴 열림/닫힘 기본값: PC는 열림, 모바일은 닫힘
+# 메뉴 열림/닫힘 기본값
 # ──────────────────────────────────────────
 if "menu_open" not in st.session_state:
     menu_param = st.query_params.get("menu_state")
@@ -503,7 +544,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 스텝 프로그레스 (계산기 모드에서는 숨김)
+# 스텝 프로그레스 (동그란 버튼 + 하단 단계명 밀착)
 # ──────────────────────────────────────────
 if not is_calc:
     st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
@@ -514,15 +555,16 @@ if not is_calc:
             is_active = i == active_idx
             label = "✓" if is_done else str(s["id"])
             
-            st.markdown('<div class="stepper-item">', unsafe_allow_html=True)
+            # 동그란 버튼 생성
             if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary"):
                 st.session_state.active_step = i
                 st.session_state.mode = "steps"
                 st.rerun()
                 
+            # 바로 밑에 작게 각 단계명 배치
             active_cls = " active" if is_active else ""
             st.markdown(f'<div class="step-label{active_cls}">{s["short"]}</div>', unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
@@ -538,7 +580,7 @@ with toggle_col:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
+# 메인 레이아웃
 # ──────────────────────────────────────────
 if st.session_state.menu_open:
     col_menu, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
@@ -546,7 +588,7 @@ else:
     col_menu = None
     col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
 
-# ── 메뉴 패널 (단계 이동 / 계산 도구 / 법령 / KPI) ──
+# ── 메뉴 패널 ──
 if col_menu is not None:
     with col_menu:
         st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
@@ -577,7 +619,7 @@ if col_menu is not None:
             st.session_state.mode = "steps" if is_calc else "calc"
             st.rerun()
 
-        # 법령 & KPI (단계 모드에서만)
+        # 법령 & KPI
         if not is_calc:
             st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
             for law in step["laws"]:
@@ -643,10 +685,9 @@ with col_center:
                 </div>""", unsafe_allow_html=True)
 
             if st.button("🔍 단축 기간 계산", key="calc_btn1", type="primary"):
-                # 마지막생리시작일 = 출산예정일 - 279일
                 lmp = due - timedelta(days=279)
-                week12_end = lmp + timedelta(days=83)    # 84일째
-                week32_start = lmp + timedelta(days=217)  # 218일째
+                week12_end = lmp + timedelta(days=83)
+                week32_start = lmp + timedelta(days=217)
 
                 days_early = (week12_end - lmp).days + 1
                 days_mid = (week32_start - week12_end).days - 1
