@@ -897,8 +897,12 @@ with col_right:
             with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
-    if prompt := st.chat_input("질문을 입력하세요..."):
+   if prompt := st.chat_input("질문을 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
+
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
 
         try:
             if "OPENAI_API_KEY" not in st.secrets:
