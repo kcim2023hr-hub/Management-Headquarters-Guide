@@ -30,12 +30,13 @@ st.markdown("""
   padding: 0.9rem 2rem; display: flex; align-items: center;
   justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
-.top-header-title { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
-.top-header-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+.top-header-title { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; word-break: keep-all; }
+.top-header-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px; word-break: keep-all; }
 .badge-2025 {
   background: linear-gradient(135deg, #f093fb, #f5576c);
   color: white; padding: 3px 10px; border-radius: 20px;
   font-size: 0.7rem; font-weight: 700; margin-left: 10px; vertical-align: middle;
+  white-space: nowrap;
 }
 
 /* ── 스텝 프로그레스 ── */
@@ -44,6 +45,21 @@ st.markdown("""
   padding: 0.9rem 2rem; overflow-x: auto;
 }
 .stepper { display: flex; align-items: center; gap: 0; min-width: 600px; }
+
+/* ── 모바일 반응형 (640px 이하) ── */
+@media (max-width: 640px) {
+  .top-header { padding: 0.8rem 1rem; flex-wrap: wrap; }
+  .top-header-title { font-size: 1.05rem; display: block; }
+  .badge-2025 { display: inline-block; margin-left: 0; margin-top: 6px; }
+  .top-header-sub { font-size: 0.7rem; }
+  .stepper-wrap { padding: 0.7rem 0.8rem; }
+  .stepper { min-width: 460px; gap: 0; }
+  .step-circle { width: 26px; height: 26px; font-size: 0.68rem; }
+  .step-label { font-size: 0.58rem; margin-top: 3px; }
+  .step-main-title { font-size: 1.15rem !important; }
+  .step-header-card { padding: 1rem 1.1rem !important; }
+  .step-header-card::after { font-size: 3.2rem !important; }
+}
 .step-node {
   display: flex; flex-direction: column; align-items: center;
   flex: 1; position: relative; cursor: pointer;
