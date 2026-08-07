@@ -230,8 +230,12 @@ div[data-testid="stChatInput"] button {
   background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
   border-radius: 8px !important; color: white !important;
 }
-section[data-testid="stSidebar"] { display: none !important; }
-header[data-testid="stHeader"] { display: none !important; }
+section[data-testid="stSidebar"] {
+  background: #ffffff !important;
+  border-right: 1px solid #e2e8f0 !important;
+}
+section[data-testid="stSidebar"] > div { padding-top: 1rem !important; }
+header[data-testid="stHeader"] { background: transparent !important; height: 2.5rem !important; }
 div[data-testid="stToolbar"] { display: none !important; }
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
@@ -468,12 +472,9 @@ if not is_calc:
     st.markdown(stepper_html, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 3열 메인 레이아웃
+# 사이드바 (단계 이동 / 계산 도구 / 법령 / KPI)
 # ──────────────────────────────────────────
-col_left, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
-
-# ── 왼쪽 패널 ──
-with col_left:
+with st.sidebar:
     st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
     for i, s in enumerate(STEPS):
         is_active = (i == active_idx) and not is_calc
@@ -524,6 +525,11 @@ with col_left:
         <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
         <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
         """, unsafe_allow_html=True)
+
+# ──────────────────────────────────────────
+# 2열 메인 레이아웃
+# ──────────────────────────────────────────
+col_center, col_right = st.columns([3.2, 1.6], gap="small")
 
 # ── 중앙 패널 ──
 with col_center:
