@@ -905,6 +905,7 @@ with col_right:
                 st.markdown(prompt)
 
         try:
+        
             if "OPENAI_API_KEY" not in st.secrets:
                 st.error("OPENAI_API_KEY가 secrets.toml에 없습니다.")
                 st.stop()
