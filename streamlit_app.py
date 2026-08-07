@@ -894,16 +894,16 @@ with col_right:
               현재 <strong>[{step['short']}]</strong> 단계에 대한 법령 해석, 대응 방법, 엣지케이스 등 무엇이든 질문하세요. 📚
             </div>""", unsafe_allow_html=True)
         for msg in st.session_state.messages:
-            avatar = "Q" if msg["role"] == "user" else "A"
-            with st.chat_message(msg["role"], avatar=avatar):
-                st.markdown(msg["content"])
+            prefix = "**Q.** " if msg["role"] == "user" else "**A.** "
+            with st.chat_message(msg["role"]):
+                st.markdown(prefix + msg["content"])
 
     if prompt := st.chat_input("질문을 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         with chat_container:
-            with st.chat_message("user", avatar="Q"):
-                st.markdown(prompt)
+            with st.chat_message("user"):
+                st.markdown("**Q.** " + prompt)
 
         try:
             if "OPENAI_API_KEY" not in st.secrets:
@@ -930,7 +930,7 @@ with col_right:
 """
 
             with chat_container:
-                with st.chat_message("assistant", avatar="A"):
+                with st.chat_message("assistant"):
                     response_placeholder = st.empty()
                     full_response = ""
 
@@ -946,9 +946,9 @@ with col_right:
                     for chunk in stream:
                         delta = chunk.choices[0].delta.content or ""
                         full_response += delta
-                        response_placeholder.markdown(full_response + "▌")
+                        response_placeholder.markdown("**A.** " + full_response + "▌")
 
-                    response_placeholder.markdown(full_response)
+                    response_placeholder.markdown("**A.** " + full_response)
 
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 
