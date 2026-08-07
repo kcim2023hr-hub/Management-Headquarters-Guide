@@ -8,9 +8,8 @@ st.set_page_config(
     page_title="KCIM 출산·육아 응대 가이드",
     page_icon="👶",
     layout="wide",
-    initial_sidebar_state="expanded",
 )
-)
+
 
 # ──────────────────────────────────────────
 # CSS
@@ -232,23 +231,13 @@ div[data-testid="stChatInput"] button {
   background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
   border-radius: 8px !important; color: white !important;
 }
-section[data-testid="stSidebar"] {
-  background: #ffffff !important;
-  border-right: 1px solid #e2e8f0 !important;
-}
-section[data-testid="stSidebar"] > div { padding-top: 1rem !important; }
-header[data-testid="stHeader"] {
-  background: transparent !important; height: 2.5rem !important;
-  overflow: visible !important; z-index: 999999 !important;
-}
+section[data-testid="stSidebar"] { display: none !important; }
+header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
-button[data-testid="stSidebarCollapsedControl"],
-div[data-testid="stSidebarCollapsedControl"],
-button[data-testid="stBaseButton-headerNoPadding"],
-[data-testid="collapsedControl"] {
-  display: flex !important; visibility: visible !important;
-  opacity: 1 !important; z-index: 1000000 !important;
-  position: relative !important;
+.menu-toggle-btn button {
+  background: #1a4a6e !important; color: white !important;
+  border-radius: 8px !important; padding: 0.3rem 0.7rem !important;
+  font-size: 1rem !important; min-height: 2.2rem !important;
 }
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
@@ -485,64 +474,85 @@ if not is_calc:
     st.markdown(stepper_html, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 사이드바 (단계 이동 / 계산 도구 / 법령 / KPI)
+# 메뉴 토글 상태 초기화
 # ──────────────────────────────────────────
-with st.sidebar:
-    st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
-    for i, s in enumerate(STEPS):
-        is_active = (i == active_idx) and not is_calc
-        is_done = i in st.session_state.completed_steps
-        check_count = sum(st.session_state.checks[i])
-        total_count = len(s["check"])
-        progress_text = f" ({check_count}/{total_count})" if check_count > 0 else ""
+if "menu_open" not in st.session_state:
+    st.session_state.menu_open = True
+
+# ──────────────────────────────────────────
+# 토글 버튼
+# ──────────────────────────────────────────
+toggle_col, _spacer = st.columns([0.12, 0.88])
+with toggle_col:
+    st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
+    btn_label = "✕ 메뉴 닫기" if st.session_state.menu_open else "☰ 메뉴 열기"
+    if st.button(btn_label, key="menu_toggle_btn"):
+        st.session_state.menu_open = not st.session_state.menu_open
+        st.rerun()
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# ──────────────────────────────────────────
+# 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
+# ──────────────────────────────────────────
+if st.session_state.menu_open:
+    col_menu, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
+else:
+    col_menu = None
+    col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
+
+# ── 메뉴 패널 (단계 이동 / 계산 도구 / 법령 / KPI) ──
+if col_menu is not None:
+    with col_menu:
+        st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
+        for i, s in enumerate(STEPS):
+            is_active = (i == active_idx) and not is_calc
+            is_done = i in st.session_state.completed_steps
+            check_count = sum(st.session_state.checks[i])
+            total_count = len(s["check"])
+            progress_text = f" ({check_count}/{total_count})" if check_count > 0 else ""
+            if st.button(
+                f"{'✓ ' if is_done else ''}{s['id']}. {s['short']}{progress_text}",
+                key=f"nav_{i}",
+                use_container_width=True,
+                type="primary" if is_active else "secondary",
+            ):
+                st.session_state.active_step = i
+                st.session_state.mode = "steps"
+                st.rerun()
+
+        # 계산기 버튼
+        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🧮 계산 도구</div>', unsafe_allow_html=True)
         if st.button(
-            f"{'✓ ' if is_done else ''}{s['id']}. {s['short']}{progress_text}",
-            key=f"nav_{i}",
+            "📊 계산기" + (" ✓" if is_calc else ""),
+            key="btn_calc",
             use_container_width=True,
-            type="primary" if is_active else "secondary",
+            type="primary" if is_calc else "secondary",
         ):
-            st.session_state.active_step = i
-            st.session_state.mode = "steps"
+            st.session_state.mode = "steps" if is_calc else "calc"
             st.rerun()
 
-    # 계산기 버튼
-    st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🧮 계산 도구</div>', unsafe_allow_html=True)
-    if st.button(
-        "📊 계산기" + (" ✓" if is_calc else ""),
-        key="btn_calc",
-        use_container_width=True,
-        type="primary" if is_calc else "secondary",
-    ):
-        st.session_state.mode = "steps" if is_calc else "calc"
-        st.rerun()
+        # 법령 & KPI (단계 모드에서만)
+        if not is_calc:
+            st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
+            for law in step["laws"]:
+                st.markdown(f"""
+                <div class="law-item">
+                  <div class="law-item-title">{law['name']}</div>
+                  <div class="law-item-desc">{law['desc']}</div>
+                </div>""", unsafe_allow_html=True)
 
-    # 법령 & KPI (단계 모드에서만)
-    if not is_calc:
-        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
-        for law in step["laws"]:
-            st.markdown(f"""
-            <div class="law-item">
-              <div class="law-item-title">{law['name']}</div>
-              <div class="law-item-desc">{law['desc']}</div>
-            </div>""", unsafe_allow_html=True)
-
-        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🔢 핵심 수치</div>', unsafe_allow_html=True)
-        for kpi in step["kpi"]:
-            st.markdown(f"""
-            <div class="kpi-card">
-              <div class="kpi-value">{kpi['val']}</div>
-              <div class="kpi-label">{kpi['label']}</div>
-            </div>""", unsafe_allow_html=True)
-        st.markdown("""
-        <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
-        <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
-        <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
-        """, unsafe_allow_html=True)
-
-# ──────────────────────────────────────────
-# 2열 메인 레이아웃
-# ──────────────────────────────────────────
-col_center, col_right = st.columns([3.2, 1.6], gap="small")
+            st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🔢 핵심 수치</div>', unsafe_allow_html=True)
+            for kpi in step["kpi"]:
+                st.markdown(f"""
+                <div class="kpi-card">
+                  <div class="kpi-value">{kpi['val']}</div>
+                  <div class="kpi-label">{kpi['label']}</div>
+                </div>""", unsafe_allow_html=True)
+            st.markdown("""
+            <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
+            <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
+            <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
+            """, unsafe_allow_html=True)
 
 # ── 중앙 패널 ──
 with col_center:
