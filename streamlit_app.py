@@ -132,25 +132,45 @@ st.markdown("""
   .step-header-card::after { font-size: 2.8rem !important; }
 }
 
-/* ── 왼쪽 패널 ── */
+/* ── 왼쪽 참고정보 패널 ── */
+.side-panel {
+  background: rgba(255,255,255,0.72);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.55rem;
+  margin: 0.25rem 0 0.75rem;
+}
 .nav-section-title {
-  font-size: 0.65rem; font-weight: 700; color: #94a3b8;
-  letter-spacing: 0.8px; text-transform: uppercase;
-  padding: 0.3rem 0.5rem 0.2rem; margin-top: 0.5rem;
+  font-size: 0.68rem; font-weight: 800; color: #64748b;
+  letter-spacing: -0.1px;
+  padding: 0.45rem 0.35rem 0.3rem;
+  margin-top: 0.15rem;
+}
+.side-action button {
+  border-radius: 8px !important;
+  min-height: 38px !important;
+  font-size: 0.78rem !important;
+  font-weight: 750 !important;
 }
 .law-item {
-  padding: 0.4rem 0.6rem; border-radius: 6px; background: #f8fafc;
-  border-left: 3px solid #e2e8f0; margin-bottom: 4px;
+  padding: 0.5rem 0.6rem; border-radius: 8px; background: #f8fafc;
+  border: 1px solid #e2e8f0; margin-bottom: 5px;
 }
-.law-item-title { font-size: 0.7rem; font-weight: 700; color: #374151; }
-.law-item-desc { font-size: 0.65rem; color: #6b7280; margin-top: 1px; line-height: 1.4; }
+.law-item-title { font-size: 0.7rem; font-weight: 800; color: #374151; }
+.law-item-desc { font-size: 0.64rem; color: #64748b; margin-top: 2px; line-height: 1.4; }
+.kpi-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 5px;
+}
 .kpi-card {
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border: 1px solid #bae6fd; border-radius: 8px;
-  padding: 0.5rem 0.7rem; margin-bottom: 4px; text-align: center;
+  padding: 0.48rem 0.35rem; margin: 0; text-align: center;
 }
-.kpi-value { font-size: 1.1rem; font-weight: 900; color: #0369a1; }
-.kpi-label { font-size: 0.62rem; font-weight: 600; color: #0369a1; opacity: 0.8; }
+.kpi-value { font-size: 1rem; font-weight: 900; color: #0369a1; }
+.kpi-label { font-size: 0.6rem; font-weight: 600; color: #0369a1; opacity: 0.8; line-height: 1.2; }
+@media (max-width: 640px) {
+  .side-panel { margin-top: 0; }
+}
 
 /* ── 스텝 헤더 카드 ── */
 .step-header-card {
@@ -574,60 +594,46 @@ if not is_calc:
         st.rerun()
 
 # ──────────────────────────────────────────
-# 토글 버튼
+# 참고정보 패널 토글
 # ──────────────────────────────────────────
-toggle_col, _spacer = st.columns([0.12, 0.88])
+toggle_col, _spacer = st.columns([0.18, 0.82])
 with toggle_col:
     st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
-    btn_label = "✕ 메뉴 닫기" if st.session_state.menu_open else "☰ 메뉴 열기"
+    btn_label = "✕ 참고정보 닫기" if st.session_state.menu_open else "☰ 참고정보"
     if st.button(btn_label, key="menu_toggle_btn"):
         st.session_state.menu_open = not st.session_state.menu_open
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
+# 메인 레이아웃
+# 상단 STEP이 단계 이동을 전담하므로 왼쪽에는 참고정보만 배치
 # ──────────────────────────────────────────
 if st.session_state.menu_open:
-    col_menu, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
+    col_menu, col_center, col_right = st.columns([1.15, 3.55, 1.55], gap="small")
 else:
     col_menu = None
-    col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
+    col_spacer, col_center, col_right = st.columns([0.04, 4.55, 1.55], gap="small")
 
-# ── 메뉴 패널 (단계 이동 / 계산 도구 / 법령 / KPI) ──
+# ── 참고정보 패널 (계산기 / 관련 법령 / 핵심 수치) ──
 if col_menu is not None:
     with col_menu:
-        st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
-        for i, s in enumerate(STEPS):
-            is_active = (i == active_idx) and not is_calc
-            is_done = i in st.session_state.completed_steps
-            check_count = sum(st.session_state.checks[i])
-            total_count = len(s["check"])
-            progress_text = f" ({check_count}/{total_count})" if check_count > 0 else ""
-            if st.button(
-                f"{'✓ ' if is_done else ''}{s['id']}. {s['short']}{progress_text}",
-                key=f"nav_{i}",
-                use_container_width=True,
-                type="primary" if is_active else "secondary",
-            ):
-                st.session_state.active_step = i
-                st.session_state.mode = "steps"
-                st.rerun()
+        st.markdown('<div class="side-panel">', unsafe_allow_html=True)
 
-        # 계산기 버튼
-        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🧮 계산 도구</div>', unsafe_allow_html=True)
+        st.markdown('<div class="nav-section-title">🧰 업무 도구</div>', unsafe_allow_html=True)
+        st.markdown('<div class="side-action">', unsafe_allow_html=True)
         if st.button(
-            "📊 계산기" + (" ✓" if is_calc else ""),
+            "📊 기간 계산기" + (" ✓" if is_calc else ""),
             key="btn_calc",
             use_container_width=True,
             type="primary" if is_calc else "secondary",
         ):
             st.session_state.mode = "steps" if is_calc else "calc"
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
-        # 법령 & KPI (단계 모드에서만)
         if not is_calc:
-            st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
+            st.markdown('<div class="nav-section-title">⚖️ 현재 STEP 관련 법령</div>', unsafe_allow_html=True)
             for law in step["laws"]:
                 st.markdown(f"""
                 <div class="law-item">
@@ -635,19 +641,30 @@ if col_menu is not None:
                   <div class="law-item-desc">{law['desc']}</div>
                 </div>""", unsafe_allow_html=True)
 
-            st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🔢 핵심 수치</div>', unsafe_allow_html=True)
-            for kpi in step["kpi"]:
+            st.markdown('<div class="nav-section-title">🔢 핵심 수치</div>', unsafe_allow_html=True)
+            kpi_items = list(step["kpi"]) + [
+                {"val": "90일", "label": "출산휴가"},
+                {"val": "20일", "label": "배우자휴가"},
+                {"val": "2시간", "label": "임신기단축/일"},
+            ]
+            # 중복 수치는 제거하면서 현재 STEP의 KPI를 우선 노출
+            seen = set()
+            unique_kpis = []
+            for k in kpi_items:
+                key = (k["val"], k["label"])
+                if key not in seen:
+                    seen.add(key)
+                    unique_kpis.append(k)
+            st.markdown('<div class="kpi-grid">', unsafe_allow_html=True)
+            for kpi in unique_kpis[:6]:
                 st.markdown(f"""
                 <div class="kpi-card">
                   <div class="kpi-value">{kpi['val']}</div>
                   <div class="kpi-label">{kpi['label']}</div>
                 </div>""", unsafe_allow_html=True)
-            st.markdown("""
-            <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
-            <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
-            <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
-            """, unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
 
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # ── 중앙 패널 ──
 with col_center:
