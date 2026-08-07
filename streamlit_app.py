@@ -894,14 +894,15 @@ with col_right:
               현재 <strong>[{step['short']}]</strong> 단계에 대한 법령 해석, 대응 방법, 엣지케이스 등 무엇이든 질문하세요. 📚
             </div>""", unsafe_allow_html=True)
         for msg in st.session_state.messages:
-            with st.chat_message(msg["role"]):
+            avatar = "Q" if msg["role"] == "user" else "A"
+            with st.chat_message(msg["role"], avatar=avatar):
                 st.markdown(msg["content"])
 
     if prompt := st.chat_input("질문을 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         with chat_container:
-            with st.chat_message("user"):
+            with st.chat_message("user", avatar="Q"):
                 st.markdown(prompt)
 
         try:
@@ -929,7 +930,7 @@ with col_right:
 """
 
             with chat_container:
-                with st.chat_message("assistant"):
+                with st.chat_message("assistant", avatar="A"):
                     response_placeholder = st.empty()
                     full_response = ""
 
