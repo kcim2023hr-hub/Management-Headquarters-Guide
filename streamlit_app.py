@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from openai import OpenAI
 import math
 from datetime import date, timedelta
@@ -42,9 +43,17 @@ st.markdown("""
 /* ── 스텝 프로그레스 ── */
 .stepper-wrap {
   background: #fff; border-bottom: 1px solid #e2e8f0;
-  padding: 0.9rem 2rem; overflow-x: auto;
+  padding: 0.9rem 0.5rem; overflow-x: auto;
 }
-.stepper { display: flex; align-items: center; gap: 0; min-width: 600px; }
+.stepper-btn { text-align: center; }
+.stepper-btn .stButton { display: flex; justify-content: center; }
+.stepper-btn button {
+  border-radius: 50% !important; width: 32px !important; height: 32px !important;
+  min-width: 32px !important; padding: 0 !important; font-weight: 800 !important;
+  font-size: 0.8rem !important; margin: 0 auto !important;
+}
+.step-label { font-size: 0.62rem; font-weight: 600; color: #94a3b8; margin-top: 3px; text-align: center; white-space: nowrap; }
+.step-label.active { color: #3b82f6; font-weight: 800; }
 
 /* ── 모바일 반응형 (640px 이하) ── */
 @media (max-width: 640px) {
@@ -52,39 +61,13 @@ st.markdown("""
   .top-header-title { font-size: 1.05rem; display: block; }
   .badge-2025 { display: inline-block; margin-left: 0; margin-top: 6px; }
   .top-header-sub { font-size: 0.7rem; }
-  .stepper-wrap { padding: 0.7rem 0.8rem; }
-  .stepper { min-width: 460px; gap: 0; }
-  .step-circle { width: 26px; height: 26px; font-size: 0.68rem; }
-  .step-label { font-size: 0.58rem; margin-top: 3px; }
+  .stepper-wrap { padding: 0.7rem 0.3rem; }
+  .stepper-btn button { width: 26px !important; height: 26px !important; min-width: 26px !important; font-size: 0.68rem !important; }
+  .step-label { font-size: 0.5rem; margin-top: 2px; }
   .step-main-title { font-size: 1.15rem !important; }
   .step-header-card { padding: 1rem 1.1rem !important; }
   .step-header-card::after { font-size: 3.2rem !important; }
 }
-.step-node {
-  display: flex; flex-direction: column; align-items: center;
-  flex: 1; position: relative; cursor: pointer;
-}
-.step-node::before {
-  content: ''; position: absolute; top: 16px; right: 50%;
-  width: 100%; height: 2px; background: #e2e8f0; z-index: 0;
-}
-.step-node:first-child::before { display: none; }
-.step-node.done::before { background: #22c55e; }
-.step-node.active::before { background: #3b82f6; }
-.step-circle {
-  width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.8rem; border: 2px solid #e2e8f0;
-  background: #f8fafc; color: #94a3b8; position: relative; z-index: 1; transition: all 0.2s;
-}
-.step-node.done .step-circle { background: #22c55e; border-color: #22c55e; color: white; }
-.step-node.active .step-circle {
-  background: #3b82f6; border-color: #3b82f6; color: white;
-  box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
-}
-.step-label { font-size: 0.68rem; font-weight: 600; color: #94a3b8; margin-top: 5px; text-align: center; white-space: nowrap; }
-.step-node.active .step-label { color: #3b82f6; font-weight: 800; }
-.step-node.done .step-label { color: #22c55e; }
 
 /* ── 왼쪽 패널 ── */
 .nav-section-title {
@@ -434,6 +417,35 @@ if "checks" not in st.session_state:
 if "completed_steps" not in st.session_state:
     st.session_state.completed_steps = set()
 
+# ──────────────────────────────────────────
+# 메뉴 열림/닫힘 기본값: PC는 열림, 모바일은 닫힘
+# (서버 쪽에서 화면 폭을 알 수 없어 JS로 감지 후 1회 리다이렉트)
+# ──────────────────────────────────────────
+if "menu_open" not in st.session_state:
+    menu_param = st.query_params.get("menu_state")
+    if menu_param == "closed":
+        st.session_state.menu_open = False
+    elif menu_param == "open":
+        st.session_state.menu_open = True
+    else:
+        st.session_state.menu_open = True
+        components.html("""
+        <script>
+        (function() {
+            try {
+                const topWin = window.top;
+                const params = new URLSearchParams(topWin.location.search);
+                if (!params.has('menu_state')) {
+                    const isMobile = topWin.innerWidth < 640;
+                    params.set('menu_state', isMobile ? 'closed' : 'open');
+                    topWin.location.search = params.toString();
+                }
+            } catch (e) {}
+        })();
+        </script>
+        """, height=0)
+
+
 active_idx = st.session_state.active_step
 step = STEPS[active_idx]
 is_calc = st.session_state.mode == "calc"
@@ -457,26 +469,25 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 스텝 프로그레스 (계산기 모드에서는 숨김)
+# 스텝 프로그레스 (계산기 모드에서는 숨김, 클릭 시 해당 STEP으로 이동)
 # ──────────────────────────────────────────
 if not is_calc:
-    stepper_html = '<div class="stepper-wrap"><div class="stepper">'
+    st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
+    stepper_cols = st.columns(len(STEPS))
     for i, s in enumerate(STEPS):
-        cls = "active" if i == active_idx else ("done" if i in st.session_state.completed_steps else "")
-        icon = "✓" if i in st.session_state.completed_steps else str(s["id"])
-        stepper_html += f"""
-        <div class="step-node {cls}">
-          <div class="step-circle">{icon}</div>
-          <div class="step-label">{s['short']}</div>
-        </div>"""
-    stepper_html += '</div></div>'
-    st.markdown(stepper_html, unsafe_allow_html=True)
-
-# ──────────────────────────────────────────
-# 메뉴 토글 상태 초기화
-# ──────────────────────────────────────────
-if "menu_open" not in st.session_state:
-    st.session_state.menu_open = True
+        with stepper_cols[i]:
+            is_done = i in st.session_state.completed_steps
+            is_active = i == active_idx
+            label = "✓" if is_done else str(s["id"])
+            st.markdown('<div class="stepper-btn">', unsafe_allow_html=True)
+            if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary"):
+                st.session_state.active_step = i
+                st.session_state.mode = "steps"
+                st.rerun()
+            active_cls = " active" if is_active else ""
+            st.markdown(f'<div class="step-label{active_cls}">{s["short"]}</div>', unsafe_allow_html=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
 # 토글 버튼
@@ -552,6 +563,7 @@ if col_menu is not None:
             <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
             <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
             """, unsafe_allow_html=True)
+
 
 # ── 중앙 패널 ──
 with col_center:
