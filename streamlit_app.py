@@ -234,10 +234,45 @@ div[data-testid="stChatInput"] button {
 section[data-testid="stSidebar"] { display: none !important; }
 header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
-.menu-toggle-btn button {
-  background: #1a4a6e !important; color: white !important;
-  border-radius: 8px !important; padding: 0.3rem 0.7rem !important;
-  font-size: 1rem !important; min-height: 2.2rem !important;
+/* ── 메뉴 토글 탭 (화면 가장자리 고정, 레이아웃 흐름에서 제외되어 여백을 잡아먹지 않음) ── */
+.st-key-menu_toggle_btn {
+  position: fixed !important;
+  top: 50% !important;
+  left: 0 !important;
+  transform: translateY(-50%) !important;
+  z-index: 999 !important;
+  width: auto !important;
+}
+.st-key-menu_toggle_btn button {
+  background: linear-gradient(135deg, #1a4a6e, #1e6091) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 0 10px 10px 0 !important;
+  box-shadow: 2px 0 10px rgba(0,0,0,0.18) !important;
+  width: 22px !important; height: 56px !important;
+  min-height: 56px !important; min-width: 22px !important;
+  padding: 0 !important; margin: 0 !important;
+  font-size: 0.95rem !important; font-weight: 900 !important;
+  line-height: 1 !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  transition: width 0.15s ease, background 0.15s ease !important;
+}
+.st-key-menu_toggle_btn button:hover {
+  width: 28px !important;
+  background: linear-gradient(135deg, #1e6091, #2a7ab0) !important;
+}
+.st-key-menu_toggle_btn button:active {
+  background: linear-gradient(135deg, #163a58, #1a4a6e) !important;
+}
+/* 본문이 탭에 가리지 않도록 좌측에 여유 공간 확보 */
+.block-container { padding-left: 22px !important; }
+@media (max-width: 640px) {
+  .st-key-menu_toggle_btn button {
+    width: 26px !important; height: 64px !important; min-width: 26px !important;
+    font-size: 1.05rem !important;
+  }
+  .st-key-menu_toggle_btn button:hover { width: 26px !important; }
+  .block-container { padding-left: 26px !important; }
 }
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
@@ -480,16 +515,13 @@ if "menu_open" not in st.session_state:
     st.session_state.menu_open = True
 
 # ──────────────────────────────────────────
-# 토글 버튼
+# 토글 버튼 (화면 가장자리에 고정된 얇은 탭 — 별도 행을 차지하지 않아 여백 없음)
 # ──────────────────────────────────────────
-toggle_col, _spacer = st.columns([0.12, 0.88])
-with toggle_col:
-    st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
-    btn_label = "✕ 메뉴 닫기" if st.session_state.menu_open else "☰ 메뉴 열기"
-    if st.button(btn_label, key="menu_toggle_btn"):
-        st.session_state.menu_open = not st.session_state.menu_open
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+btn_label = "«" if st.session_state.menu_open else "»"
+btn_help = "메뉴 닫기" if st.session_state.menu_open else "메뉴 열기"
+if st.button(btn_label, key="menu_toggle_btn", help=btn_help):
+    st.session_state.menu_open = not st.session_state.menu_open
+    st.rerun()
 
 # ──────────────────────────────────────────
 # 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
@@ -999,3 +1031,4 @@ with col_right:
 
         except Exception as e:
             st.error(f"챗봇 오류: {str(e)}")
+
