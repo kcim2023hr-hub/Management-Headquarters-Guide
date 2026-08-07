@@ -223,7 +223,7 @@ div[data-testid="stToolbar"] { display: none !important; }
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 데이터 정의 (2026-08 기준, 노무법인 인화 매뉴얼 2026.03 1판 + 언론보도 참고)
+# 데이터 정의 (2026-08 기준, 노무법인 인화 매뉴얼 2026.03 1판 참고)
 # ──────────────────────────────────────────
 STEPS = [
     {
@@ -899,6 +899,10 @@ with col_right:
 
     if prompt := st.chat_input("질문을 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
+
+        with chat_container:
+            with st.chat_message("user"):
+                st.markdown(prompt)
 
         try:
             if "OPENAI_API_KEY" not in st.secrets:
