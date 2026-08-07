@@ -40,137 +40,110 @@ st.markdown("""
   white-space: nowrap;
 }
 
-/* ── STEP 네비게이션 ── */
+/* ── 컴팩트 STEP 네비게이션 ── */
 .stepper-wrap {
   background: #fff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.3rem 0.6rem;
+  padding: 0.45rem 0.8rem 0.5rem;
   overflow: hidden;
 }
-.stepper-btn { text-align: center; }
+.stepper-btn { text-align: center; position: relative; }
 .stepper-btn .stButton { display: flex; justify-content: center; margin: 0 !important; }
 .stepper-btn button {
-  width: 100% !important;
-  min-width: 0 !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  padding: 0 5px !important;
-  border-radius: 8px !important;
-  border: 1px solid #e2e8f0 !important;
-  background: #f8fafc !important;
-  color: #64748b !important;
-  font-size: 0.72rem !important;
-  font-weight: 700 !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
+  border-radius: 999px !important;
+  width: 30px !important; height: 30px !important;
+  min-width: 30px !important;
+  padding: 0 !important;
+  font-weight: 800 !important;
+  font-size: 0.76rem !important;
+  margin: 0 auto !important;
   box-shadow: none !important;
 }
-.stepper-btn button[kind="primary"] {
-  background: #2563eb !important;
-  border-color: #2563eb !important;
-  color: #fff !important;
-  box-shadow: 0 2px 6px rgba(37,99,235,.18) !important;
-}
 .step-label {
-  display: none !important;
-}
-
-/* 모바일 STEP 선택창: 데스크톱에서는 숨김 */
-.mobile-step-select-wrap {
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0.35rem 0.65rem 0.4rem;
-}
-.mobile-step-select-title {
-  font-size: 0.62rem;
-  font-weight: 700;
+  font-size: 0.60rem;
+  font-weight: 600;
   color: #94a3b8;
-  margin: 0 0 2px 2px;
+  margin-top: 2px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-@media (min-width: 641px) {
-  div[data-testid="stSelectbox"] { display: none !important; }
-}
+.step-label.active { color: #2563eb; font-weight: 800; }
 
-/* 모바일 반응형 */
+.mobile-current-step { display: none; }
 @media (max-width: 640px) {
-  /* PC용 9개 STEP 버튼은 모바일에서 완전히 숨김 */
-  div[data-testid="stMarkdownContainer"]:has(.stepper-mobile-anchor) + div[data-testid="stHorizontalBlock"] {
-    display: none !important;
-  }
-
-  .top-header {
-    padding: 0.55rem 0.8rem;
-    min-height: auto;
-  }
-  .top-header-title { font-size: 0.92rem; line-height: 1.2; }
-  .badge-2025 { font-size: 0.58rem; padding: 2px 7px; margin-left: 4px; }
-  .top-header-sub { font-size: 0.58rem; margin-top: 1px; }
-
-  .mobile-step-select-wrap {
-    padding: 0.3rem 0.6rem 0.35rem;
-  }
-  .mobile-step-select-title {
-    font-size: 0.58rem;
-  }
-  div[data-testid="stSelectbox"] {
-    margin: 0 !important;
-  }
-  div[data-testid="stSelectbox"] > div {
-    min-height: 38px !important;
-  }
-  div[data-testid="stSelectbox"] [data-baseweb="select"] {
-    min-height: 38px !important;
-    border-radius: 8px !important;
-  }
-  div[data-testid="stSelectbox"] [data-baseweb="select"] > div {
-    font-size: 0.78rem !important;
-    font-weight: 700 !important;
-  }
-
-  .step-main-title { font-size: 1.05rem !important; }
-  .step-header-card { padding: 0.8rem 0.9rem !important; }
-  .step-header-card::after { font-size: 2.8rem !important; }
+  .mobile-current-step { display: block; padding: 0.25rem 0.85rem 0.45rem; background: #fff; color: #2563eb; font-size: 0.76rem; font-weight: 800; border-bottom: 1px solid #eef2f7; }
 }
 
-/* ── 왼쪽 참고정보 패널 ── */
-.side-panel {
-  background: rgba(255,255,255,0.72);
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0.55rem;
-  margin: 0.25rem 0 0.75rem;
-}
+/* 사이드바: 단계 이동 제거 후 도구/참고정보 중심 */
 .nav-section-title {
   font-size: 0.68rem; font-weight: 800; color: #64748b;
-  letter-spacing: -0.1px;
-  padding: 0.45rem 0.35rem 0.3rem;
-  margin-top: 0.15rem;
-}
-.side-action button {
-  border-radius: 8px !important;
-  min-height: 38px !important;
-  font-size: 0.78rem !important;
-  font-weight: 750 !important;
+  letter-spacing: 0.2px; text-transform: none;
+  padding: 0.35rem 0.4rem 0.3rem; margin-top: 0.7rem;
+  border-bottom: 1px solid #eef2f7;
 }
 .law-item {
-  padding: 0.5rem 0.6rem; border-radius: 8px; background: #f8fafc;
-  border: 1px solid #e2e8f0; margin-bottom: 5px;
+  padding: 0.48rem 0.6rem; border-radius: 8px; background: #f8fafc;
+  border: 1px solid #edf2f7; border-left: 3px solid #dbeafe; margin-bottom: 5px;
 }
-.law-item-title { font-size: 0.7rem; font-weight: 800; color: #374151; }
-.law-item-desc { font-size: 0.64rem; color: #64748b; margin-top: 2px; line-height: 1.4; }
-.kpi-grid {
-  display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 5px;
+.kpi-card { padding: 0.45rem 0.5rem; margin-bottom: 4px; border-radius: 8px; }
+.kpi-value { font-size: 1.0rem; }
+.kpi-label { font-size: 0.60rem; }
+
+/* 메인 콘텐츠 폭/여백 */
+@media (min-width: 641px) {
+  .top-header { padding: 0.75rem 1.6rem; }
+  .stepper-wrap .stButton button:hover { transform: translateY(-1px); }
 }
+
+/* ── 모바일 반응형 (640px 이하) ── */
+@media (max-width: 640px) {
+  .top-header { padding: 0.65rem 0.85rem; flex-wrap: nowrap; min-height: 54px; }
+  .top-header-title { font-size: 0.98rem; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .badge-2025 { display: none; }
+  .top-header-sub { display: none; }
+  .top-header > div:last-child { display: none; }
+
+  /* 9개 STEP을 한눈에: 숫자만 1줄 + 현재 단계명은 아래에서만 표시 */
+  .stepper-wrap { padding: 0.35rem 0.15rem 0.25rem; }
+  .stepper-btn button {
+    width: 25px !important; height: 25px !important;
+    min-width: 25px !important; font-size: 0.64rem !important;
+  }
+  .step-label { display: none; }
+  .stepper-btn .stButton { margin: 0 !important; }
+
+  /* 상단/본문 사이의 불필요한 토글 공간 최소화 */
+  .menu-toggle-btn { margin: 0 !important; }
+  .menu-toggle-btn button { font-size: 0.68rem !important; padding: 0.15rem 0.5rem !important; min-height: 28px !important; }
+
+  .step-main-title { font-size: 1.12rem !important; }
+  .step-header-card { padding: 0.85rem 0.95rem !important; margin-bottom: 0.65rem !important; border-radius: 11px !important; }
+  .step-header-card::after { font-size: 3rem !important; }
+  .script-card { padding: 0.8rem 0.9rem !important; margin-bottom: 0.55rem !important; border-radius: 9px !important; }
+  .card-title { margin-bottom: 0.45rem !important; }
+}
+
+/* ── 왼쪽 패널 ── */
+.nav-section-title {
+  font-size: 0.65rem; font-weight: 700; color: #94a3b8;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 0.3rem 0.5rem 0.2rem; margin-top: 0.5rem;
+}
+.law-item {
+  padding: 0.4rem 0.6rem; border-radius: 6px; background: #f8fafc;
+  border-left: 3px solid #e2e8f0; margin-bottom: 4px;
+}
+.law-item-title { font-size: 0.7rem; font-weight: 700; color: #374151; }
+.law-item-desc { font-size: 0.65rem; color: #6b7280; margin-top: 1px; line-height: 1.4; }
 .kpi-card {
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border: 1px solid #bae6fd; border-radius: 8px;
-  padding: 0.48rem 0.35rem; margin: 0; text-align: center;
+  padding: 0.5rem 0.7rem; margin-bottom: 4px; text-align: center;
 }
-.kpi-value { font-size: 1rem; font-weight: 900; color: #0369a1; }
-.kpi-label { font-size: 0.6rem; font-weight: 600; color: #0369a1; opacity: 0.8; line-height: 1.2; }
-@media (max-width: 640px) {
-  .side-panel { margin-top: 0; }
-}
+.kpi-value { font-size: 1.1rem; font-weight: 900; color: #0369a1; }
+.kpi-label { font-size: 0.62rem; font-weight: 600; color: #0369a1; opacity: 0.8; }
 
 /* ── 스텝 헤더 카드 ── */
 .step-header-card {
@@ -555,73 +528,54 @@ st.markdown(f"""
 # 스텝 프로그레스 (계산기 모드에서는 숨김, 클릭 시 해당 STEP으로 이동)
 # ──────────────────────────────────────────
 if not is_calc:
-    # 모바일/PC 공통: STEP 네비게이션 영역의 기준점
-    st.markdown('<div class="stepper-mobile-anchor"></div>', unsafe_allow_html=True)
-
-    # PC: 9개 단계를 한 줄의 컴팩트 버튼으로 표시
     st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
     stepper_cols = st.columns(len(STEPS), gap="small")
     for i, s in enumerate(STEPS):
         with stepper_cols[i]:
             is_done = i in st.session_state.completed_steps
             is_active = i == active_idx
-            label = f"{'✓ ' if is_done else ''}{s['id']} · {s['short']}"
+            label = "✓" if is_done else str(s["id"])
             st.markdown('<div class="stepper-btn">', unsafe_allow_html=True)
-            if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary", use_container_width=True):
+            if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary"):
                 st.session_state.active_step = i
                 st.session_state.mode = "steps"
                 st.rerun()
+            active_cls = " active" if is_active else ""
+            st.markdown(f'<div class="step-label{active_cls}">{s["short"]}</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # 모바일: 9개 버튼 대신 현재 STEP만 한 줄 선택창으로 표시
-    mobile_step_options = [f"{s['id']} · {s['short']}" for s in STEPS]
-    desired_mobile_step = mobile_step_options[active_idx]
-    if st.session_state.get("mobile_step_select") != desired_mobile_step:
-        st.session_state.mobile_step_select = desired_mobile_step
-
-    st.markdown('<div class="mobile-step-select-wrap"><div class="mobile-step-select-title">현재 단계</div></div>', unsafe_allow_html=True)
-    selected_mobile_step = st.selectbox(
-        "현재 단계",
-        options=mobile_step_options,
-        key="mobile_step_select",
-        label_visibility="collapsed",
+    # 모바일에서는 9개 단계명을 반복 노출하지 않고 현재 단계만 한 줄로 보여줌
+    st.markdown(
+        f'<div class="mobile-current-step">STEP {step["id"]} · {step["short"]}</div>',
+        unsafe_allow_html=True
     )
-    selected_idx = mobile_step_options.index(selected_mobile_step)
-    if selected_idx != active_idx:
-        st.session_state.active_step = selected_idx
-        st.session_state.mode = "steps"
-        st.rerun()
 
 # ──────────────────────────────────────────
-# 참고정보 패널 토글
+# 토글 버튼
 # ──────────────────────────────────────────
-toggle_col, _spacer = st.columns([0.18, 0.82])
+toggle_col, _spacer = st.columns([0.12, 0.88])
 with toggle_col:
     st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
-    btn_label = "✕ 참고정보 닫기" if st.session_state.menu_open else "☰ 참고정보"
+    btn_label = "✕ 메뉴 닫기" if st.session_state.menu_open else "☰ 메뉴 열기"
     if st.button(btn_label, key="menu_toggle_btn"):
         st.session_state.menu_open = not st.session_state.menu_open
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 메인 레이아웃
-# 상단 STEP이 단계 이동을 전담하므로 왼쪽에는 참고정보만 배치
+# 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
 # ──────────────────────────────────────────
 if st.session_state.menu_open:
-    col_menu, col_center, col_right = st.columns([1.15, 3.55, 1.55], gap="small")
+    col_menu, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
 else:
     col_menu = None
-    col_spacer, col_center, col_right = st.columns([0.04, 4.55, 1.55], gap="small")
+    col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
 
-# ── 참고정보 패널 (계산기 / 관련 법령 / 핵심 수치) ──
+# ── 참고 도구 패널 (단계 이동은 상단 STEP 네비게이션으로 통일) ──
 if col_menu is not None:
     with col_menu:
-        st.markdown('<div class="side-panel">', unsafe_allow_html=True)
-
-        st.markdown('<div class="nav-section-title">🧰 업무 도구</div>', unsafe_allow_html=True)
-        st.markdown('<div class="side-action">', unsafe_allow_html=True)
+        # 계산기 버튼
+        st.markdown('<div class="nav-section-title">🧮 계산 도구</div>', unsafe_allow_html=True)
         if st.button(
             "📊 기간 계산기" + (" ✓" if is_calc else ""),
             key="btn_calc",
@@ -630,10 +584,10 @@ if col_menu is not None:
         ):
             st.session_state.mode = "steps" if is_calc else "calc"
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
+        # 관련 법령 & 핵심 수치는 기존 데이터를 그대로 사용
         if not is_calc:
-            st.markdown('<div class="nav-section-title">⚖️ 현재 STEP 관련 법령</div>', unsafe_allow_html=True)
+            st.markdown('<div class="nav-section-title">⚖️ 관련 법령</div>', unsafe_allow_html=True)
             for law in step["laws"]:
                 st.markdown(f"""
                 <div class="law-item">
@@ -642,29 +596,18 @@ if col_menu is not None:
                 </div>""", unsafe_allow_html=True)
 
             st.markdown('<div class="nav-section-title">🔢 핵심 수치</div>', unsafe_allow_html=True)
-            kpi_items = list(step["kpi"]) + [
-                {"val": "90일", "label": "출산휴가"},
-                {"val": "20일", "label": "배우자휴가"},
-                {"val": "2시간", "label": "임신기단축/일"},
-            ]
-            # 중복 수치는 제거하면서 현재 STEP의 KPI를 우선 노출
-            seen = set()
-            unique_kpis = []
-            for k in kpi_items:
-                key = (k["val"], k["label"])
-                if key not in seen:
-                    seen.add(key)
-                    unique_kpis.append(k)
-            st.markdown('<div class="kpi-grid">', unsafe_allow_html=True)
-            for kpi in unique_kpis[:6]:
+            for kpi in step["kpi"]:
                 st.markdown(f"""
                 <div class="kpi-card">
                   <div class="kpi-value">{kpi['val']}</div>
                   <div class="kpi-label">{kpi['label']}</div>
                 </div>""", unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("""
+            <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
+            <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
+            <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
+            """, unsafe_allow_html=True)
 
-        st.markdown('</div>', unsafe_allow_html=True)
 
 # ── 중앙 패널 ──
 with col_center:
