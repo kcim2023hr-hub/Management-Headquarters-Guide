@@ -40,12 +40,29 @@ st.markdown("""
   white-space: nowrap;
 }
 
-/* ── 스텝 프로그레스 ── */
-.stepper-wrap {
+/* ── 스텝 프로그레스 (클릭 가능한 버튼형 stepper) ── */
+.st-key-stepper_wrap_box {
   background: #fff; border-bottom: 1px solid #e2e8f0;
-  padding: 0.9rem 2rem; overflow-x: auto;
+  padding: 0.7rem 2rem;
 }
-.stepper { display: flex; align-items: center; gap: 0; min-width: 600px; }
+.st-key-stepper_wrap_box div[data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; row-gap: 6px !important; }
+.st-key-stepper_wrap_box button {
+  border-radius: 20px !important; font-weight: 700 !important;
+  font-size: 0.74rem !important; padding: 0.35rem 0.85rem !important;
+  min-height: 2rem !important; white-space: nowrap !important;
+  border: 1.5px solid #e2e8f0 !important; background: #f8fafc !important;
+  color: #64748b !important; transition: all 0.15s !important;
+}
+.st-key-stepper_wrap_box div[class*="st-key-step_active_"] button {
+  background: #3b82f6 !important; border-color: #3b82f6 !important;
+  color: #fff !important; box-shadow: 0 0 0 4px rgba(59,130,246,0.18) !important;
+}
+.st-key-stepper_wrap_box div[class*="st-key-step_done_"] button {
+  background: #ecfdf5 !important; border-color: #22c55e !important; color: #16a34a !important;
+}
+.st-key-stepper_wrap_box div[class*="st-key-step_todo_"] button:hover {
+  border-color: #94a3b8 !important; color: #334155 !important;
+}
 
 /* ── 모바일 반응형 (640px 이하) ── */
 @media (max-width: 640px) {
@@ -53,39 +70,12 @@ st.markdown("""
   .top-header-title { font-size: 1.05rem; display: block; }
   .badge-2025 { display: inline-block; margin-left: 0; margin-top: 6px; }
   .top-header-sub { font-size: 0.7rem; }
-  .stepper-wrap { padding: 0.7rem 0.8rem; }
-  .stepper { min-width: 460px; gap: 0; }
-  .step-circle { width: 26px; height: 26px; font-size: 0.68rem; }
-  .step-label { font-size: 0.58rem; margin-top: 3px; }
+  .st-key-stepper_wrap_box { padding: 0.6rem 0.8rem; }
+  .st-key-stepper_wrap_box button { font-size: 0.68rem !important; padding: 0.3rem 0.65rem !important; min-height: 1.8rem !important; }
   .step-main-title { font-size: 1.15rem !important; }
   .step-header-card { padding: 1rem 1.1rem !important; }
   .step-header-card::after { font-size: 3.2rem !important; }
 }
-.step-node {
-  display: flex; flex-direction: column; align-items: center;
-  flex: 1; position: relative; cursor: pointer;
-}
-.step-node::before {
-  content: ''; position: absolute; top: 16px; right: 50%;
-  width: 100%; height: 2px; background: #e2e8f0; z-index: 0;
-}
-.step-node:first-child::before { display: none; }
-.step-node.done::before { background: #22c55e; }
-.step-node.active::before { background: #3b82f6; }
-.step-circle {
-  width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.8rem; border: 2px solid #e2e8f0;
-  background: #f8fafc; color: #94a3b8; position: relative; z-index: 1; transition: all 0.2s;
-}
-.step-node.done .step-circle { background: #22c55e; border-color: #22c55e; color: white; }
-.step-node.active .step-circle {
-  background: #3b82f6; border-color: #3b82f6; color: white;
-  box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
-}
-.step-label { font-size: 0.68rem; font-weight: 600; color: #94a3b8; margin-top: 5px; text-align: center; white-space: nowrap; }
-.step-node.active .step-label { color: #3b82f6; font-weight: 800; }
-.step-node.done .step-label { color: #22c55e; }
 
 /* ── 왼쪽 패널 ── */
 .nav-section-title {
@@ -493,20 +483,24 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 스텝 프로그레스 (계산기 모드에서는 숨김)
+# 스텝 프로그레스 (클릭 가능한 버튼형, 계산기 모드에서는 숨김)
 # ──────────────────────────────────────────
 if not is_calc:
-    stepper_html = '<div class="stepper-wrap"><div class="stepper">'
-    for i, s in enumerate(STEPS):
-        cls = "active" if i == active_idx else ("done" if i in st.session_state.completed_steps else "")
-        icon = "✓" if i in st.session_state.completed_steps else str(s["id"])
-        stepper_html += f"""
-        <div class="step-node {cls}">
-          <div class="step-circle">{icon}</div>
-          <div class="step-label">{s['short']}</div>
-        </div>"""
-    stepper_html += '</div></div>'
-    st.markdown(stepper_html, unsafe_allow_html=True)
+    with st.container(key="stepper_wrap_box"):
+        with st.container(horizontal=True, gap="small"):
+            for i, s in enumerate(STEPS):
+                is_done = i in st.session_state.completed_steps
+                is_active = i == active_idx
+                icon = "✓" if is_done else str(s["id"])
+                key_state = "step_active" if is_active else ("step_done" if is_done else "step_todo")
+                if st.button(
+                    f"{icon}. {s['short']}",
+                    key=f"{key_state}_{i}",
+                    help=f"STEP {s['id']}. {s['short']}로 이동",
+                ):
+                    st.session_state.active_step = i
+                    st.session_state.mode = "steps"
+                    st.rerun()
 
 # ──────────────────────────────────────────
 # 메뉴 토글 상태 초기화
@@ -532,28 +526,11 @@ else:
     col_menu = None
     col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
 
-# ── 메뉴 패널 (단계 이동 / 계산 도구 / 법령 / KPI) ──
+# ── 메뉴 패널 (계산 도구 / 법령 / KPI — 단계 이동은 상단 스텝바로 통합) ──
 if col_menu is not None:
     with col_menu:
-        st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
-        for i, s in enumerate(STEPS):
-            is_active = (i == active_idx) and not is_calc
-            is_done = i in st.session_state.completed_steps
-            check_count = sum(st.session_state.checks[i])
-            total_count = len(s["check"])
-            progress_text = f" ({check_count}/{total_count})" if check_count > 0 else ""
-            if st.button(
-                f"{'✓ ' if is_done else ''}{s['id']}. {s['short']}{progress_text}",
-                key=f"nav_{i}",
-                use_container_width=True,
-                type="primary" if is_active else "secondary",
-            ):
-                st.session_state.active_step = i
-                st.session_state.mode = "steps"
-                st.rerun()
-
         # 계산기 버튼
-        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🧮 계산 도구</div>', unsafe_allow_html=True)
+        st.markdown('<div class="nav-section-title">🧮 계산 도구</div>', unsafe_allow_html=True)
         if st.button(
             "📊 계산기" + (" ✓" if is_calc else ""),
             key="btn_calc",
