@@ -8,6 +8,8 @@ st.set_page_config(
     page_title="KCIM 출산·육아 응대 가이드",
     page_icon="👶",
     layout="wide",
+    initial_sidebar_state="expanded",
+)
 )
 
 # ──────────────────────────────────────────
@@ -235,8 +237,19 @@ section[data-testid="stSidebar"] {
   border-right: 1px solid #e2e8f0 !important;
 }
 section[data-testid="stSidebar"] > div { padding-top: 1rem !important; }
-header[data-testid="stHeader"] { background: transparent !important; height: 2.5rem !important; }
+header[data-testid="stHeader"] {
+  background: transparent !important; height: 2.5rem !important;
+  overflow: visible !important; z-index: 999999 !important;
+}
 div[data-testid="stToolbar"] { display: none !important; }
+button[data-testid="stSidebarCollapsedControl"],
+div[data-testid="stSidebarCollapsedControl"],
+button[data-testid="stBaseButton-headerNoPadding"],
+[data-testid="collapsedControl"] {
+  display: flex !important; visibility: visible !important;
+  opacity: 1 !important; z-index: 1000000 !important;
+  position: relative !important;
+}
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
 </style>
