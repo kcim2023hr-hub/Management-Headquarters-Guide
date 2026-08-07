@@ -40,138 +40,90 @@ st.markdown("""
   white-space: nowrap;
 }
 
-/* ── 상단 스텝 프로그레스 ── */
+/* ── 컴팩트 STEP 네비게이션 ── */
 .stepper-wrap {
-  position: relative;
   background: #fff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.65rem max(1rem, 3vw) 0.75rem;
+  padding: 0.35rem 0.7rem;
   overflow-x: auto;
-  box-shadow: 0 1px 4px rgba(15,23,42,0.04);
 }
 
-/* 번호 원을 연결하는 진행선 */
-.stepper-wrap::before {
-  content: "";
-  position: absolute;
-  left: 5%;
-  right: 5%;
-  top: 25px;
-  height: 2px;
-  background: #e2e8f0;
-  z-index: 0;
-}
-
-.stepper-wrap > div[data-testid="stHorizontalBlock"] {
-  position: relative;
-  z-index: 1;
-  min-width: 760px;
-  max-width: 1500px;
-  margin: 0 auto;
-  gap: 0.25rem !important;
-}
-
+/* STEP 버튼을 한 줄짜리 업무 네비게이션으로 */
 .stepper-btn {
   text-align: center;
   position: relative;
-  min-width: 72px;
 }
 
 .stepper-btn .stButton {
   display: flex;
   justify-content: center;
+  margin: 0 !important;
 }
 
 .stepper-btn button {
-  border-radius: 50% !important;
-  width: 34px !important;
-  height: 34px !important;
-  min-width: 34px !important;
-  padding: 0 !important;
-  font-weight: 800 !important;
-  font-size: 0.78rem !important;
-  margin: 0 auto !important;
-  border: 2px solid #dbe3ed !important;
-  background: #fff !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 6px !important;
+
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+
   color: #64748b !important;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.08) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+
+  box-shadow: none !important;
+  white-space: nowrap !important;
   transition: all 0.15s ease !important;
 }
 
-.stepper-btn button:hover {
-  transform: translateY(-1px);
-  border-color: #93c5fd !important;
-  color: #2563eb !important;
-}
-
-.step-label {
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: #94a3b8;
-  margin-top: 5px;
-  text-align: center;
-  white-space: nowrap;
-  line-height: 1.2;
-}
-
-.step-label.active {
-  color: #2563eb;
-  font-weight: 800;
-}
-
-/* 현재 선택된 단계의 번호 버튼 */
+/* 현재 STEP */
 .stepper-btn button[kind="primary"] {
   background: #2563eb !important;
   border-color: #2563eb !important;
   color: #fff !important;
-  box-shadow: 0 0 0 4px rgba(37,99,235,0.12), 0 2px 6px rgba(37,99,235,0.25) !important;
+  box-shadow: 0 2px 7px rgba(37, 99, 235, 0.22) !important;
 }
 
-/* 완료 단계 */
-.stepper-btn button:has(+ *) { }
+/* STEP 사이의 자연스러운 여백 */
+.stepper-btn + .stepper-btn {
+  margin-left: 0.1rem;
+}
 
-/* ── 모바일 반응형 (640px 이하) ── */
+/* 기존 STEP 이름 영역은 사용하지 않음 */
+.step-label {
+  display: none !important;
+}
+
+/* 모바일 */
 @media (max-width: 640px) {
-  .top-header { padding: 0.8rem 1rem; flex-wrap: wrap; }
-  .top-header-title { font-size: 1.05rem; display: block; }
-  .badge-2025 { display: inline-block; margin-left: 0; margin-top: 6px; }
-  .top-header-sub { font-size: 0.7rem; }
-
   .stepper-wrap {
-    padding: 0.55rem 0.5rem 0.65rem;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .stepper-wrap::before {
-    left: 25px;
-    right: 25px;
-    top: 22px;
-  }
-
-  .stepper-wrap > div[data-testid="stHorizontalBlock"] {
-    min-width: 690px;
-    gap: 0 !important;
-  }
-
-  .stepper-btn {
-    min-width: 62px;
+    padding: 0.3rem 0.35rem;
   }
 
   .stepper-btn button {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    font-size: 0.68rem !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 5px !important;
+    border-radius: 7px !important;
+    font-size: 0.62rem !important;
   }
 
-  .step-label {
-    font-size: 0.56rem;
-    margin-top: 4px;
+  .step-main-title {
+    font-size: 1.15rem !important;
   }
 
-  .step-main-title { font-size: 1.15rem !important; }
-  .step-header-card { padding: 1rem 1.1rem !important; }
-  .step-header-card::after { font-size: 3.2rem !important; }
+  .step-header-card {
+    padding: 1rem 1.1rem !important;
+  }
+
+  .step-header-card::after {
+    font-size: 3.2rem !important;
+  }
 }
 
 /* ── 왼쪽 패널 ── */
@@ -579,29 +531,32 @@ st.markdown(f"""
 if not is_calc:
     st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
     stepper_cols = st.columns(len(STEPS), gap="small")
+
     for i, s in enumerate(STEPS):
         with stepper_cols[i]:
             is_done = i in st.session_state.completed_steps
             is_active = i == active_idx
-            label = "✓" if is_done else str(s["id"])
+
+            # 번호와 단계명을 하나의 버튼에 통합해 상단 높이를 최소화
+            if is_done:
+                label = f"✓ {s['short']}"
+            else:
+                label = f"{s['id']} · {s['short']}"
 
             st.markdown('<div class="stepper-btn">', unsafe_allow_html=True)
+
             if st.button(
                 label,
                 key=f"stepper_{i}",
                 type="primary" if is_active else "secondary",
-                help=f"STEP {s['id']}. {s['short']}"
+                use_container_width=True,
             ):
                 st.session_state.active_step = i
                 st.session_state.mode = "steps"
                 st.rerun()
 
-            active_cls = " active" if is_active else ""
-            st.markdown(
-                f'<div class="step-label{active_cls}">STEP {s["id"]}<br>{s["short"]}</div>',
-                unsafe_allow_html=True
-            )
             st.markdown('</div>', unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
