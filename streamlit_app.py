@@ -40,20 +40,55 @@ st.markdown("""
   white-space: nowrap;
 }
 
-/* ── 스텝 프로그레스 ── */
+/* ── 스텝 프로그레스 (수정 및 레이아웃 정렬) ── */
 .stepper-wrap {
-  background: #fff; border-bottom: 1px solid #e2e8f0;
-  padding: 0.9rem 0.5rem; overflow-x: auto;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.8rem 1rem;
+  overflow-x: auto;
 }
-.stepper-btn { text-align: center; }
-.stepper-btn .stButton { display: flex; justify-content: center; }
-.stepper-btn button {
-  border-radius: 50% !important; width: 32px !important; height: 32px !important;
-  min-width: 32px !important; padding: 0 !important; font-weight: 800 !important;
-  font-size: 0.8rem !important; margin: 0 auto !important;
+.stepper-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
 }
-.step-label { font-size: 0.62rem; font-weight: 600; color: #94a3b8; margin-top: 3px; text-align: center; white-space: nowrap; }
-.step-label.active { color: #3b82f6; font-weight: 800; }
+.stepper-item div[data-testid="stButton"] {
+  display: flex !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  width: 100% !important;
+}
+.stepper-item button {
+  border-radius: 50% !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  padding: 0 !important;
+  font-weight: 800 !important;
+  font-size: 0.85rem !important;
+  margin: 0 auto !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.08) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+.step-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #64748b;
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+.step-label.active {
+  color: #2563eb;
+  font-weight: 800;
+}
 
 /* ── 모바일 반응형 (640px 이하) ── */
 @media (max-width: 640px) {
@@ -61,9 +96,9 @@ st.markdown("""
   .top-header-title { font-size: 1.05rem; display: block; }
   .badge-2025 { display: inline-block; margin-left: 0; margin-top: 6px; }
   .top-header-sub { font-size: 0.7rem; }
-  .stepper-wrap { padding: 0.7rem 0.3rem; }
-  .stepper-btn button { width: 26px !important; height: 26px !important; min-width: 26px !important; font-size: 0.68rem !important; }
-  .step-label { font-size: 0.5rem; margin-top: 2px; }
+  .stepper-wrap { padding: 0.6rem 0.2rem; }
+  .stepper-item button { width: 28px !important; height: 28px !important; min-width: 28px !important; font-size: 0.7rem !important; }
+  .step-label { font-size: 0.55rem; margin-top: 1px; }
   .step-main-title { font-size: 1.15rem !important; }
   .step-header-card { padding: 1rem 1.1rem !important; }
   .step-header-card::after { font-size: 3.2rem !important; }
@@ -419,7 +454,6 @@ if "completed_steps" not in st.session_state:
 
 # ──────────────────────────────────────────
 # 메뉴 열림/닫힘 기본값: PC는 열림, 모바일은 닫힘
-# (서버 쪽에서 화면 폭을 알 수 없어 JS로 감지 후 1회 리다이렉트)
 # ──────────────────────────────────────────
 if "menu_open" not in st.session_state:
     menu_param = st.query_params.get("menu_state")
@@ -469,7 +503,7 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 스텝 프로그레스 (계산기 모드에서는 숨김, 클릭 시 해당 STEP으로 이동)
+# 스텝 프로그레스 (계산기 모드에서는 숨김)
 # ──────────────────────────────────────────
 if not is_calc:
     st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
@@ -479,11 +513,13 @@ if not is_calc:
             is_done = i in st.session_state.completed_steps
             is_active = i == active_idx
             label = "✓" if is_done else str(s["id"])
-            st.markdown('<div class="stepper-btn">', unsafe_allow_html=True)
+            
+            st.markdown('<div class="stepper-item">', unsafe_allow_html=True)
             if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary"):
                 st.session_state.active_step = i
                 st.session_state.mode = "steps"
                 st.rerun()
+                
             active_cls = " active" if is_active else ""
             st.markdown(f'<div class="step-label{active_cls}">{s["short"]}</div>', unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
@@ -607,10 +643,10 @@ with col_center:
                 </div>""", unsafe_allow_html=True)
 
             if st.button("🔍 단축 기간 계산", key="calc_btn1", type="primary"):
-                # 마지막생리시작일 = 출산예정일 - 279일 (40주 = 280일, 1일차 포함)
+                # 마지막생리시작일 = 출산예정일 - 279일
                 lmp = due - timedelta(days=279)
-                week12_end = lmp + timedelta(days=83)    # 84일째 (12주×7일)
-                week32_start = lmp + timedelta(days=217)  # 218일째 (31주×7일 + 1일)
+                week12_end = lmp + timedelta(days=83)    # 84일째
+                week32_start = lmp + timedelta(days=217)  # 218일째
 
                 days_early = (week12_end - lmp).days + 1
                 days_mid = (week32_start - week12_end).days - 1
@@ -768,7 +804,7 @@ with col_center:
                 annual_cnt = st.number_input("발생 연차 (일)", min_value=1, max_value=25, value=15, key="calc_annual_cnt")
             with col_b:
                 base_days = st.number_input("연도 기준일수", min_value=365, max_value=366, value=365, key="calc_base_days",
-                                             help="윤년은 366 입력")
+                                           help="윤년은 366 입력")
             with col_c:
                 st.markdown("")
                 st.markdown("""<div style="background:#fef9c3;border:1px solid #fde047;border-radius:8px;
@@ -812,11 +848,10 @@ with col_center:
                     st.dataframe(pd.DataFrame(leave_rows), use_container_width=True, hide_index=True)
 
                 work_ratio = (base_days - total_leave) / base_days
-                # CEILING to 0.5 단위 (엑셀 CEILING 함수 동일)
                 adjusted = math.ceil(annual_cnt * work_ratio * 2) / 2
                 adjusted = max(0, adjusted)
                 deducted = annual_cnt - adjusted
-                threshold_days = base_days * 0.2  # 20% = 73일
+                threshold_days = base_days * 0.2
 
                 c1, c2, c3, c4 = st.columns(4)
                 with c1:
