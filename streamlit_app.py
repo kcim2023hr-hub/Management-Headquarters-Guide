@@ -224,46 +224,58 @@ div[data-testid="stChatInput"] button {
 section[data-testid="stSidebar"] { display: none !important; }
 header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
-/* ── 메뉴 토글 탭 (화면 가장자리 고정, 레이아웃 흐름에서 제외되어 여백을 잡아먹지 않음) ── */
-.st-key-menu_toggle_btn {
+
+/* ── 플로팅 액션 버튼(FAB): 메뉴 토글 · AI 챗봇 ──
+   화면 가장자리에 고정된 원형 버튼으로, 레이아웃 흐름(block-container)에
+   전혀 영향을 주지 않아 본문이 한쪽으로 쏠리는 문제가 발생하지 않음.
+   좌/우 하단에 분리 배치하여 PC·모바일 모두 엄지로 닿기 쉬운 위치 확보. */
+.block-container { padding-bottom: 92px !important; }
+
+.st-key-menu_toggle_btn, .st-key-chat_toggle_btn {
   position: fixed !important;
-  top: 50% !important;
-  left: 0 !important;
-  transform: translateY(-50%) !important;
+  bottom: max(20px, env(safe-area-inset-bottom)) !important;
   z-index: 999 !important;
   width: auto !important;
 }
+.st-key-menu_toggle_btn { left: 18px !important; }
+.st-key-chat_toggle_btn { right: 18px !important; }
+
+.st-key-menu_toggle_btn button, .st-key-chat_toggle_btn button {
+  width: 54px !important; height: 54px !important;
+  min-width: 54px !important; min-height: 54px !important;
+  border-radius: 50% !important; border: none !important;
+  padding: 0 !important; margin: 0 !important;
+  font-size: 1.3rem !important; font-weight: 800 !important;
+  line-height: 1 !important; color: white !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.28) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+}
 .st-key-menu_toggle_btn button {
   background: linear-gradient(135deg, #1a4a6e, #1e6091) !important;
-  color: white !important;
-  border: none !important;
-  border-radius: 0 10px 10px 0 !important;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.18) !important;
-  width: 22px !important; height: 56px !important;
-  min-height: 56px !important; min-width: 22px !important;
-  padding: 0 !important; margin: 0 !important;
-  font-size: 0.95rem !important; font-weight: 900 !important;
-  line-height: 1 !important;
-  display: flex !important; align-items: center !important; justify-content: center !important;
-  transition: width 0.15s ease, background 0.15s ease !important;
 }
-.st-key-menu_toggle_btn button:hover {
-  width: 28px !important;
-  background: linear-gradient(135deg, #1e6091, #2a7ab0) !important;
+.st-key-chat_toggle_btn button {
+  background: linear-gradient(135deg, #f093fb, #f5576c) !important;
 }
-.st-key-menu_toggle_btn button:active {
-  background: linear-gradient(135deg, #163a58, #1a4a6e) !important;
+.st-key-menu_toggle_btn button:hover, .st-key-chat_toggle_btn button:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.32) !important;
 }
-/* 본문이 탭에 가리지 않도록 좌측에 여유 공간 확보 */
-.block-container { padding-left: 22px !important; }
+.st-key-menu_toggle_btn button:active, .st-key-chat_toggle_btn button:active {
+  transform: scale(0.94) !important;
+}
 @media (max-width: 640px) {
-  .st-key-menu_toggle_btn button {
-    width: 26px !important; height: 64px !important; min-width: 26px !important;
-    font-size: 1.05rem !important;
+  .block-container { padding-bottom: 84px !important; }
+  .st-key-menu_toggle_btn button, .st-key-chat_toggle_btn button {
+    width: 48px !important; height: 48px !important;
+    min-width: 48px !important; min-height: 48px !important;
+    font-size: 1.15rem !important;
   }
-  .st-key-menu_toggle_btn button:hover { width: 26px !important; }
-  .block-container { padding-left: 26px !important; }
 }
+
+/* ── 챗봇 다이얼로그 내부 ── */
+div[data-testid="stDialog"] .chat-desc-caption { margin-top: -0.6rem; }
+
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
 </style>
@@ -503,28 +515,40 @@ if not is_calc:
                     st.rerun()
 
 # ──────────────────────────────────────────
-# 메뉴 토글 상태 초기화
+# 메뉴 / 챗봇 상태 초기화
 # ──────────────────────────────────────────
 if "menu_open" not in st.session_state:
-    st.session_state.menu_open = True
+    st.session_state.menu_open = False  # 모바일 기본값을 고려해 기본은 닫힘(본문 우선)
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
 
 # ──────────────────────────────────────────
-# 토글 버튼 (화면 가장자리에 고정된 얇은 탭 — 별도 행을 차지하지 않아 여백 없음)
+# 플로팅 액션 버튼 (좌하단: 메뉴 토글 / 우하단: AI 챗봇 열기)
+# 두 버튼 모두 CSS로 position:fixed 처리되어 레이아웃 흐름에서 완전히
+# 벗어나므로, block-container에 어떤 강제 여백도 필요하지 않습니다.
+# → 모바일에서 본문이 한쪽으로 쏠려 보이던 문제의 근본 원인을 제거.
 # ──────────────────────────────────────────
-btn_label = "«" if st.session_state.menu_open else "»"
-btn_help = "메뉴 닫기" if st.session_state.menu_open else "메뉴 열기"
-if st.button(btn_label, key="menu_toggle_btn", help=btn_help):
+menu_btn_label = "✕" if st.session_state.menu_open else "☰"
+menu_btn_help = "메뉴 닫기" if st.session_state.menu_open else "메뉴 열기"
+if st.button(menu_btn_label, key="menu_toggle_btn", help=menu_btn_help):
     st.session_state.menu_open = not st.session_state.menu_open
     st.rerun()
 
+if st.button("💬", key="chat_toggle_btn", help="AI 챗봇 육아지원박사에게 질문하기"):
+    st.session_state.chat_open = True
+    st.rerun()
+
 # ──────────────────────────────────────────
-# 메인 레이아웃 (메뉴 열림/닫힘에 따라 컬럼 비율 재배분)
+# 메인 레이아웃 (본문 중심 1~2단)
+# 좌측 메뉴는 열렸을 때만 컬럼을 차지하고, 닫히면 본문이 전체 폭을 사용합니다.
+# (기존 "가장자리 고정 탭 + block-container 좌측 여백 강제" 방식은 모바일에서
+#  본문이 오른쪽으로 쏠려 보이는 비대칭 여백을 유발했기 때문에 완전히 제거했습니다.)
 # ──────────────────────────────────────────
 if st.session_state.menu_open:
-    col_menu, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
+    col_menu, col_center = st.columns([1, 3.6], gap="small")
 else:
     col_menu = None
-    col_spacer, col_center, col_right = st.columns([0.15, 4.35, 1.6], gap="small")
+    col_center = st.container()
 
 # ── 메뉴 패널 (계산 도구 / 법령 / KPI — 단계 이동은 상단 스텝바로 통합) ──
 if col_menu is not None:
@@ -927,11 +951,17 @@ with col_center:
           </div>""", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-# ── 오른쪽: 챗봇 ──
-with col_right:
+# ──────────────────────────────────────────
+# AI 챗봇 (우하단 플로팅 버튼 → 모달 다이얼로그)
+# PC/모바일 동일한 방식으로 동작하며, 평소에는 화면 공간을 전혀 차지하지
+# 않아 본문 폭을 최대한 넓게 유지할 수 있습니다. (기존 3번째 컬럼 고정 배치
+# 방식은 모바일에서 본문 폭을 지나치게 좁혀 가독성을 해쳤기 때문에 제거)
+# ──────────────────────────────────────────
+@st.dialog("🎓 육아지원박사", width="large")
+def render_chatbot_dialog():
     chat_desc = "계산기 도구 대기 중" if is_calc else f"KCIM 모성보호 전문 AI · {step['short']} 단계 대기 중"
     st.markdown(f"""
-    <div class="chat-header">
+    <div class="chat-header" style="border-radius:10px;margin:-1rem -1rem 0.8rem;">
       <div class="chat-avatar">🎓</div>
       <div class="chat-header-text">
         <div class="chat-name">육아지원박사</div>
@@ -939,7 +969,7 @@ with col_right:
       </div>
     </div>""", unsafe_allow_html=True)
 
-    chat_container = st.container(height=480)
+    chat_container = st.container(height=420)
     with chat_container:
         if not st.session_state.messages:
             st.markdown(f"""
@@ -1003,9 +1033,14 @@ with col_right:
                         response_placeholder.markdown(full_response + "▌")
 
                     response_placeholder.markdown(full_response)
-                    
+
             st.session_state.messages.append({"role": "assistant", "content": full_response})
 
         except Exception as e:
             st.error(f"챗봇 오류: {str(e)}")
+
+
+if st.session_state.get("chat_open"):
+    st.session_state.chat_open = False
+    render_chatbot_dialog()
 
