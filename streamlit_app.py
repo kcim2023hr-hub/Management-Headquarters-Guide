@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from openai import OpenAI
 import math
 from datetime import date, timedelta
@@ -31,146 +30,65 @@ st.markdown("""
   padding: 0.9rem 2rem; display: flex; align-items: center;
   justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
-.top-header-title { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; word-break: keep-all; }
-.top-header-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px; word-break: keep-all; }
+.top-header-title { font-size: 1.25rem; font-weight: 800; color: #fff; letter-spacing: -0.3px; }
+.top-header-sub { font-size: 0.78rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
 .badge-2025 {
   background: linear-gradient(135deg, #f093fb, #f5576c);
   color: white; padding: 3px 10px; border-radius: 20px;
   font-size: 0.7rem; font-weight: 700; margin-left: 10px; vertical-align: middle;
-  white-space: nowrap;
 }
 
-/* ── STEP 네비게이션 ── */
+/* ── 스텝 프로그레스 ── */
 .stepper-wrap {
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0.3rem 0.6rem;
-  overflow: hidden;
+  background: #fff; border-bottom: 1px solid #e2e8f0;
+  padding: 0.9rem 2rem; overflow-x: auto;
 }
-.stepper-btn { text-align: center; }
-.stepper-btn .stButton { display: flex; justify-content: center; margin: 0 !important; }
-.stepper-btn button {
-  width: 100% !important;
-  min-width: 0 !important;
-  height: 36px !important;
-  min-height: 36px !important;
-  padding: 0 5px !important;
-  border-radius: 8px !important;
-  border: 1px solid #e2e8f0 !important;
-  background: #f8fafc !important;
-  color: #64748b !important;
-  font-size: 0.72rem !important;
-  font-weight: 700 !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-  box-shadow: none !important;
+.stepper { display: flex; align-items: center; gap: 0; min-width: 600px; }
+.step-node {
+  display: flex; flex-direction: column; align-items: center;
+  flex: 1; position: relative; cursor: pointer;
 }
-.stepper-btn button[kind="primary"] {
-  background: #2563eb !important;
-  border-color: #2563eb !important;
-  color: #fff !important;
-  box-shadow: 0 2px 6px rgba(37,99,235,.18) !important;
+.step-node::before {
+  content: ''; position: absolute; top: 16px; right: 50%;
+  width: 100%; height: 2px; background: #e2e8f0; z-index: 0;
 }
-.step-label {
-  display: none !important;
+.step-node:first-child::before { display: none; }
+.step-node.done::before { background: #22c55e; }
+.step-node.active::before { background: #3b82f6; }
+.step-circle {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.8rem; border: 2px solid #e2e8f0;
+  background: #f8fafc; color: #94a3b8; position: relative; z-index: 1; transition: all 0.2s;
 }
+.step-node.done .step-circle { background: #22c55e; border-color: #22c55e; color: white; }
+.step-node.active .step-circle {
+  background: #3b82f6; border-color: #3b82f6; color: white;
+  box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
+}
+.step-label { font-size: 0.68rem; font-weight: 600; color: #94a3b8; margin-top: 5px; text-align: center; white-space: nowrap; }
+.step-node.active .step-label { color: #3b82f6; font-weight: 800; }
+.step-node.done .step-label { color: #22c55e; }
 
-/* 모바일 STEP 선택창: 데스크톱에서는 숨김 */
-.mobile-step-select-wrap {
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 0.35rem 0.65rem 0.4rem;
-}
-.mobile-step-select-title {
-  font-size: 0.62rem;
-  font-weight: 700;
-  color: #94a3b8;
-  margin: 0 0 2px 2px;
-}
-@media (min-width: 641px) {
-  div[data-testid="stSelectbox"] { display: none !important; }
-}
-
-/* 모바일 반응형 */
-@media (max-width: 640px) {
-  /* PC용 9개 STEP 버튼은 모바일에서 완전히 숨김 */
-  div[data-testid="stMarkdownContainer"]:has(.stepper-mobile-anchor) + div[data-testid="stHorizontalBlock"] {
-    display: none !important;
-  }
-
-  .top-header {
-    padding: 0.55rem 0.8rem;
-    min-height: auto;
-  }
-  .top-header-title { font-size: 0.92rem; line-height: 1.2; }
-  .badge-2025 { font-size: 0.58rem; padding: 2px 7px; margin-left: 4px; }
-  .top-header-sub { font-size: 0.58rem; margin-top: 1px; }
-
-  .mobile-step-select-wrap {
-    padding: 0.3rem 0.6rem 0.35rem;
-  }
-  .mobile-step-select-title {
-    font-size: 0.58rem;
-  }
-  div[data-testid="stSelectbox"] {
-    margin: 0 !important;
-  }
-  div[data-testid="stSelectbox"] > div {
-    min-height: 38px !important;
-  }
-  div[data-testid="stSelectbox"] [data-baseweb="select"] {
-    min-height: 38px !important;
-    border-radius: 8px !important;
-  }
-  div[data-testid="stSelectbox"] [data-baseweb="select"] > div {
-    font-size: 0.78rem !important;
-    font-weight: 700 !important;
-  }
-
-  .step-main-title { font-size: 1.05rem !important; }
-  .step-header-card { padding: 0.8rem 0.9rem !important; }
-  .step-header-card::after { font-size: 2.8rem !important; }
-}
-
-/* ── 왼쪽 참고정보 패널 ── */
-.side-panel {
-  background: rgba(255,255,255,0.72);
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 0.55rem;
-  margin: 0.25rem 0 0.75rem;
-}
+/* ── 왼쪽 패널 ── */
 .nav-section-title {
-  font-size: 0.68rem; font-weight: 800; color: #64748b;
-  letter-spacing: -0.1px;
-  padding: 0.45rem 0.35rem 0.3rem;
-  margin-top: 0.15rem;
-}
-.side-action button {
-  border-radius: 8px !important;
-  min-height: 38px !important;
-  font-size: 0.78rem !important;
-  font-weight: 750 !important;
+  font-size: 0.65rem; font-weight: 700; color: #94a3b8;
+  letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 0.3rem 0.5rem 0.2rem; margin-top: 0.5rem;
 }
 .law-item {
-  padding: 0.5rem 0.6rem; border-radius: 8px; background: #f8fafc;
-  border: 1px solid #e2e8f0; margin-bottom: 5px;
+  padding: 0.4rem 0.6rem; border-radius: 6px; background: #f8fafc;
+  border-left: 3px solid #e2e8f0; margin-bottom: 4px;
 }
-.law-item-title { font-size: 0.7rem; font-weight: 800; color: #374151; }
-.law-item-desc { font-size: 0.64rem; color: #64748b; margin-top: 2px; line-height: 1.4; }
-.kpi-grid {
-  display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 5px;
-}
+.law-item-title { font-size: 0.7rem; font-weight: 700; color: #374151; }
+.law-item-desc { font-size: 0.65rem; color: #6b7280; margin-top: 1px; line-height: 1.4; }
 .kpi-card {
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border: 1px solid #bae6fd; border-radius: 8px;
-  padding: 0.48rem 0.35rem; margin: 0; text-align: center;
+  padding: 0.5rem 0.7rem; margin-bottom: 4px; text-align: center;
 }
-.kpi-value { font-size: 1rem; font-weight: 900; color: #0369a1; }
-.kpi-label { font-size: 0.6rem; font-weight: 600; color: #0369a1; opacity: 0.8; line-height: 1.2; }
-@media (max-width: 640px) {
-  .side-panel { margin-top: 0; }
-}
+.kpi-value { font-size: 1.1rem; font-weight: 900; color: #0369a1; }
+.kpi-label { font-size: 0.62rem; font-weight: 600; color: #0369a1; opacity: 0.8; }
 
 /* ── 스텝 헤더 카드 ── */
 .step-header-card {
@@ -299,11 +217,6 @@ div[data-testid="stChatInput"] button {
 section[data-testid="stSidebar"] { display: none !important; }
 header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
-.menu-toggle-btn button {
-  background: #1a4a6e !important; color: white !important;
-  border-radius: 8px !important; padding: 0.3rem 0.7rem !important;
-  font-size: 1rem !important; min-height: 2.2rem !important;
-}
 .stChatMessage { background: transparent !important; }
 .stButton button { border-radius: 8px !important; font-weight: 700 !important; transition: all 0.15s !important; }
 </style>
@@ -314,7 +227,25 @@ div[data-testid="stToolbar"] { display: none !important; }
 # ──────────────────────────────────────────
 STEPS = [
     {
-        "id": 0, "short": "임신 확인", "title": "임신 확인 및 초기 응대",
+        "id": 0, "short": "난임치료", "title": "난임치료휴가",
+        "color": "#ec4899", "grad": "linear-gradient(135deg, #db2777, #ec4899)",
+        "target": "난임치료 중인 직원", "next": "임신 확인",
+        "guide": '"난임치료(인공수정·체외수정 등 시술 및 전후 준비·휴식기 포함)를 위한 휴가는 연 6일까지 가능하고, 최초 2일은 유급입니다. 신청기한이 따로 없으니 당일 신청도 가능해요."',
+        "check": ["난임치료휴가 신청서 접수", "최초 2일 유급 처리 (정부 지원금 상한 84,210원/일 차감 안내)", "치료 관련 정보 비밀유지 서약"],
+        "forms": ["난임치료휴가 신청서", "치료 사실 입증서류(선택)"],
+        "warn": ["거부 시 500만원 이하 과태료", "신청 과정에서 알게 된 질환·치료 정보 무단 누설 금지", "1일 단위 분할 사용 가능"],
+        "laws": [
+            {"name": "남녀고용평등법 제18조의3", "desc": "난임치료휴가 연 6일, 최초 2일 유급"},
+        ],
+        "faq": [
+            {"q": "난임치료휴가 급여는 회사가 다 부담하나요?", "a": "아닙니다. 근로자가 고용센터에 난임치료휴가급여를 신청해 받으면(1일 상한 84,210원), 회사는 통상임금에서 그 금액을 뺀 차액만 지급하면 됩니다."},
+            {"q": "연차휴가에서 차감되나요?", "a": "아니요. 연차휴가와 별개로 부여되는 법정휴가라 연차에서 차감할 수 없습니다."},
+            {"q": "증빙 서류가 꼭 필요한가요?", "a": "회사는 난임치료 사실을 확인할 수 있는 입증서류를 요청할 수 있습니다. 다만 신청서 제출 기한 자체는 별도로 없습니다."},
+        ],
+        "kpi": [{"val": "6일", "label": "연간 최대(2일 유급)"}],
+    },
+    {
+        "id": 1, "short": "임신 확인", "title": "임신 확인 및 초기 응대",
         "color": "#3b82f6", "grad": "linear-gradient(135deg, #2563eb, #3b82f6)",
         "target": "임신 확인 직원", "next": "단축 조율",
         "guide": '"축하드립니다! 임신 소식은 본인이 원하는 범위 내에서만 공유될 예정이니 안심하세요. 먼저 단축근무 제도부터 안내해 드릴까요?"',
@@ -333,7 +264,7 @@ STEPS = [
         "kpi": [{"val": "즉시", "label": "비밀유지"}],
     },
     {
-        "id": 1, "short": "임신기 단축", "title": "임신기 근로시간 단축 및 근무조정",
+        "id": 2, "short": "임신기 단축", "title": "임신기 근로시간 단축 및 근무조정",
         "color": "#10b981", "grad": "linear-gradient(135deg, #059669, #10b981)",
         "target": "단축 희망 직원", "next": "검진 안내",
         "guide": '"임신 12주 이내(84일까지) 또는 32주 이후(246일 이후)에 하루 2시간 단축 근무가 가능합니다. 급여는 전액 유지되고, 출퇴근 시간 조정이나 쉬운 업무 전환도 함께 신청하실 수 있어요."',
@@ -352,7 +283,7 @@ STEPS = [
         "kpi": [{"val": "2시간", "label": "일 단축(6시간까지)"}],
     },
     {
-        "id": 2, "short": "건강진단", "title": "정기 건강진단 (태아검진)",
+        "id": 3, "short": "건강진단", "title": "정기 건강진단 (태아검진)",
         "color": "#f59e0b", "grad": "linear-gradient(135deg, #d97706, #f59e0b)",
         "target": "검진 대상자", "next": "연차 안내",
         "guide": '"검진 시간은 이동·대기·진료시간을 모두 포함해 사실상 유급으로 보장됩니다. 신청서만 작성해 주시면 팀장님께 자동 공유됩니다."',
@@ -370,7 +301,7 @@ STEPS = [
         "kpi": [{"val": "유급", "label": "검진 시간(사실상)"}],
     },
     {
-        "id": 3, "short": "연차 정리", "title": "연차 정리 및 인수인계",
+        "id": 4, "short": "연차 정리", "title": "연차 정리 및 인수인계",
         "color": "#8b5cf6", "grad": "linear-gradient(135deg, #7c3aed, #8b5cf6)",
         "target": "휴가 예정자", "next": "출산/배우자 휴가",
         "guide": '"출산휴가 전 남은 연차를 사용해 조금 더 일찍 쉬실 수 있어요. 인수인계 시점만 알려주시면 제가 도와드릴게요."',
@@ -388,7 +319,7 @@ STEPS = [
         "kpi": [{"val": "자율", "label": "연차 사용"}],
     },
     {
-        "id": 4, "short": "출산 관련", "title": "출산 전후 및 배우자 출산(전후)휴가",
+        "id": 5, "short": "출산 관련", "title": "출산 전후 및 배우자 출산(전후)휴가",
         "color": "#ef4444", "grad": "linear-gradient(135deg, #dc2626, #ef4444)",
         "target": "출산 전후 직원", "next": "육아기 지원",
         "guide": '"출산휴가는 90일(다태아 120일, 미숙아 100일), 배우자분은 근무일 기준 20일 유급 휴가가 보장되고 3회까지 나눠 쓸 수 있어요. 출산 후 45일은 반드시 쉬셔야 합니다."',
@@ -407,7 +338,7 @@ STEPS = [
         "kpi": [{"val": "90일", "label": "출산휴가"}],
     },
     {
-        "id": 5, "short": "육아 지원", "title": "육아기 근로시간 단축 · 육아시간",
+        "id": 6, "short": "육아 지원", "title": "육아기 근로시간 단축 · 육아시간",
         "color": "#0ea5e9", "grad": "linear-gradient(135deg, #0284c7, #0ea5e9)",
         "target": "육아기 부모", "next": "육아휴직/복직",
         "guide": '"자녀가 만 12세 이하(초6 이하)라면 원칙적으로 1년, 육아휴직 미사용분을 전환하면 최대 3년까지 단축 근무가 가능합니다. 생후 1년 미만 자녀가 있으면 육아시간(수유시간)도 별도로 신청하실 수 있어요."',
@@ -426,31 +357,28 @@ STEPS = [
         "kpi": [{"val": "최대 3년", "label": "단축(전환 시)"}],
     },
     {
-        "id": 6, "short": "복직 준비", "title": "육아휴직 및 복직 관리",
+        "id": 7, "short": "복직 준비", "title": "육아휴직 및 복직 관리",
         "color": "#22c55e", "grad": "linear-gradient(135deg, #16a34a, #22c55e)",
         "target": "복직 예정자", "next": "가족돌봄 지원",
-        "guide": '"육아휴직은 기본 1년이며, 부모가 각각 3개월 이상 사용하시거나 한부모·중증장애아동 부모이신 경우 6개월이 추가돼 최대 1년 6개월까지 가능합니다. 사후지급금 없이 매월 급여 100%가 지급됩니다. 갑자기 며칠만 필요하시면 단기 육아휴직으로 1주나 2주만 쓰실 수도 있어요."',
-        "check": ["육아휴직 기본 1년 + 조건부 연장 요건 확인", "사후지급금 폐지 사실 안내", "6+6 부모육아휴직제 해당 여부 확인 (자녀 생후 18개월 이내)", "단기 육아휴직(1주/2주) 필요 여부 확인 — 자녀 질병·휴원·방학 등", "복직 면담 일정 잡기 및 자리 세팅"],
-        "forms": ["어울지기 내 신청 (휴직/복직)", "단기 육아휴직 신청서(해당 시)"],
-        "warn": ["연장(1년6개월)은 조건부 — 무조건 안내 금지: 부모 각각 3개월+ 사용 또는 한부모/중증장애아동 부모만 해당", "복직 14일 전 의사표시 필요", "복직 후 부당 처우·차별 절대 금지", "⚠️ 2026-08-20 시행: 단기 육아휴직 신설(연 1회, 1주/2주 단위) — 정당한 사유 없이 거부 불가, 신청일로부터 7일 이내 승인·거부 통보", "⚠️ 2026-09-18 시행 예정: 배우자 유산·조산 위험 시 남성 근로자도 출산 전 육아휴직 사용 가능하도록 확대"],
+        "guide": '"육아휴직은 기본 1년이며, 부모가 각각 3개월 이상 사용하시거나 한부모·중증장애아동 부모이신 경우 6개월이 추가돼 최대 1년 6개월까지 가능합니다. 사후지급금 없이 매월 급여 100%가 지급됩니다."',
+        "check": ["육아휴직 기본 1년 + 조건부 연장 요건 확인", "사후지급금 폐지 사실 안내", "6+6 부모육아휴직제 해당 여부 확인 (자녀 생후 18개월 이내)", "복직 면담 일정 잡기 및 자리 세팅"],
+        "forms": ["어울지기 내 신청 (휴직/복직)"],
+        "warn": ["연장(1년6개월)은 조건부 — 무조건 안내 금지: 부모 각각 3개월+ 사용 또는 한부모/중증장애아동 부모만 해당", "복직 14일 전 의사표시 필요", "복직 후 부당 처우·차별 절대 금지", "⚠️ 2026-09-18 시행 예정: 배우자 유산·조산 위험 시 남성 근로자도 출산 전 육아휴직 사용 가능하도록 확대"],
         "laws": [
             {"name": "남녀고용평등법 제19조", "desc": "육아휴직 기본 1년, 조건부 +6개월(최대 1년 6개월), 사후지급금 폐지"},
-            {"name": "동법 제19조 (단기 육아휴직, 2026-08-20 시행)", "desc": "만 8세 이하 자녀 단기 돌봄 시 연 1회 1주/2주 단위 사용, 전체 육아휴직 기간에서 차감(분할횟수 미포함)"},
             {"name": "동법 제19조의4", "desc": "복직 후 동일 또는 동등 업무 복귀 보장"},
         ],
         "faq": [
             {"q": "육아휴직 급여는 얼마나 받나요?", "a": "최초 3개월 통상임금 100%(상한 250만원, 한부모 300만원), 4~6개월 100%(상한 200만원), 7개월 이후 80%(상한 160만원)이며 하한은 70만원입니다. 사후지급금은 폐지되어 매월 전액 지급됩니다."},
             {"q": "배우자도 동시에 육아휴직이 가능한가요?", "a": "네, 가능합니다. 자녀 생후 18개월 이내에 부모가 동시 또는 순차로 사용하면 '6+6 부모육아휴직제'가 적용되어 첫 6개월 동안 통상임금 100%가 지급되고, 부모 합산 상한액이 1개월 250만원에서 6개월 450만원까지 계단식으로 올라갑니다. (첫 3개월이 아니라 첫 6개월입니다)"},
-            {"q": "자녀가 갑자기 아파서 며칠만 쉬어야 하는데, 육아휴직은 30일 이상 써야 하지 않나요?", "a": "2026년 8월 20일부터는 '단기 육아휴직'으로 연 1회, 1주 또는 2주 단위로도 쓰실 수 있습니다. 자녀 질병·사고 입원, 소속 기관 휴원·휴교, 방학 등이 사유가 되고, 급여도 기존 육아휴직급여 기준으로 일할 계산되어 지급됩니다."},
-            {"q": "단기 육아휴직을 쓰면 나중에 일반 육아휴직 쓸 수 있는 기간이 줄어드나요?", "a": "네, 사용한 만큼 전체 육아휴직 한도(최대 1년 6개월)에서 차감됩니다. 다만 육아휴직의 분할 사용 횟수(3회) 카운트에는 포함되지 않으니 이 부분은 구분해서 안내해 주세요."},
             {"q": "복직 후 기존 부서로 반드시 돌아가야 하나요?", "a": "동일하거나 동등한 수준의 업무로 복직해야 하며, 일방적인 부서 변경이나 직급 하락은 금지됩니다."},
         ],
-        "kpi": [{"val": "최대 1.5년", "label": "육아휴직(조건부)"}, {"val": "1~2주", "label": "단기 육아휴직(연1회)"}],
+        "kpi": [{"val": "최대 1.5년", "label": "육아휴직(조건부)"}],
     },
     {
-        "id": 7, "short": "가족돌봄", "title": "가족돌봄휴직 및 휴가",
+        "id": 8, "short": "가족돌봄", "title": "가족돌봄휴직 및 휴가",
         "color": "#64748b", "grad": "linear-gradient(135deg, #475569, #64748b)",
-        "target": "가족돌봄 필요 직원", "next": "난임치료 안내(참고)",
+        "target": "가족돌봄 필요 직원", "next": "사후 관리",
         "guide": '"조부모·부모·배우자·배우자의 부모·자녀·손자녀를 돌봐야 하는 경우 연간 최대 90일 휴직이 가능하고, 급하게 하루 이틀만 필요하면 그 안에서 연 10일은 휴가 형태로 쓰실 수 있어요."',
         "check": ["돌봄 대상 가족관계 확인", "휴직(30일 이상 단위) vs 휴가(1일 단위, 연 10일) 구분 안내", "감염병·휴원 등 특별사유 해당 여부 확인(+10일 가능)"],
         "forms": ["가족돌봄휴직·휴가 신청서", "가족관계 및 돌봄 필요성 입증서류"],
@@ -465,24 +393,6 @@ STEPS = [
             {"q": "연차휴가로 대체할 수 있나요?", "a": "아니요. 가족돌봄휴가는 연차와 별개의 무급휴가입니다. 다만 직원이 연차휴가를 신청하는 경우라면 그건 유급으로 처리하면 됩니다."},
         ],
         "kpi": [{"val": "90일", "label": "연간 (휴직+휴가 합산)"}],
-    },
-    {
-        "id": 8, "short": "난임치료", "title": "난임치료휴가",
-        "color": "#ec4899", "grad": "linear-gradient(135deg, #db2777, #ec4899)",
-        "target": "난임치료 중인 직원", "next": "가이드 종료(참고 항목)",
-        "guide": '"난임치료(인공수정·체외수정 등 시술 및 전후 준비·휴식기 포함)를 위한 휴가는 연 6일까지 가능하고, 최초 2일은 유급입니다. 신청기한이 따로 없으니 당일 신청도 가능해요."',
-        "check": ["난임치료휴가 신청서 접수", "최초 2일 유급 처리 (정부 지원금 상한 84,210원/일 차감 안내)", "치료 관련 정보 비밀유지 서약"],
-        "forms": ["난임치료휴가 신청서", "치료 사실 입증서류(선택)"],
-        "warn": ["거부 시 500만원 이하 과태료", "신청 과정에서 알게 된 질환·치료 정보 무단 누설 금지", "1일 단위 분할 사용 가능"],
-        "laws": [
-            {"name": "남녀고용평등법 제18조의3", "desc": "난임치료휴가 연 6일, 최초 2일 유급"},
-        ],
-        "faq": [
-            {"q": "난임치료휴가 급여는 회사가 다 부담하나요?", "a": "아닙니다. 근로자가 고용센터에 난임치료휴가급여를 신청해 받으면(1일 상한 84,210원), 회사는 통상임금에서 그 금액을 뺀 차액만 지급하면 됩니다."},
-            {"q": "연차휴가에서 차감되나요?", "a": "아니요. 연차휴가와 별개로 부여되는 법정휴가라 연차에서 차감할 수 없습니다."},
-            {"q": "증빙 서류가 꼭 필요한가요?", "a": "회사는 난임치료 사실을 확인할 수 있는 입증서류를 요청할 수 있습니다. 다만 신청서 제출 기한 자체는 별도로 없습니다."},
-        ],
-        "kpi": [{"val": "6일", "label": "연간 최대(2일 유급)"}],
     },
 ]
 
@@ -499,35 +409,6 @@ if "checks" not in st.session_state:
     st.session_state.checks = {i: [False] * len(STEPS[i]["check"]) for i in range(len(STEPS))}
 if "completed_steps" not in st.session_state:
     st.session_state.completed_steps = set()
-
-# ──────────────────────────────────────────
-# 메뉴 열림/닫힘 기본값: PC는 열림, 모바일은 닫힘
-# (서버 쪽에서 화면 폭을 알 수 없어 JS로 감지 후 1회 리다이렉트)
-# ──────────────────────────────────────────
-if "menu_open" not in st.session_state:
-    menu_param = st.query_params.get("menu_state")
-    if menu_param == "closed":
-        st.session_state.menu_open = False
-    elif menu_param == "open":
-        st.session_state.menu_open = True
-    else:
-        st.session_state.menu_open = True
-        components.html("""
-        <script>
-        (function() {
-            try {
-                const topWin = window.top;
-                const params = new URLSearchParams(topWin.location.search);
-                if (!params.has('menu_state')) {
-                    const isMobile = topWin.innerWidth < 640;
-                    params.set('menu_state', isMobile ? 'closed' : 'open');
-                    topWin.location.search = params.toString();
-                }
-            } catch (e) {}
-        })();
-        </script>
-        """, height=0)
-
 
 active_idx = st.session_state.active_step
 step = STEPS[active_idx]
@@ -552,119 +433,78 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 스텝 프로그레스 (계산기 모드에서는 숨김, 클릭 시 해당 STEP으로 이동)
+# 스텝 프로그레스 (계산기 모드에서는 숨김)
 # ──────────────────────────────────────────
 if not is_calc:
-    # 모바일/PC 공통: STEP 네비게이션 영역의 기준점
-    st.markdown('<div class="stepper-mobile-anchor"></div>', unsafe_allow_html=True)
-
-    # PC: 9개 단계를 한 줄의 컴팩트 버튼으로 표시
-    st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
-    stepper_cols = st.columns(len(STEPS), gap="small")
+    stepper_html = '<div class="stepper-wrap"><div class="stepper">'
     for i, s in enumerate(STEPS):
-        with stepper_cols[i]:
-            is_done = i in st.session_state.completed_steps
-            is_active = i == active_idx
-            label = f"{'✓ ' if is_done else ''}{s['id']} · {s['short']}"
-            st.markdown('<div class="stepper-btn">', unsafe_allow_html=True)
-            if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary", use_container_width=True):
-                st.session_state.active_step = i
-                st.session_state.mode = "steps"
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # 모바일: 9개 버튼 대신 현재 STEP만 한 줄 선택창으로 표시
-    mobile_step_options = [f"{s['id']} · {s['short']}" for s in STEPS]
-    desired_mobile_step = mobile_step_options[active_idx]
-    if st.session_state.get("mobile_step_select") != desired_mobile_step:
-        st.session_state.mobile_step_select = desired_mobile_step
-
-    st.markdown('<div class="mobile-step-select-wrap"><div class="mobile-step-select-title">현재 단계</div></div>', unsafe_allow_html=True)
-    selected_mobile_step = st.selectbox(
-        "현재 단계",
-        options=mobile_step_options,
-        key="mobile_step_select",
-        label_visibility="collapsed",
-    )
-    selected_idx = mobile_step_options.index(selected_mobile_step)
-    if selected_idx != active_idx:
-        st.session_state.active_step = selected_idx
-        st.session_state.mode = "steps"
-        st.rerun()
+        cls = "active" if i == active_idx else ("done" if i in st.session_state.completed_steps else "")
+        icon = "✓" if i in st.session_state.completed_steps else str(s["id"])
+        stepper_html += f"""
+        <div class="step-node {cls}">
+          <div class="step-circle">{icon}</div>
+          <div class="step-label">{s['short']}</div>
+        </div>"""
+    stepper_html += '</div></div>'
+    st.markdown(stepper_html, unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# 참고정보 패널 토글
+# 3열 메인 레이아웃
 # ──────────────────────────────────────────
-toggle_col, _spacer = st.columns([0.18, 0.82])
-with toggle_col:
-    st.markdown('<div class="menu-toggle-btn">', unsafe_allow_html=True)
-    btn_label = "✕ 참고정보 닫기" if st.session_state.menu_open else "☰ 참고정보"
-    if st.button(btn_label, key="menu_toggle_btn"):
-        st.session_state.menu_open = not st.session_state.menu_open
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+col_left, col_center, col_right = st.columns([1, 3.2, 1.6], gap="small")
 
-# ──────────────────────────────────────────
-# 메인 레이아웃
-# 상단 STEP이 단계 이동을 전담하므로 왼쪽에는 참고정보만 배치
-# ──────────────────────────────────────────
-if st.session_state.menu_open:
-    col_menu, col_center, col_right = st.columns([1.15, 3.55, 1.55], gap="small")
-else:
-    col_menu = None
-    col_spacer, col_center, col_right = st.columns([0.04, 4.55, 1.55], gap="small")
-
-# ── 참고정보 패널 (계산기 / 관련 법령 / 핵심 수치) ──
-if col_menu is not None:
-    with col_menu:
-        st.markdown('<div class="side-panel">', unsafe_allow_html=True)
-
-        st.markdown('<div class="nav-section-title">🧰 업무 도구</div>', unsafe_allow_html=True)
-        st.markdown('<div class="side-action">', unsafe_allow_html=True)
+# ── 왼쪽 패널 ──
+with col_left:
+    st.markdown('<div class="nav-section-title">📍 단계 이동</div>', unsafe_allow_html=True)
+    for i, s in enumerate(STEPS):
+        is_active = (i == active_idx) and not is_calc
+        is_done = i in st.session_state.completed_steps
+        check_count = sum(st.session_state.checks[i])
+        total_count = len(s["check"])
+        progress_text = f" ({check_count}/{total_count})" if check_count > 0 else ""
         if st.button(
-            "📊 기간 계산기" + (" ✓" if is_calc else ""),
-            key="btn_calc",
+            f"{'✓ ' if is_done else ''}{s['id']}. {s['short']}{progress_text}",
+            key=f"nav_{i}",
             use_container_width=True,
-            type="primary" if is_calc else "secondary",
+            type="primary" if is_active else "secondary",
         ):
-            st.session_state.mode = "steps" if is_calc else "calc"
+            st.session_state.active_step = i
+            st.session_state.mode = "steps"
             st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
 
-        if not is_calc:
-            st.markdown('<div class="nav-section-title">⚖️ 현재 STEP 관련 법령</div>', unsafe_allow_html=True)
-            for law in step["laws"]:
-                st.markdown(f"""
-                <div class="law-item">
-                  <div class="law-item-title">{law['name']}</div>
-                  <div class="law-item-desc">{law['desc']}</div>
-                </div>""", unsafe_allow_html=True)
+    # 계산기 버튼
+    st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🧮 계산 도구</div>', unsafe_allow_html=True)
+    if st.button(
+        "📊 계산기" + (" ✓" if is_calc else ""),
+        key="btn_calc",
+        use_container_width=True,
+        type="primary" if is_calc else "secondary",
+    ):
+        st.session_state.mode = "steps" if is_calc else "calc"
+        st.rerun()
 
-            st.markdown('<div class="nav-section-title">🔢 핵심 수치</div>', unsafe_allow_html=True)
-            kpi_items = list(step["kpi"]) + [
-                {"val": "90일", "label": "출산휴가"},
-                {"val": "20일", "label": "배우자휴가"},
-                {"val": "2시간", "label": "임신기단축/일"},
-            ]
-            # 중복 수치는 제거하면서 현재 STEP의 KPI를 우선 노출
-            seen = set()
-            unique_kpis = []
-            for k in kpi_items:
-                key = (k["val"], k["label"])
-                if key not in seen:
-                    seen.add(key)
-                    unique_kpis.append(k)
-            st.markdown('<div class="kpi-grid">', unsafe_allow_html=True)
-            for kpi in unique_kpis[:6]:
-                st.markdown(f"""
-                <div class="kpi-card">
-                  <div class="kpi-value">{kpi['val']}</div>
-                  <div class="kpi-label">{kpi['label']}</div>
-                </div>""", unsafe_allow_html=True)
-            st.markdown('</div>', unsafe_allow_html=True)
+    # 법령 & KPI (단계 모드에서만)
+    if not is_calc:
+        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
+        for law in step["laws"]:
+            st.markdown(f"""
+            <div class="law-item">
+              <div class="law-item-title">{law['name']}</div>
+              <div class="law-item-desc">{law['desc']}</div>
+            </div>""", unsafe_allow_html=True)
 
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🔢 핵심 수치</div>', unsafe_allow_html=True)
+        for kpi in step["kpi"]:
+            st.markdown(f"""
+            <div class="kpi-card">
+              <div class="kpi-value">{kpi['val']}</div>
+              <div class="kpi-label">{kpi['label']}</div>
+            </div>""", unsafe_allow_html=True)
+        st.markdown("""
+        <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
+        <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
+        <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
+        """, unsafe_allow_html=True)
 
 # ── 중앙 패널 ──
 with col_center:
@@ -1051,16 +891,11 @@ with col_right:
               현재 <strong>[{step['short']}]</strong> 단계에 대한 법령 해석, 대응 방법, 엣지케이스 등 무엇이든 질문하세요. 📚
             </div>""", unsafe_allow_html=True)
         for msg in st.session_state.messages:
-            avatar = "🙋" if msg["role"] == "user" else "🎓"
-            with st.chat_message(msg["role"], avatar=avatar):
+            with st.chat_message(msg["role"]):
                 st.markdown(msg["content"])
 
     if prompt := st.chat_input("질문을 입력하세요..."):
         st.session_state.messages.append({"role": "user", "content": prompt})
-
-        with chat_container:
-            with st.chat_message("user", avatar="🙋"):
-                st.markdown(prompt)
 
         try:
             if "OPENAI_API_KEY" not in st.secrets:
@@ -1078,7 +913,7 @@ with col_right:
 - 관련 법령: {[l['name'] for l in step['laws']]}
 
 [답변 원칙]
-1. 최신 개정 반영: 임신기 단축 32주, 배우자출산휴가 20일(3분할), 육아휴직 기본 1년+조건부 6개월(최대 1.5년, 부모 각각 3개월+ 사용 또는 한부모·중증장애아동 부모만 해당), 사후지급금 폐지, 6+6 부모육아휴직제(자녀 생후 18개월 이내, 동시/순차 사용 시 첫 6개월 100% 지급), 난임치료휴가 연 6일(2일 유급), 가족돌봄휴직 연 90일(휴가 연 10일 포함), 단기 육아휴직(2026-08-20 시행, 만 8세 이하 자녀 단기 돌봄 시 연 1회 1주/2주 단위, 전체 육아휴직 기간에서 차감). 단, 2026-09-18 시행 예정 사항(배우자출산전후휴가 명칭변경 및 출산예정일 50일 전부터 사용 가능하도록 확대, 배우자 유산·사산휴가 신설, 배우자 유산·조산 위험 시 남성 육아휴직 확대)은 아직 시행 전이므로 시행일을 함께 안내할 것
+1. 최신 개정 반영: 임신기 단축 32주, 배우자출산휴가 20일(3분할), 육아휴직 기본 1년+조건부 6개월(최대 1.5년, 부모 각각 3개월+ 사용 또는 한부모·중증장애아동 부모만 해당), 사후지급금 폐지, 6+6 부모육아휴직제(자녀 생후 18개월 이내, 동시/순차 사용 시 첫 6개월 100% 지급), 난임치료휴가 연 6일(2일 유급), 가족돌봄휴직 연 90일(휴가 연 10일 포함). 단, 2026-09-18 시행 예정 사항(배우자출산전후휴가 명칭변경 및 출산예정일 50일 전부터 사용 가능하도록 확대, 배우자 유산·사산휴가 신설, 배우자 유산·조산 위험 시 남성 육아휴직 확대)은 아직 시행 전이므로 시행일을 함께 안내할 것
 2. 담당자가 직원에게 즉시 말할 수 있는 구어체 스크립트를 포함할 것
 3. 법령 조항명을 정확히 인용할 것
 4. 친절하고 명확하며, 든든한 동료 느낌 유지
@@ -1087,7 +922,7 @@ with col_right:
 """
 
             with chat_container:
-                with st.chat_message("assistant", avatar="🎓"):
+                with st.chat_message("assistant"):
                     response_placeholder = st.empty()
                     full_response = ""
 
