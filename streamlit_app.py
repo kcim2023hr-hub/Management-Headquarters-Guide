@@ -40,90 +40,96 @@ st.markdown("""
   white-space: nowrap;
 }
 
-/* ── 컴팩트 STEP 네비게이션 ── */
+/* ── STEP 네비게이션 ── */
 .stepper-wrap {
   background: #fff;
   border-bottom: 1px solid #e2e8f0;
-  padding: 0.35rem 0.7rem;
-  overflow-x: auto;
+  padding: 0.3rem 0.6rem;
+  overflow: hidden;
 }
-
-/* STEP 버튼을 한 줄짜리 업무 네비게이션으로 */
-.stepper-btn {
-  text-align: center;
-  position: relative;
-}
-
-.stepper-btn .stButton {
-  display: flex;
-  justify-content: center;
-  margin: 0 !important;
-}
-
+.stepper-btn { text-align: center; }
+.stepper-btn .stButton { display: flex; justify-content: center; margin: 0 !important; }
 .stepper-btn button {
   width: 100% !important;
   min-width: 0 !important;
-  height: 38px !important;
-  min-height: 38px !important;
-  padding: 0 6px !important;
-
+  height: 36px !important;
+  min-height: 36px !important;
+  padding: 0 5px !important;
   border-radius: 8px !important;
   border: 1px solid #e2e8f0 !important;
   background: #f8fafc !important;
-
   color: #64748b !important;
   font-size: 0.72rem !important;
   font-weight: 700 !important;
   line-height: 1 !important;
-
-  box-shadow: none !important;
   white-space: nowrap !important;
-  transition: all 0.15s ease !important;
+  box-shadow: none !important;
 }
-
-/* 현재 STEP */
 .stepper-btn button[kind="primary"] {
   background: #2563eb !important;
   border-color: #2563eb !important;
   color: #fff !important;
-  box-shadow: 0 2px 7px rgba(37, 99, 235, 0.22) !important;
+  box-shadow: 0 2px 6px rgba(37,99,235,.18) !important;
 }
-
-/* STEP 사이의 자연스러운 여백 */
-.stepper-btn + .stepper-btn {
-  margin-left: 0.1rem;
-}
-
-/* 기존 STEP 이름 영역은 사용하지 않음 */
 .step-label {
   display: none !important;
 }
 
-/* 모바일 */
+/* 모바일 STEP 선택창: 데스크톱에서는 숨김 */
+.mobile-step-select-wrap {
+  background: #fff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0.35rem 0.65rem 0.4rem;
+}
+.mobile-step-select-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #94a3b8;
+  margin: 0 0 2px 2px;
+}
+@media (min-width: 641px) {
+  div[data-testid="stSelectbox"] { display: none !important; }
+}
+
+/* 모바일 반응형 */
 @media (max-width: 640px) {
-  .stepper-wrap {
-    padding: 0.3rem 0.35rem;
+  /* PC용 9개 STEP 버튼은 모바일에서 완전히 숨김 */
+  div[data-testid="stMarkdownContainer"]:has(.stepper-mobile-anchor) + div[data-testid="stHorizontalBlock"] {
+    display: none !important;
   }
 
-  .stepper-btn button {
-    height: 34px !important;
-    min-height: 34px !important;
-    padding: 0 5px !important;
-    border-radius: 7px !important;
-    font-size: 0.62rem !important;
+  .top-header {
+    padding: 0.55rem 0.8rem;
+    min-height: auto;
+  }
+  .top-header-title { font-size: 0.92rem; line-height: 1.2; }
+  .badge-2025 { font-size: 0.58rem; padding: 2px 7px; margin-left: 4px; }
+  .top-header-sub { font-size: 0.58rem; margin-top: 1px; }
+
+  .mobile-step-select-wrap {
+    padding: 0.3rem 0.6rem 0.35rem;
+  }
+  .mobile-step-select-title {
+    font-size: 0.58rem;
+  }
+  div[data-testid="stSelectbox"] {
+    margin: 0 !important;
+  }
+  div[data-testid="stSelectbox"] > div {
+    min-height: 38px !important;
+  }
+  div[data-testid="stSelectbox"] [data-baseweb="select"] {
+    min-height: 38px !important;
+    border-radius: 8px !important;
+  }
+  div[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+    font-size: 0.78rem !important;
+    font-weight: 700 !important;
   }
 
-  .step-main-title {
-    font-size: 1.15rem !important;
-  }
-
-  .step-header-card {
-    padding: 1rem 1.1rem !important;
-  }
-
-  .step-header-card::after {
-    font-size: 3.2rem !important;
-  }
+  .step-main-title { font-size: 1.05rem !important; }
+  .step-header-card { padding: 0.8rem 0.9rem !important; }
+  .step-header-card::after { font-size: 2.8rem !important; }
 }
 
 /* ── 왼쪽 패널 ── */
@@ -529,35 +535,43 @@ st.markdown(f"""
 # 스텝 프로그레스 (계산기 모드에서는 숨김, 클릭 시 해당 STEP으로 이동)
 # ──────────────────────────────────────────
 if not is_calc:
+    # 모바일/PC 공통: STEP 네비게이션 영역의 기준점
+    st.markdown('<div class="stepper-mobile-anchor"></div>', unsafe_allow_html=True)
+
+    # PC: 9개 단계를 한 줄의 컴팩트 버튼으로 표시
     st.markdown('<div class="stepper-wrap">', unsafe_allow_html=True)
     stepper_cols = st.columns(len(STEPS), gap="small")
-
     for i, s in enumerate(STEPS):
         with stepper_cols[i]:
             is_done = i in st.session_state.completed_steps
             is_active = i == active_idx
-
-            # 번호와 단계명을 하나의 버튼에 통합해 상단 높이를 최소화
-            if is_done:
-                label = f"✓ {s['short']}"
-            else:
-                label = f"{s['id']} · {s['short']}"
-
+            label = f"{'✓ ' if is_done else ''}{s['id']} · {s['short']}"
             st.markdown('<div class="stepper-btn">', unsafe_allow_html=True)
-
-            if st.button(
-                label,
-                key=f"stepper_{i}",
-                type="primary" if is_active else "secondary",
-                use_container_width=True,
-            ):
+            if st.button(label, key=f"stepper_{i}", type="primary" if is_active else "secondary", use_container_width=True):
                 st.session_state.active_step = i
                 st.session_state.mode = "steps"
                 st.rerun()
-
             st.markdown('</div>', unsafe_allow_html=True)
-
     st.markdown('</div>', unsafe_allow_html=True)
+
+    # 모바일: 9개 버튼 대신 현재 STEP만 한 줄 선택창으로 표시
+    mobile_step_options = [f"{s['id']} · {s['short']}" for s in STEPS]
+    desired_mobile_step = mobile_step_options[active_idx]
+    if st.session_state.get("mobile_step_select") != desired_mobile_step:
+        st.session_state.mobile_step_select = desired_mobile_step
+
+    st.markdown('<div class="mobile-step-select-wrap"><div class="mobile-step-select-title">현재 단계</div></div>', unsafe_allow_html=True)
+    selected_mobile_step = st.selectbox(
+        "현재 단계",
+        options=mobile_step_options,
+        key="mobile_step_select",
+        label_visibility="collapsed",
+    )
+    selected_idx = mobile_step_options.index(selected_mobile_step)
+    if selected_idx != active_idx:
+        st.session_state.active_step = selected_idx
+        st.session_state.mode = "steps"
+        st.rerun()
 
 # ──────────────────────────────────────────
 # 토글 버튼
