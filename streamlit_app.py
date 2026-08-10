@@ -25,10 +25,7 @@ st.markdown("""
 .block-container { padding: 0 !important; max-width: 100% !important; }
 .stApp { background: #f0f4f8; }
 
-/* ── position:fixed가 화면 기준으로 정확히 뜨도록, 조상 요소의 transform 제거 ──
-   (Streamlit이 페이지 전환 시 앱 컨테이너에 transform을 거는 경우가 있는데,
-    이때 position:fixed 자식 요소는 "화면 전체"가 아니라 그 조상 기준으로
-    잘못 배치/클리핑됨 — 플로팅 버튼이 가장자리에서 잘려 보이던 원인) */
+/* ── position:fixed가 화면 기준으로 정확히 뜨도록, 조상 요소의 transform 제거 ── */
 .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"],
 [data-testid="stMainBlockContainer"], .main {
   transform: none !important;
@@ -897,7 +894,7 @@ with col_center:
                 st.markdown(f'<div class="warn-banner">⚠️ {w}</div>', unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
-      st.markdown(f"""
+        st.markdown(f"""
         <div class="faq-card">
           <div class="card-title">💡 자주 묻는 질문 (FAQ)</div>""", unsafe_allow_html=True)
         for faq in step["faq"]:
@@ -933,7 +930,7 @@ with col_center:
             st.markdown("</div>", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
-# AI 챗봇 (우하단 플로팅 버튼 → 모달 다이얼로그)
+# AI 챗봇 (좌하단 플로팅 버튼 → 모달 다이얼로그)
 # ──────────────────────────────────────────
 @st.dialog("🎓 육아지원박사", width="large")
 def render_chatbot_dialog():
