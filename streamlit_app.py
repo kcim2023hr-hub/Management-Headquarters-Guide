@@ -1,5 +1,4 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from openai import OpenAI
 import math
 from datetime import date, timedelta
@@ -235,22 +234,20 @@ section[data-testid="stSidebar"] { display: none !important; }
 header[data-testid="stHeader"] { display: none !important; }
 div[data-testid="stToolbar"] { display: none !important; }
 
-/* ── 플로팅 액션 버튼(FAB): 메뉴 토글 · AI 챗봇 ──
-   화면 가장자리에 고정된 원형 버튼. 레이아웃 흐름(block-container)에
-   영향을 주지 않아 본문이 한쪽으로 쏠리는 문제가 없음.
-   좌/우 하단에 분리 배치, 가장자리에서 확실히 떨어뜨려 잘려 보이지 않게 함. */
+/* ── 플로팅 액션 버튼(FAB): AI 챗봇 열기 ──
+   화면 좌하단(기존 메뉴 버튼 자리)에 고정된 원형 버튼. 레이아웃 흐름
+   (block-container)에 영향을 주지 않아 본문이 쏠리는 문제가 없음. */
 .block-container { padding-bottom: 100px !important; }
 
-.st-key-menu_toggle_btn, .st-key-chat_toggle_btn {
+.st-key-chat_toggle_btn {
   position: fixed !important;
   bottom: max(24px, env(safe-area-inset-bottom)) !important;
+  left: max(24px, env(safe-area-inset-left)) !important;
   z-index: 999999 !important;
   width: auto !important;
 }
-.st-key-menu_toggle_btn { left: max(24px, env(safe-area-inset-left)) !important; }
-.st-key-chat_toggle_btn { right: max(24px, env(safe-area-inset-right)) !important; }
 
-.st-key-menu_toggle_btn button, .st-key-chat_toggle_btn button {
+.st-key-chat_toggle_btn button {
   width: 56px !important; height: 56px !important;
   min-width: 56px !important; min-height: 56px !important;
   border-radius: 50% !important; border: 3px solid white !important;
@@ -260,25 +257,19 @@ div[data-testid="stToolbar"] { display: none !important; }
   display: flex !important; align-items: center !important; justify-content: center !important;
   box-shadow: 0 4px 16px rgba(0,0,0,0.32) !important;
   transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
-}
-.st-key-menu_toggle_btn button {
-  background: linear-gradient(135deg, #1a4a6e, #1e6091) !important;
-}
-.st-key-chat_toggle_btn button {
   background: linear-gradient(135deg, #f093fb, #f5576c) !important;
 }
-.st-key-menu_toggle_btn button:hover, .st-key-chat_toggle_btn button:hover {
+.st-key-chat_toggle_btn button:hover {
   transform: translateY(-2px) scale(1.05) !important;
   box-shadow: 0 6px 20px rgba(0,0,0,0.36) !important;
 }
-.st-key-menu_toggle_btn button:active, .st-key-chat_toggle_btn button:active {
+.st-key-chat_toggle_btn button:active {
   transform: scale(0.94) !important;
 }
 @media (max-width: 640px) {
   .block-container { padding-bottom: 90px !important; }
-  .st-key-menu_toggle_btn { left: max(16px, env(safe-area-inset-left)) !important; }
-  .st-key-chat_toggle_btn { right: max(16px, env(safe-area-inset-right)) !important; }
-  .st-key-menu_toggle_btn button, .st-key-chat_toggle_btn button {
+  .st-key-chat_toggle_btn { left: max(16px, env(safe-area-inset-left)) !important; }
+  .st-key-chat_toggle_btn button {
     width: 50px !important; height: 50px !important;
     min-width: 50px !important; min-height: 50px !important;
     font-size: 1.15rem !important;
@@ -483,35 +474,6 @@ if "checks" not in st.session_state:
     st.session_state.checks = {i: [False] * len(STEPS[i]["check"]) for i in range(len(STEPS))}
 if "completed_steps" not in st.session_state:
     st.session_state.completed_steps = set()
-
-# ──────────────────────────────────────────
-# 메뉴 기본값: PC는 펼침, 모바일은 접힘
-# (서버 쪽에서 화면 폭을 알 수 없어 JS로 감지 후 1회만 리다이렉트)
-# ──────────────────────────────────────────
-if "menu_open" not in st.session_state:
-    menu_param = st.query_params.get("menu_state")
-    if menu_param == "closed":
-        st.session_state.menu_open = False
-    elif menu_param == "open":
-        st.session_state.menu_open = True
-    else:
-        st.session_state.menu_open = True
-        components.html("""
-        <script>
-        (function() {
-            try {
-                const topWin = window.top;
-                const params = new URLSearchParams(topWin.location.search);
-                if (!params.has('menu_state')) {
-                    const isMobile = topWin.innerWidth < 640;
-                    params.set('menu_state', isMobile ? 'closed' : 'open');
-                    topWin.location.search = params.toString();
-                }
-            } catch (e) {}
-        })();
-        </script>
-        """, height=0)
-
 if "chat_open" not in st.session_state:
     st.session_state.chat_open = False
 
@@ -558,66 +520,29 @@ if not is_calc:
                     st.rerun()
 
 # ──────────────────────────────────────────
-# 플로팅 액션 버튼 (좌하단: 메뉴 토글 / 우하단: AI 챗봇 열기)
-# 두 버튼 모두 CSS로 position:fixed 처리되어 레이아웃 흐름에서 완전히
-# 벗어나므로, block-container에 별도 강제 여백이 필요하지 않습니다.
+# 상단 컨트롤 행: 계산기 ↔ 가이드 전환 버튼 (항상 우측에 고정 노출)
 # ──────────────────────────────────────────
-menu_btn_label = "✕" if st.session_state.menu_open else "☰"
-menu_btn_help = "메뉴 닫기" if st.session_state.menu_open else "메뉴 열기"
-if st.button(menu_btn_label, key="menu_toggle_btn", help=menu_btn_help):
-    st.session_state.menu_open = not st.session_state.menu_open
-    st.rerun()
+ctrl_spacer, ctrl_btn = st.columns([5.5, 1.4])
+with ctrl_btn:
+    calc_toggle_label = "📋 가이드로" if is_calc else "📊 계산기"
+    if st.button(calc_toggle_label, key="btn_calc", use_container_width=True,
+                 type="primary" if is_calc else "secondary"):
+        st.session_state.mode = "steps" if is_calc else "calc"
+        st.rerun()
 
+# ──────────────────────────────────────────
+# 플로팅 액션 버튼 (좌하단: AI 챗봇 열기)
+# CSS로 position:fixed 처리되어 레이아웃 흐름에서 완전히 벗어나므로
+# block-container에 별도 강제 여백이 필요하지 않습니다.
+# ──────────────────────────────────────────
 if st.button("💬", key="chat_toggle_btn", help="AI 챗봇 육아지원박사에게 질문하기"):
     st.session_state.chat_open = True
     st.rerun()
 
 # ──────────────────────────────────────────
-# 메인 레이아웃 (본문 중심 1~2단)
-# 좌측 메뉴는 열렸을 때만 컬럼을 차지하고, 닫히면 본문이 전체 폭을 사용합니다.
+# 메인 레이아웃 — 메뉴 없이 본문이 항상 전체 폭 사용
 # ──────────────────────────────────────────
-if st.session_state.menu_open:
-    col_menu, col_center = st.columns([1, 3.6], gap="small")
-else:
-    col_menu = None
-    col_center = st.container()
-
-# ── 메뉴 패널 (계산 도구 / 법령 / KPI — 단계 이동은 상단 스텝바로 통합) ──
-if col_menu is not None:
-    with col_menu:
-        # 계산기 버튼
-        st.markdown('<div class="nav-section-title">🧮 계산 도구</div>', unsafe_allow_html=True)
-        if st.button(
-            "📊 계산기" + (" ✓" if is_calc else ""),
-            key="btn_calc",
-            use_container_width=True,
-            type="primary" if is_calc else "secondary",
-        ):
-            st.session_state.mode = "steps" if is_calc else "calc"
-            st.rerun()
-
-        # 법령 & KPI (단계 모드에서만)
-        if not is_calc:
-            st.markdown('<div class="nav-section-title" style="margin-top:1rem;">⚖️ 관련 법령</div>', unsafe_allow_html=True)
-            for law in step["laws"]:
-                st.markdown(f"""
-                <div class="law-item">
-                  <div class="law-item-title">{law['name']}</div>
-                  <div class="law-item-desc">{law['desc']}</div>
-                </div>""", unsafe_allow_html=True)
-
-            st.markdown('<div class="nav-section-title" style="margin-top:1rem;">🔢 핵심 수치</div>', unsafe_allow_html=True)
-            for kpi in step["kpi"]:
-                st.markdown(f"""
-                <div class="kpi-card">
-                  <div class="kpi-value">{kpi['val']}</div>
-                  <div class="kpi-label">{kpi['label']}</div>
-                </div>""", unsafe_allow_html=True)
-            st.markdown("""
-            <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
-            <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
-            <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
-            """, unsafe_allow_html=True)
+col_center = st.container()
 
 # ── 중앙 패널 ──
 with col_center:
@@ -972,7 +897,7 @@ with col_center:
                 st.markdown(f'<div class="warn-banner">⚠️ {w}</div>', unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown(f"""
+      st.markdown(f"""
         <div class="faq-card">
           <div class="card-title">💡 자주 묻는 질문 (FAQ)</div>""", unsafe_allow_html=True)
         for faq in step["faq"]:
@@ -982,6 +907,30 @@ with col_center:
             <div class="faq-a">A. {faq['a']}</div>
           </div>""", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
+
+        c3, c4 = st.columns(2)
+        with c3:
+            st.markdown('<div class="info-card"><div class="card-title">⚖️ 관련 법령</div>', unsafe_allow_html=True)
+            for law in step["laws"]:
+                st.markdown(f"""
+                <div class="law-item">
+                  <div class="law-item-title">{law['name']}</div>
+                  <div class="law-item-desc">{law['desc']}</div>
+                </div>""", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        with c4:
+            st.markdown('<div class="info-card"><div class="card-title">🔢 핵심 수치</div>', unsafe_allow_html=True)
+            kpi_html = ""
+            for kpi in step["kpi"]:
+                kpi_html += f'<div class="kpi-card"><div class="kpi-value">{kpi["val"]}</div><div class="kpi-label">{kpi["label"]}</div></div>'
+            kpi_html += """
+            <div class="kpi-card"><div class="kpi-value">90일</div><div class="kpi-label">출산휴가</div></div>
+            <div class="kpi-card"><div class="kpi-value">20일</div><div class="kpi-label">배우자휴가</div></div>
+            <div class="kpi-card"><div class="kpi-value">2시간</div><div class="kpi-label">임신기단축/일</div></div>
+            """
+            st.markdown(kpi_html, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
 # ──────────────────────────────────────────
 # AI 챗봇 (우하단 플로팅 버튼 → 모달 다이얼로그)
