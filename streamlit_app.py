@@ -25,7 +25,10 @@ st.markdown("""
 .block-container { padding: 0 !important; max-width: 100% !important; }
 .stApp { background: #f0f4f8; }
 
-/* ── position:fixed가 화면 기준으로 정확히 뜨도록, 조상 요소의 transform 제거 ── */
+/* ── position:fixed가 화면 기준으로 정확히 뜨도록, 조상 요소의 transform 제거 ──
+   (Streamlit이 페이지 전환 시 앱 컨테이너에 transform을 거는 경우가 있는데,
+    이때 position:fixed 자식 요소는 "화면 전체"가 아니라 그 조상 기준으로
+    잘못 배치/클리핑됨 — 플로팅 버튼이 가장자리에서 잘려 보이던 원인) */
 .stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"],
 [data-testid="stMainBlockContainer"], .main {
   transform: none !important;
@@ -90,18 +93,18 @@ st.markdown("""
   padding: 0.3rem 0.5rem 0.2rem; margin-top: 0.5rem;
 }
 .law-item {
-  padding: 0.4rem 0.6rem; border-radius: 6px; background: #f8fafc;
+  padding: 0.35rem 0.55rem; border-radius: 6px; background: #f8fafc;
   border-left: 3px solid #e2e8f0; margin-bottom: 4px;
 }
 .law-item-title { font-size: 0.7rem; font-weight: 700; color: #374151; }
-.law-item-desc { font-size: 0.65rem; color: #6b7280; margin-top: 1px; line-height: 1.4; }
+.law-item-desc { font-size: 0.64rem; color: #6b7280; margin-top: 1px; line-height: 1.3; }
 .kpi-card {
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
   border: 1px solid #bae6fd; border-radius: 8px;
-  padding: 0.5rem 0.7rem; margin-bottom: 4px; text-align: center;
+  padding: 0.4rem 0.6rem; margin-bottom: 4px; text-align: center;
 }
-.kpi-value { font-size: 1.1rem; font-weight: 900; color: #0369a1; }
-.kpi-label { font-size: 0.62rem; font-weight: 600; color: #0369a1; opacity: 0.8; }
+.kpi-value { font-size: 1.05rem; font-weight: 900; color: #0369a1; }
+.kpi-label { font-size: 0.6rem; font-weight: 600; color: #0369a1; opacity: 0.8; }
 
 /* ── 스텝 헤더 카드 ── */
 .step-header-card {
@@ -126,41 +129,58 @@ st.markdown("""
 /* ── 스크립트 박스 ── */
 .script-card {
   background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-  padding: 1rem 1.2rem; margin-bottom: 0.8rem;
+  padding: 0.9rem 1.1rem; margin-bottom: 0.7rem;
   box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
 .card-title {
-  font-size: 0.8rem; font-weight: 800; color: #374151;
-  margin-bottom: 0.6rem; display: flex; align-items: center; gap: 6px;
+  font-size: 0.78rem; font-weight: 800; color: #374151;
+  margin-bottom: 0.45rem; display: flex; align-items: center; gap: 6px;
 }
 .script-content {
   background: #f0f9ff; border-left: 4px solid #3b82f6;
-  border-radius: 0 8px 8px 0; padding: 0.8rem 1rem;
-  font-size: 0.95rem; font-weight: 500; color: #1e40af; line-height: 1.7; font-style: italic;
+  border-radius: 0 8px 8px 0; padding: 0.7rem 0.9rem;
+  font-size: 0.92rem; font-weight: 500; color: #1e40af; line-height: 1.6; font-style: italic;
 }
 .info-card {
   background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-  padding: 0.9rem 1rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 0.75rem 0.95rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
 .form-chip2 {
   display: inline-flex; align-items: center; gap: 5px;
   background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px;
-  padding: 4px 10px; font-size: 0.78rem; font-weight: 600; color: #334155;
-  margin-bottom: 5px; width: 100%;
+  padding: 3px 9px; font-size: 0.76rem; font-weight: 600; color: #334155;
+  margin-bottom: 4px; width: 100%;
 }
 .warn-banner {
   background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
-  padding: 0.5rem 0.8rem; font-size: 0.78rem; font-weight: 600;
-  color: #dc2626; margin-top: 6px; line-height: 1.5;
+  padding: 0.4rem 0.7rem; font-size: 0.75rem; font-weight: 600;
+  color: #dc2626; margin-top: 5px; line-height: 1.4;
 }
 .faq-card {
   background: white; border-radius: 12px; border: 1px solid #e2e8f0;
-  padding: 0.9rem 1rem; margin-bottom: 0.8rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+  padding: 0.75rem 0.95rem; margin-bottom: 0.7rem; box-shadow: 0 1px 6px rgba(0,0,0,0.04);
 }
-.faq-item { padding: 0.4rem 0; border-bottom: 1px solid #f1f5f9; }
+.faq-item { padding: 0.35rem 0; border-bottom: 1px solid #f1f5f9; }
 .faq-item:last-child { border-bottom: none; }
-.faq-q { font-size: 0.8rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px; }
-.faq-a { font-size: 0.78rem; color: #475569; line-height: 1.5; }
+.faq-q { font-size: 0.78rem; font-weight: 700; color: #1d4ed8; margin-bottom: 2px; }
+.faq-a { font-size: 0.76rem; color: #475569; line-height: 1.4; }
+
+/* ── 관리자 필수 체크: Streamlit 기본 체크박스 위젯 여백이 커서
+   옆 카드(필요 서류)보다 세로로 불필요하게 커 보이는 문제 보정 ── */
+div[data-testid="stCheckbox"] {
+  margin-bottom: -0.55rem !important;
+  margin-top: -0.15rem !important;
+}
+div[data-testid="stCheckbox"] label {
+  min-height: unset !important;
+}
+div[data-testid="stCheckbox"] label p {
+  font-size: 0.78rem !important;
+  line-height: 1.3 !important;
+}
+div[data-testid="stCheckbox"] label span {
+  height: 1.1rem !important; width: 1.1rem !important;
+}
 
 /* ── 챗봇 ── */
 .chat-header {
